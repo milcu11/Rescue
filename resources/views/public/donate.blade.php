@@ -45,14 +45,15 @@
 
           <form action="{{ route('donate.submit') }}" method="POST">
             @csrf
+            @php $signedInDonor = auth()->user()?->role?->slug === 'donor' ? auth()->user() : null; @endphp
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">Your Name <span class="text-danger">*</span></label>
-                <input type="text" name="donor_name" class="form-control" value="{{ old('donor_name') }}" required>
+                <input type="text" name="donor_name" class="form-control" value="{{ old('donor_name', $signedInDonor?->name) }}" {{ $signedInDonor ? 'readonly' : '' }} required>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">Email</label>
-                <input type="email" name="donor_email" class="form-control" value="{{ old('donor_email') }}">
+                <input type="email" name="donor_email" class="form-control" value="{{ old('donor_email', $signedInDonor?->email) }}" {{ $signedInDonor ? 'readonly' : '' }}>
               </div>
             </div>
 

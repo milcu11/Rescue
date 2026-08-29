@@ -153,6 +153,15 @@ class PublicController extends Controller
 
     public function storeDonation(Request $request)
     {
+        $donor = Auth::user()?->role?->slug === 'donor' ? Auth::user() : null;
+
+        if ($donor) {
+            $request->merge([
+                'donor_name' => $donor->name,
+                'donor_email' => $donor->email,
+            ]);
+        }
+
         $validator = Validator::make($request->all(), [
             'donor_name' => 'required|string|max:255',
             'donor_contact' => 'nullable|string|max:20',
