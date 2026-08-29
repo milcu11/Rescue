@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<div class="row mb-3">
+<div class="row mb-3 payment-kpi-row">
   <div class="col-6 col-lg-3">
     <div class="small-box small-box-green text-white">
       <div class="inner"><h3>{{ $summary['total'] }}</h3><p>Total Transactions</p></div>
@@ -79,6 +79,23 @@
   @endif
 </div>
 @endsection
+
+@push('styles')
+<style>
+  .payment-kpi-row .small-box {
+    min-height: 108px;
+    overflow: hidden !important;
+  }
+
+  .payment-kpi-row .small-box .inner {
+    padding: 16px 90px 16px 16px;
+  }
+
+  .payment-kpi-row .small-box .icon {
+    top: 8px !important;
+  }
+</style>
+@endpush
 
 @push('scripts')
 <script>
