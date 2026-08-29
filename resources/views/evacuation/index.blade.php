@@ -366,6 +366,10 @@
     }
 
     @media (max-width: 575.98px) {
+      #evacKpiRow .small-box .icon {
+        display: none !important;
+      }
+
       .evacuation-toolbar__actions {
         width: 100%;
         justify-content: flex-start;
