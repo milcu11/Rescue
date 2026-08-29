@@ -13,7 +13,7 @@
       <a href="/evac-centers" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener">
         <i class="fas fa-external-link-alt"></i> Public shelters
       </a>
-      <button type="button" class="btn btn-sm btn-primary drms-icon-action" id="btnAddEvac" title="Add center">
+      <button type="button" class="btn btn-sm btn-primary" id="btnAddEvac" title="Add center">
         <i class="fas fa-plus"></i> Add center
       </button>
     </div>
