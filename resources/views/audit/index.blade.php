@@ -150,7 +150,7 @@
   </div>
   @if($logs->hasPages())
     <div class="card-footer clearfix">
-      {{ $logs->links() }}
+      {{ $logs->links('pagination::bootstrap-4') }}
     </div>
   @endif
 </div>
