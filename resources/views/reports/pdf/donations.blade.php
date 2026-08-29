@@ -36,6 +36,6 @@
       @endforeach
     </tbody>
   </table>
-  <div class="footer">RescuePH &copy; {{ date('Y') }} — For thesis/capstone purposes only</div>
+  <div class="footer">DRMS &middot; Disaster Response &amp; Volunteer Matching System</div>
 </body>
 </html>

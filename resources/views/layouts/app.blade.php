@@ -530,7 +530,7 @@
 
   {{-- ═══ FOOTER ═══ --}}
   <footer class="main-footer">
-    <strong>RescuePH</strong> &copy; 2026. For thesis/capstone purposes only.
+    <strong>DRMS</strong> &middot; Disaster Response &amp; Volunteer Matching System
   </footer>
 
 </div>

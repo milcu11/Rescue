@@ -44,7 +44,7 @@
   @yield('content')
 
   <div class="footer">
-    RescuePH &copy; {{ date('Y') }} &nbsp;|&nbsp; For thesis/capstone purposes only &nbsp;|&nbsp; Printed: {{ now()->format('M d, Y h:i A') }}
+    DRMS &middot; Disaster Response &amp; Volunteer Matching System
   </div>
 
       <div class="no-print" style="text-align:center;margin-top:20px;">
