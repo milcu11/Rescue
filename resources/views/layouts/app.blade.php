@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RescuePH — @yield('title', 'Dashboard')</title>
+  <title>@yield('title', 'Dashboard') | DRMS</title>
+  <link rel="icon" type="image/png" href="/assets/logo/baras_seal_l.png">
 
   <!-- Google Fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -278,8 +279,8 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
     {{-- Brand (reference-style compact header) --}}
-    <a href="https://drvms.freedev.app/admin/dashboard" class="brand-link">
-      <img src="https://drvms.freedev.app/assets/logo/baras_seal_xs.png" width="41" height="43"
+    <a href="{{ route('dashboard') }}" class="brand-link">
+      <img src="/assets/logo/baras_seal_l.png" width="41" height="43"
            alt="Municipality of Baras seal" class="brand-image drms-municipal-seal elevation-2">
       <span class="brand-text font-weight-light drms-brand-erp">
         DRMS
