@@ -435,6 +435,28 @@
             </li>
           @endif
 
+          @if(Auth::user()->role->slug === 'donor')
+            <li class="nav-header">MY PORTAL</li>
+            <li class="nav-item">
+              <a href="{{ route('donor.index') }}" class="nav-link {{ request()->routeIs('donor.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-hand-holding-heart"></i>
+                <p>My Donations</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('donate') }}" class="nav-link {{ request()->routeIs('donate*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-donate"></i>
+                <p>Make a Donation</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('donations.track') }}" class="nav-link {{ request()->routeIs('donations.track') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-search"></i>
+                <p>Track a Donation</p>
+              </a>
+            </li>
+          @endif
+
           <li class="nav-header">PUBLIC</li>
 
           @if(Auth::user()->role->slug !== 'donor')
@@ -451,19 +473,6 @@
               <p>Evacuation centers</p>
             </a>
           </li>
-
-          @if(Auth::user()->role->slug === 'donor')
-            <li class="nav-item">
-              <a href="{{ route('donor.index') }}" class="nav-link {{ request()->routeIs('donor.*') ? 'active' : '' }}">
-                <p>My Donations</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('donate') }}" class="nav-link">
-                <p>Make a Donation</p>
-              </a>
-            </li>
-          @endif
 
           <li class="nav-header">SYSTEM</li>
 
