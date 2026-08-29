@@ -28,14 +28,15 @@ RUN apt-get update \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY composer.json composer.lock ./
-RUN composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader --no-dev
+RUN composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader --no-dev --no-scripts
 
 COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
 
-RUN npm run build \
+RUN php artisan package:discover --ansi \
+    && npm run build \
     && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
