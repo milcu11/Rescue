@@ -120,5 +120,9 @@
     .donor-kpi-row .small-box .inner {
       padding: 16px 90px 16px 16px;
     }
+
+    .donor-kpi-row .small-box .icon {
+      top: 8px !important;
+    }
   </style>
 @endpush
