@@ -15,7 +15,7 @@
     $inKindDonations = $donations->where('type', 'in-kind')->count();
   @endphp
 
-  <div class="row mb-3">
+  <div class="row mb-3 donor-kpi-row">
     <div class="col-lg-3 col-6">
       <div class="small-box bg-danger">
         <div class="inner"><h3>{{ $totalDonations }}</h3><p>Total Donations</p></div>
@@ -110,3 +110,15 @@
     </div>
   </div>
 @endsection
+
+@push('styles')
+  <style>
+    .donor-kpi-row .small-box {
+      min-height: 108px;
+    }
+
+    .donor-kpi-row .small-box .inner {
+      padding: 16px 90px 16px 16px;
+    }
+  </style>
+@endpush
