@@ -375,7 +375,7 @@
             </li>
           @endif
 
-          @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer', 'warehouse_staff']))
+          @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer', 'warehouse_staff', 'evac_manager', 'evacuation_manager']))
             <li class="nav-item">
               <a href="{{ route('inventory.index') }}"
                  class="nav-link {{ request()->routeIs('inventory.*') ? 'active' : '' }}">
@@ -385,7 +385,7 @@
             </li>
           @endif
 
-          @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer']))
+          @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer', 'evac_manager', 'evacuation_manager']))
             <li class="nav-item">
               <a href="{{ route('relief.index') }}"
                  class="nav-link {{ request()->routeIs('relief.*') ? 'active' : '' }}">
