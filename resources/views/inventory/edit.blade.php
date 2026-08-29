@@ -37,10 +37,10 @@
         <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
           <select name="category" class="form-select @error('category') is-invalid @enderror">
-            @foreach(['food','medicine','clothing','tools','other'] as $cat)
+            @foreach(['food','medical','first_aid','emergency','hygiene','water','clothing','tools','other'] as $cat)
               <option value="{{ $cat }}"
                 {{ old('category', $inventoryItem->category) === $cat ? 'selected' : '' }}>
-                {{ ucfirst($cat) }}
+                {{ str_replace('_', ' ', ucfirst($cat)) }}
               </option>
             @endforeach
           </select>

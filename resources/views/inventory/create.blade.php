@@ -42,9 +42,9 @@
           <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
           <select name="category" class="form-select @error('category') is-invalid @enderror">
             <option value="">Select category</option>
-            @foreach(['food','medicine','clothing','tools','other'] as $cat)
+            @foreach(['food','medical','first_aid','emergency','hygiene','water','clothing','tools','other'] as $cat)
               <option value="{{ $cat }}" {{ old('category') === $cat ? 'selected' : '' }}>
-                {{ ucfirst($cat) }}
+                {{ str_replace('_', ' ', ucfirst($cat)) }}
               </option>
             @endforeach
           </select>

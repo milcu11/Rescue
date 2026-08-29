@@ -44,7 +44,7 @@ class InventoryController extends Controller
         $validator = Validator::make($request->all(), [
             'sku'               => 'nullable|string|max:100',
             'name'              => 'required|string|max:255',
-            'category'          => 'required|in:food,medicine,clothing,tools,other',
+            'category'          => 'required|in:food,medical,clothing,tools,other,emergency,first_aid,hygiene,water',
             'quantity'          => 'required|integer|min:0',
             'unit'              => 'required|string|max:50',
             'expires_at'        => 'nullable|date',
@@ -88,7 +88,7 @@ class InventoryController extends Controller
         $validator = Validator::make($request->all(), [
             'sku'               => 'nullable|string|max:100',
             'name'              => 'required|string|max:255',
-            'category'          => 'required|in:food,medicine,clothing,tools,other',
+            'category'          => 'required|in:food,medical,clothing,tools,other,emergency,first_aid,hygiene,water',
             'quantity'          => 'required|integer|min:0',
             'unit'              => 'required|string|max:50',
             'expires_at'        => 'nullable|date',
