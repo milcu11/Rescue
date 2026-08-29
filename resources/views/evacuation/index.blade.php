@@ -327,6 +327,26 @@
 
 @push('styles')
   <style>
+    #evacKpiRow .small-box {
+      overflow: hidden !important;
+    }
+
+    #evacKpiRow .small-box .icon {
+      top: 10px !important;
+      right: 12px !important;
+      width: 64px;
+      height: 64px;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    #evacKpiRow .small-box .icon i {
+      font-size: 58px !important;
+      line-height: 1;
+    }
+
     .evacuation-toolbar {
       gap: .5rem;
     }
@@ -351,6 +371,7 @@
         justify-content: flex-start;
       }
     }
+
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 @endpush
