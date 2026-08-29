@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Inventory - view
-    Route::middleware('role:super_admin,mdrrmo,lgu_staff')
+    Route::middleware('role:super_admin,mdrrmo,lgu_staff,evac_manager,evacuation_manager')
         ->group(function () {
           Route::get('/inventory', [InventoryController::class, 'index'])
               ->name('inventory.index');
@@ -143,7 +143,7 @@ Route::middleware('auth')->group(function () {
         });
 
     // Relief - view
-    Route::middleware('role:super_admin,mdrrmo,lgu_staff')
+    Route::middleware('role:super_admin,mdrrmo,lgu_staff,evac_manager,evacuation_manager')
         ->group(function () {
           Route::get('/relief', [ReliefController::class, 'index'])
               ->name('relief.index');
@@ -166,7 +166,7 @@ Route::middleware('auth')->group(function () {
         });
 
     // Keep the static create path before the dynamic {relief} path.
-    Route::middleware('role:super_admin,mdrrmo,lgu_staff')
+    Route::middleware('role:super_admin,mdrrmo,lgu_staff,evac_manager,evacuation_manager')
         ->group(function () {
           Route::get('/relief/{relief}', [ReliefController::class, 'show'])
               ->name('relief.show');
@@ -180,7 +180,7 @@ Route::middleware('auth')->group(function () {
         });
 
     // Reports available to warehouse staff
-    Route::middleware('role:super_admin,mdrrmo,lgu_staff')
+        Route::middleware('role:super_admin,mdrrmo,lgu_staff,evac_manager,evacuation_manager')
         ->group(function () {
           Route::get('/reports', [ReportController::class, 'index'])
               ->name('reports.index');
