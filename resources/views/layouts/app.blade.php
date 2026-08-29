@@ -150,6 +150,12 @@
     .small-box h3 { font-size: 2.2rem !important; color: #fff !important; }
     .small-box p   { color: rgba(255,255,255,0.9) !important; }
 
+    @media (max-width: 575.98px) {
+      .small-box .icon {
+        display: none !important;
+      }
+    }
+
     /* ── Content header ── */
     .content-header h1 { font-size: 1.5rem; font-weight: 600; }
 
