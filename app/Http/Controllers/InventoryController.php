@@ -17,6 +17,8 @@ class InventoryController extends Controller
             ->orderBy('name')
             ->get();
 
+        $items->each->syncStatus();
+
         $summary = [
             'total'     => $items->count(),
             'available' => $items->where('status', 'available')->count(),

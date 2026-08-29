@@ -34,13 +34,7 @@ class InventoryItem extends Model
         static::saving(function ($item) {
             $originalStatus = $item->getOriginal('status');
 
-            if ($item->quantity <= 0) {
-                $item->status = 'depleted';
-            } elseif ($item->quantity <= $item->minimum_threshold) {
-                $item->status = 'low_stock';
-            } else {
-                $item->status = 'available';
-            }
+            $item->status = $item->calculatedStatus();
 
             if ($item->status !== $originalStatus) {
                 $service = app(NotificationService::class);
@@ -64,6 +58,24 @@ class InventoryItem extends Model
                 }
             }
         });
+    }
+
+    public function calculatedStatus(): string
+    {
+        if ($this->quantity <= 0) {
+            return 'depleted';
+        }
+
+        return $this->quantity <= $this->minimum_threshold ? 'low_stock' : 'available';
+    }
+
+    public function syncStatus(): void
+    {
+        $status = $this->calculatedStatus();
+
+        if ($this->status !== $status) {
+            $this->forceFill(['status' => $status])->saveQuietly();
+        }
     }
 
     public function creator()

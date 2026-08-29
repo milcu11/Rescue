@@ -186,6 +186,7 @@ class ReliefController extends Controller
 
             // Deduct from inventory
             $item->decrement('quantity', $request->quantity_distributed);
+            $item->refresh()->syncStatus();
         });
 
         AuditService::log(

@@ -112,7 +112,7 @@
                 {{ $item->expires_at->format('M d, Y') }}
                 @if($item->expires_at->isPast())
                   <span class="badge badge-danger">Expired</span>
-                @elseif($item->expires_at->diffInDays(now()) <= 30)
+                @elseif($item->expires_at->isFuture() && $item->expires_at->diffInDays(now(), true) <= 30)
                   <span class="badge badge-warning">Expiring soon</span>
                 @endif
               </small>
