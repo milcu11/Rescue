@@ -7,9 +7,9 @@
 @endsection
 
 @section('content')
-  <div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
-    <p class="text-muted mb-2 mb-md-0">Monitor shelter capacity, occupancy, and locations across Municipality of Baras.</p>
-    <div>
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-2 evacuation-toolbar">
+    <p class="text-muted mb-0 evacuation-toolbar__summary">Monitor shelter capacity, occupancy, and locations across Municipality of Baras.</p>
+    <div class="evacuation-toolbar__actions">
       <a href="/evac-centers" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener">
         <i class="fas fa-external-link-alt"></i> Public shelters
       </a>
@@ -326,6 +326,32 @@
 @endsection
 
 @push('styles')
+  <style>
+    .evacuation-toolbar {
+      gap: .5rem;
+    }
+
+    .evacuation-toolbar__summary {
+      flex: 1 1 30rem;
+      min-width: 0;
+    }
+
+    .evacuation-toolbar__actions {
+      display: flex;
+      flex: 0 1 auto;
+      flex-wrap: wrap;
+      gap: .5rem;
+      justify-content: flex-end;
+      max-width: 100%;
+    }
+
+    @media (max-width: 575.98px) {
+      .evacuation-toolbar__actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+  </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 @endpush
 
