@@ -13,7 +13,7 @@
   <div class="col-lg-3 col-6">
     <div class="small-box small-box-red text-white">
       <div class="inner">
-        <h3>{{ $activeOps }}</h3>
+        <h3>{{ $stats['active_ops'] ?? 0 }}</h3>
         <p>Active Relief Ops</p>
       </div>
       <div class="icon">
@@ -28,7 +28,7 @@
   <div class="col-lg-3 col-6">
     <div class="small-box small-box-brown text-white">
       <div class="inner">
-        <h3>{{ $totalDistributions }}</h3>
+        <h3>{{ $stats['total_distributions'] ?? 0 }}</h3>
         <p>Relief Distributions</p>
       </div>
       <div class="icon">
@@ -43,7 +43,7 @@
   <div class="col-lg-3 col-6">
     <div class="small-box small-box-green text-white">
       <div class="inner">
-        <h3>{{ $occupancyPercent }}%</h3>
+        <h3>{{ $stats['occupancy_percent'] ?? 0 }}%</h3>
         <p>Evacuation Occupancy</p>
       </div>
       <div class="icon">
@@ -58,7 +58,7 @@
   <div class="col-lg-3 col-6">
     <div class="small-box small-box-orange text-white">
       <div class="inner">
-        <h3>{{ $totalDonations }}</h3>
+        <h3>{{ $stats['total_donations'] ?? 0 }}</h3>
         <p>Donations Received</p>
       </div>
       <div class="icon">
@@ -95,7 +95,19 @@
         <h3 class="card-title"><i class="fas fa-exclamation-triangle mr-2"></i>Low Stock Items</h3>
       </div>
       <div class="card-body">
-        <p class="text-muted">No low stock alerts at this time.</p>
+        @php $low = $stats['low_stock_items'] ?? collect(); @endphp
+        @if($low && count($low) > 0)
+          <ul class="list-unstyled mb-0">
+            @foreach($low as $i)
+              <li>
+                <strong>{{ $i->name ?? ($i->label ?? 'Item') }}</strong>
+                <span class="text-muted"> — {{ $i->status ?? '' }}</span>
+              </li>
+            @endforeach
+          </ul>
+        @else
+          <p class="text-muted">No low stock alerts at this time.</p>
+        @endif
       </div>
     </div>
   </div>

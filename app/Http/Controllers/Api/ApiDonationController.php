@@ -11,6 +11,24 @@ use Illuminate\Support\Facades\Validator;
 
 class ApiDonationController extends Controller
 {
+    protected function formatDonation(Donation $donation): array
+    {
+        return [
+            'id'               => $donation->id,
+            'tracking_code'    => $donation->tracking_code,
+            'donor_name'       => $donation->donor_name,
+            'donor_contact'    => $donation->donor_contact,
+            'donor_email'      => $donation->donor_email,
+            'type'             => $donation->type,
+            'amount'           => $donation->amount,
+            'items_description'=> $donation->items_description,
+            'location'         => $donation->location,
+            'status'           => $donation->status,
+            'created_at'       => $donation->created_at?->toDateTimeString(),
+            'updated_at'       => $donation->updated_at?->toDateTimeString(),
+        ];
+    }
+
     public function index()
     {
         $donations = Donation::with('creator')
@@ -28,6 +46,20 @@ class ApiDonationController extends Controller
             'success' => true,
             'data'    => $donations,
             'summary' => $summary,
+        ]);
+    }
+
+    public function publicIndex()
+    {
+        $donations = Donation::orderByDesc('created_at')->get();
+
+        return response()->json([
+            'data' => $donations->map(fn($donation) => $this->formatDonation($donation)),
+            'meta' => [
+                'count' => $donations->count(),
+                'limit' => 200,
+                'read_only' => true,
+            ],
         ]);
     }
 
@@ -51,10 +83,12 @@ class ApiDonationController extends Controller
             ], 422);
         }
 
-        $donation = Donation::create($request->only([
+        $donation = Donation::create(array_merge($request->only([
             'donor_name', 'donor_contact', 'donor_email',
             'type', 'amount', 'items_description',
             'location', 'notes',
+        ]), [
+            'created_by' => \App\Models\User::query()->value('id') ?? 1,
         ]));
 
         AuditService::created(
@@ -83,6 +117,20 @@ class ApiDonationController extends Controller
         return response()->json([
             'success' => true,
             'data'    => $donation,
+        ]);
+    }
+
+    public function publicShow(int $id)
+    {
+        $donation = Donation::findOrFail($id);
+
+        return response()->json([
+            'data' => [$this->formatDonation($donation)],
+            'meta' => [
+                'count' => 1,
+                'limit' => 1,
+                'read_only' => true,
+            ],
         ]);
     }
 

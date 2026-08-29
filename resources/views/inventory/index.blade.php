@@ -84,25 +84,44 @@
       <thead class="table-dark">
         <tr>
           <th>#</th>
+          <th>SKU</th>
           <th>Name</th>
           <th>Category</th>
           <th>Quantity</th>
           <th>Unit</th>
+          <th>Expires</th>
           <th>Min. Threshold</th>
+          <th>Warehouse</th>
           <th>Location</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="inventoryTableBody">
         @forelse($items as $item)
         <tr>
           <td>{{ $loop->iteration }}</td>
+          <td><small><code>{{ $item->sku ?? '—' }}</code></small></td>
           <td>{{ $item->name }}</td>
-          <td><span class="badge bg-secondary">{{ ucfirst($item->category) }}</span></td>
+          <td><span class="badge bg-secondary">{{ $item->category_label }}</span></td>
           <td>{{ number_format($item->quantity) }}</td>
           <td>{{ $item->unit }}</td>
+          <td>
+            @if($item->expires_at)
+              <small class="{{ $item->expires_at->isPast() ? 'text-danger' : 'text-muted' }}">
+                {{ $item->expires_at->format('M d, Y') }}
+                @if($item->expires_at->isPast())
+                  <span class="badge badge-danger">Expired</span>
+                @elseif($item->expires_at->diffInDays(now()) <= 30)
+                  <span class="badge badge-warning">Expiring soon</span>
+                @endif
+              </small>
+            @else
+              <small class="text-muted">—</small>
+            @endif
+          </td>
           <td>{{ number_format($item->minimum_threshold) }}</td>
+          <td>{{ $item->warehouse ?? '—' }}</td>
           <td>{{ $item->location ?? '—' }}</td>
           <td>
             @if($item->status === 'available')
@@ -127,8 +146,8 @@
           </td>
         </tr>
         @empty
-        <tr>
-          <td colspan="9" class="text-center text-muted py-4">
+        <tr id="inventoryEmptyRow">
+          <td colspan="11" class="text-center text-muted py-4">
             <i class="bi bi-inbox fs-4 d-block mb-2"></i>
             No inventory items yet.
             <a href="{{ route('inventory.create') }}">Add the first one.</a>
@@ -146,14 +165,110 @@
 <script>
   $(document).ready(function () {
     var $inv = $('#inventoryTable');
-    console.log('inventoryTable columns - thead th:', $inv.find('thead tr th').length, 'first tbody td:', $inv.find('tbody tr:first td').length);
-    safeInit($inv, {
-      pageLength: 25,
-      order: [[7, 'asc']],
-      columnDefs: [
-        { orderable: false, targets: [-1] }
-      ]
-    });
+    var externalEndpoint = 'https://drvms.freedev.app/api/v1/public/inventory?limit=100';
+    var localEndpoint = '{{ url('/api/v1/public/inventory') }}?limit=100';
+
+    function fetchJson(url) {
+      return fetch(url, {
+        headers: { 'Accept': 'application/json' }
+      }).then(function (response) {
+        if (!response.ok) {
+          throw new Error('Request failed: ' + response.status);
+        }
+        return response.json();
+      });
+    }
+
+    function formatDate(value) {
+      if (!value) return '—';
+      var date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function categoryLabel(item) {
+      return item.category_label || item.category || 'Other';
+    }
+
+    function statusBadge(item) {
+      var quantity = Number(item.quantity ?? 0);
+      if (quantity <= 0) {
+        return '<span class="badge bg-danger">Depleted</span>';
+      }
+      if (Boolean(item.is_low_stock)) {
+        return '<span class="badge bg-warning text-dark">Low Stock</span>';
+      }
+      return '<span class="badge bg-success">Available</span>';
+    }
+
+    function renderInventoryRows(rows) {
+      var $body = $('#inventoryTableBody');
+      if (!rows.length) {
+        $body.html('<tr><td colspan="12" class="text-center text-muted py-4"><i class="bi bi-inbox fs-4 d-block mb-2"></i>No inventory items available.</td></tr>');
+        return;
+      }
+
+      var html = rows.map(function (item, index) {
+        var quantity = Number(item.quantity ?? 0);
+        var sku = item.sku || '—';
+        var expires = formatDate(item.expires_at);
+        var unit = item.unit || 'units';
+        var category = categoryLabel(item);
+
+        return '<tr>' +
+          '<td>' + (index + 1) + '</td>' +
+          '<td><small><code>' + sku + '</code></small></td>' +
+          '<td>' + (item.name || 'Unnamed item') + '</td>' +
+          '<td><span class="badge bg-secondary">' + category + '</span></td>' +
+          '<td>' + quantity.toLocaleString() + '</td>' +
+          '<td>' + unit + '</td>' +
+          '<td>' + expires + '</td>' +
+          '<td>—</td>' +
+          '<td>—</td>' +
+          '<td>—</td>' +
+          '<td>' + statusBadge(item) + '</td>' +
+          '<td><button type="button" class="btn btn-sm btn-outline-primary" disabled><i class="bi bi-pencil"></i></button></td>' +
+          '</tr>';
+      }).join('');
+
+      $body.html(html);
+    }
+
+    fetchJson(externalEndpoint)
+      .then(function (payload) {
+        var rows = Array.isArray(payload && payload.data) ? payload.data : [];
+        renderInventoryRows(rows);
+        if (window.safeInit) {
+          safeInit($inv, {
+            pageLength: 25,
+            order: [[7, 'asc']],
+            columnDefs: [{ orderable: false, targets: [-1] }]
+          });
+        }
+      })
+      .catch(function () {
+        return fetchJson(localEndpoint)
+          .then(function (payload) {
+            var rows = Array.isArray(payload && payload.data) ? payload.data : [];
+            renderInventoryRows(rows);
+            if (window.safeInit) {
+              safeInit($inv, {
+                pageLength: 25,
+                order: [[7, 'asc']],
+                columnDefs: [{ orderable: false, targets: [-1] }]
+              });
+            }
+          })
+          .catch(function () {
+            if (window.safeInit) {
+              safeInit($inv, {
+                pageLength: 25,
+                order: [[7, 'asc']],
+                columnDefs: [{ orderable: false, targets: [-1] }]
+              });
+            }
+          });
+      });
   });
 </script>
 @endpush

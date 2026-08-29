@@ -15,7 +15,7 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="card-title mb-0">
-          <i class="bi bi-heart me-2"></i>{{ $donation->tracking_code }}
+          {{ $donation->tracking_code }}
         </h3>
         @if($donation->status === 'pending')
           <span class="badge bg-warning text-dark fs-6">Pending</span>
@@ -79,10 +79,16 @@
         </table>
       </div>
       <div class="card-footer d-flex gap-2 flex-wrap">
-        <a href="{{ route('donations.edit', $donation) }}" class="btn btn-primary">
-          <i class="bi bi-pencil me-1"></i>Edit
-        </a>
-        @if($donation->type === 'monetary' && $donation->payment_status !== 'paid')
+        {{-- Only show Edit button if not a PayMongo online donation --}}
+        @if(!$donation->paymongo_checkout_id)
+          @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
+          <a href="{{ route('donations.edit', $donation) }}" class="btn btn-primary"> 
+            <i class="bi bi-pencil me-1"></i>Edit
+          </a>
+          @endif
+        @endif
+        {{-- Show Pay Now only for unpaid monetary donations without PayMongo payment --}}
+        @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']) && $donation->type === 'monetary' && $donation->payment_status !== 'paid' && !$donation->paymongo_checkout_id)
           <a href="{{ route('donations.payment.create', $donation) }}" class="btn btn-success">
             <i class="fas fa-credit-card mr-1"></i>Pay Now
           </a>

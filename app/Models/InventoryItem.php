@@ -11,15 +11,22 @@ class InventoryItem extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'sku',
         'name',
         'category',
         'quantity',
         'unit',
+        'expires_at',
         'minimum_threshold',
         'status',
+        'warehouse',
         'location',
         'notes',
         'created_by',
+    ];
+
+    protected $casts = [
+        'expires_at' => 'date',
     ];
 
     protected static function booted(): void
@@ -72,5 +79,27 @@ class InventoryItem extends Model
     public function isDepleted(): bool
     {
         return $this->status === 'depleted';
+    }
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return match($this->category) {
+            'food'      => 'Food & rations',
+            'medicine'  => 'Medical supplies',
+            'medical'   => 'Medical supplies',
+            'clothing'  => 'Clothing',
+            'tools'     => 'Emergency equipment',
+            'emergency' => 'Emergency equipment',
+            'first_aid' => 'First aid kits',
+            'hygiene'   => 'Hygiene kits',
+            'water'     => 'Water & sanitation',
+            'other'     => 'Other supplies',
+            default     => ucfirst((string) $this->category),
+        };
+    }
+
+    public function getIsLowStockAttribute(): bool
+    {
+        return in_array($this->status, ['low_stock', 'depleted']);
     }
 }

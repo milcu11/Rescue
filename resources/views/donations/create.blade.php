@@ -12,7 +12,7 @@
 
 <div class="card" style="max-width:700px;">
   <div class="card-header">
-    <h3 class="card-title"><i class="bi bi-heart me-2"></i>New Donation Record</h3>
+    <h3 class="card-title">New Donation Record</h3>
   </div>
   <div class="card-body">
     <form action="{{ route('donations.store') }}" method="POST">

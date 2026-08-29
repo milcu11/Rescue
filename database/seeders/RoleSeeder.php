@@ -11,15 +11,17 @@ class RoleSeeder extends Seeder
     {
         $roles = [
             ['name' => 'Super Admin',        'slug' => 'super_admin'],
-            ['name' => 'DRRM Officer',        'slug' => 'drrm_officer'],
-            ['name' => 'Volunteer',           'slug' => 'volunteer'],
-            ['name' => 'Donor',               'slug' => 'donor'],
-            ['name' => 'Warehouse Staff',     'slug' => 'warehouse_staff'],
-            ['name' => 'Evacuation Manager',  'slug' => 'evacuation_manager'],
+            ['name' => 'MDRRMO Staff',       'slug' => 'mdrrmo'],
+            ['name' => 'LGU Staff',          'slug' => 'lgu_staff'],
+            ['name' => 'Volunteer',          'slug' => 'volunteer'],
+            ['name' => 'Supplier',           'slug' => 'supplier'],
+            ['name' => 'Donor',              'slug' => 'donor'],
+            ['name' => 'Resident',           'slug' => 'resident'],
+            ['name' => 'Evacuation Manager', 'slug' => 'evac_manager'],
         ];
 
         foreach ($roles as $role) {
-            Role::firstOrCreate(['slug' => $role['slug']], $role);
+            Role::updateOrCreate(['slug' => $role['slug']], $role);
         }
     }
 }

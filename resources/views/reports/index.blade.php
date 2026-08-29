@@ -54,6 +54,7 @@
     </div>
   </div>
 
+  @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
   {{-- Donations Report --}}
   <div class="col-md-6">
     <div class="card">
@@ -103,6 +104,9 @@
     </div>
   </div>
 
+  @endif
+
+  @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
   {{-- Evacuation Report --}}
   <div class="col-md-6">
     <div class="card">
@@ -161,6 +165,9 @@
     </div>
   </div>
 
+  @endif
+
+  @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
   {{-- Relief Report --}}
   <div class="col-md-6">
     <div class="card">
@@ -209,6 +216,8 @@
       </div>
     </div>
   </div>
+
+  @endif
 
 </div>
 

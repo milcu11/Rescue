@@ -36,7 +36,6 @@
         </table>
 
         <div class="callout callout-success mt-3">
-          <i class="fas fa-heart mr-1"></i>
           Thank you for your generous donation to RescuePH disaster relief operations.
         </div>
 

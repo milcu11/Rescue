@@ -64,7 +64,9 @@
           <p class="text-muted small">{{ $relief->description }}</p>
         @endif
 
-        <a href="{{ route('relief.edit', $relief) }}" class="btn btn-sm btn-outline-primary mt-2"><i class="bi bi-pencil me-1"></i>Edit Operation</a>
+        @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
+          <a href="{{ route('relief.edit', $relief) }}" class="btn btn-sm btn-outline-primary mt-2"><i class="bi bi-pencil me-1"></i>Edit Operation</a>
+        @endif
       </div>
     </div>
   </div>
@@ -73,7 +75,7 @@
   <div class="col-md-8">
 
     {{-- Distribute Form --}}
-    @if($relief->status !== 'completed' && $relief->status !== 'cancelled')
+    @if($relief->status !== 'completed' && $relief->status !== 'cancelled' && !in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
     <div class="card mb-3">
       <div class="card-header">
         <h3 class="card-title"><i class="bi bi-box-arrow-right me-2"></i>Record Distribution</h3>

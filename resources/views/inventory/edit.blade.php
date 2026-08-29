@@ -26,6 +26,13 @@
         @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
       </div>
 
+      <div class="mb-3">
+        <label class="form-label fw-semibold">SKU / Item Code</label>
+        <input type="text" name="sku" class="form-control @error('sku') is-invalid @enderror"
+               value="{{ old('sku', $inventoryItem->sku) }}">
+        @error('sku')<div class="invalid-feedback">{{ $message }}</div>@enderror
+      </div>
+
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
@@ -56,11 +63,26 @@
           @error('quantity')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Expiry Date</label>
+          <input type="date" name="expires_at" class="form-control @error('expires_at') is-invalid @enderror"
+                 value="{{ old('expires_at', $inventoryItem->expires_at?->format('Y-m-d')) }}">
+          @error('expires_at')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Minimum Threshold <span class="text-danger">*</span></label>
           <input type="number" name="minimum_threshold" min="0"
                  class="form-control @error('minimum_threshold') is-invalid @enderror"
                  value="{{ old('minimum_threshold', $inventoryItem->minimum_threshold) }}">
           @error('minimum_threshold')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Warehouse</label>
+          <input type="text" name="warehouse" class="form-control @error('warehouse') is-invalid @enderror"
+                 value="{{ old('warehouse', $inventoryItem->warehouse) }}">
+          @error('warehouse')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
       </div>
 

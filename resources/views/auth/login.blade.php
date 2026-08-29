@@ -9,8 +9,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/css/adminlte.min.css">
   <style>
     .login-page  { background: #f4f6f9; }
-    .login-logo a { color: #7B1113; }
-    .login-logo a b { color: #7B1113; }
+    .login-logo a { color: #3b0b0d; }
+    .login-logo a b { color: #3b0b0d; }
     .login-logo small {
       display: block;
       font-size: .85rem;
@@ -19,12 +19,12 @@
       margin-top: -4px;
     }
     .btn-block.btn-danger {
-      background-color: #7B1113;
-      border-color:     #7B1113;
+      background-color: #3b0b0d;
+      border-color:     #3b0b0d;
     }
     .btn-block.btn-danger:hover {
-      background-color: #9B1416;
-      border-color:     #9B1416;
+      background-color: #4b0f11;
+      border-color:     #4b0f11;
     }
     .dev-box {
       margin-top: 14px;

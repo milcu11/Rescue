@@ -25,6 +25,18 @@
         @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
       </div>
 
+      <div class="mb-3">
+        <label class="form-label fw-semibold">SKU / Item Code</label>
+        <input type="text" name="sku"
+               class="form-control @error('sku') is-invalid @enderror"
+               value="{{ old('sku') }}"
+               placeholder="e.g. MED-IFAK-01">
+        <small class="form-text text-muted">
+          Unique code for this item. Agree with Group 1 on the format.
+        </small>
+        @error('sku')<div class="invalid-feedback">{{ $message }}</div>@enderror
+      </div>
+
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
@@ -48,12 +60,22 @@
 
       <div class="row">
         <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Expiry Date</label>
+          <input type="date" name="expires_at"
+                 class="form-control @error('expires_at') is-invalid @enderror"
+                 value="{{ old('expires_at') }}">
+          <small class="form-text text-muted">Leave blank if item does not expire.</small>
+          @error('expires_at')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Quantity <span class="text-danger">*</span></label>
           <input type="number" name="quantity" min="0"
                  class="form-control @error('quantity') is-invalid @enderror"
                  value="{{ old('quantity', 0) }}">
           @error('quantity')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
+      </div>
+      <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Minimum Threshold <span class="text-danger">*</span></label>
           <input type="number" name="minimum_threshold" min="0"
@@ -62,13 +84,19 @@
           <div class="form-text">System warns when quantity drops to or below this number.</div>
           @error('minimum_threshold')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Warehouse</label>
+          <input type="text" name="warehouse" class="form-control @error('warehouse') is-invalid @enderror"
+                 value="{{ old('warehouse') }}" placeholder="e.g. Main Central Warehouse">
+          @error('warehouse')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
       </div>
 
       <div class="mb-3">
         <label class="form-label fw-semibold">Storage Location</label>
         <input type="text" name="location"
                class="form-control @error('location') is-invalid @enderror"
-               value="{{ old('location') }}" placeholder="e.g. Binangonan Sports Complex Bodega">
+               value="{{ old('location') }}" placeholder="e.g. Baras Sports Complex Bodega">
         @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
       </div>
 

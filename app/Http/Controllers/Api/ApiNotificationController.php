@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
@@ -27,7 +28,14 @@ class ApiNotificationController extends Controller
 
     public function markRead(int $id)
     {
-        $updated = $this->notifications->markAsRead($id);
+        $user = auth()->guard('api')->user();
+        $notification = Notification::forUser($user)->find($id);
+
+        if ($notification) {
+            $notification->update(['is_read' => true]);
+        }
+
+        $updated = (bool) $notification;
 
         if (! $updated) {
             return response()->json([

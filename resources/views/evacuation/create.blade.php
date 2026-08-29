@@ -23,7 +23,7 @@
         <input type="text" name="name"
                class="form-control @error('name') is-invalid @enderror"
                value="{{ old('name') }}"
-               placeholder="e.g. Binangonan Sports Complex">
+               placeholder="e.g. Baras Sports Complex">
         @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
       </div>
 
@@ -32,7 +32,7 @@
           <label class="form-label fw-semibold">Barangay <span class="text-danger">*</span></label>
           <input type="text" name="barangay"
                  class="form-control @error('barangay') is-invalid @enderror"
-                 value="{{ old('barangay') }}" placeholder="e.g. Binangonan">
+                 value="{{ old('barangay') }}" placeholder="e.g. Baras">
           @error('barangay')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="col-md-6 mb-3">
@@ -60,9 +60,9 @@
                  value="{{ old('contact_person') }}" placeholder="Name of person-in-charge">
         </div>
         <div class="col-md-6 mb-3">
-          <label class="form-label fw-semibold">Contact Number</label>
-          <input type="text" name="contact_number" class="form-control"
-                 value="{{ old('contact_number') }}" placeholder="09XX XXX XXXX">
+          <label class="form-label fw-semibold">Contact Phone</label>
+          <input type="text" name="contact_phone" class="form-control"
+                 value="{{ old('contact_phone') }}" placeholder="09XX XXX XXXX">
         </div>
       </div>
 
@@ -82,6 +82,20 @@
         <i class="bi bi-info-circle me-1"></i>
         Coordinates are used for the map view. You can get them from Google Maps by right-clicking your location.
       </small>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Check-in Procedures for Families</label>
+        <textarea name="intake_procedures" rows="4" class="form-control"
+                  placeholder="Step-by-step instructions (e.g. Go only if status is OPEN, Report to registration desk, Present valid ID, etc.)">{{ old('intake_procedures') }}</textarea>
+        <small class="text-muted">Instructions shown to families on the public evacuation page.</small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Required Documents & Items</label>
+        <textarea name="required_items" rows="3" class="form-control"
+                  placeholder="Valid ID, clothes, hygiene kit, medicines, etc.">{{ old('required_items') }}</textarea>
+        <small class="text-muted">What families must bring to be admitted.</small>
+      </div>
 
       <div class="mb-3">
         <label class="form-label fw-semibold">Notes</label>

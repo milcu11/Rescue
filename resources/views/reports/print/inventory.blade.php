@@ -31,6 +31,7 @@
       <th>Quantity</th>
       <th>Unit</th>
       <th>Min. Threshold</th>
+      <th>Warehouse</th>
       <th>Location</th>
       <th>Status</th>
       <th>Date Added</th>
@@ -45,6 +46,7 @@
       <td>{{ number_format($item->quantity) }}</td>
       <td>{{ $item->unit }}</td>
       <td>{{ number_format($item->minimum_threshold) }}</td>
+      <td>{{ $item->warehouse ?? '—' }}</td>
       <td>{{ $item->location ?? '—' }}</td>
       <td>
         <span class="badge badge-{{ $item->status === 'available' ? 'success' : ($item->status === 'low_stock' ? 'warning' : 'danger') }}">

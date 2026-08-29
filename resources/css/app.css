@@ -1,2 +1,1 @@
-/* Bootstrap CSS */
-@import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+/* Bootstrap is loaded through the AdminLTE layout and public pages for consistent styling */

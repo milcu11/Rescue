@@ -97,9 +97,13 @@
         <form action="{{ route('evacuation.checkin', $evacuation) }}" method="POST">
           @csrf
           <div class="row g-2">
-            <div class="col-md-5">
+            <div class="col-md-4">
               <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="Full name of head of family *">
               @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="col-md-3">
+              <input type="text" name="family_group" class="form-control @error('family_group') is-invalid @enderror" value="{{ old('family_group') }}" placeholder="Family / household name">
+              @error('family_group')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="col-md-2">
               <input type="number" name="family_members" min="1" class="form-control @error('family_members') is-invalid @enderror" value="{{ old('family_members', 1) }}" placeholder="Members *">
@@ -135,6 +139,7 @@
           <thead class="table-dark">
             <tr>
               <th>Name</th>
+              <th>Family Group</th>
               <th>Members</th>
               <th>From</th>
               <th>Needs</th>
@@ -147,6 +152,7 @@
             @forelse($evacuees as $evacuee)
             <tr class="{{ $evacuee->status === 'checked_out' ? 'text-muted' : '' }}">
               <td>{{ $evacuee->name }}</td>
+              <td>{{ $evacuee->family_group ?? '—' }}</td>
               <td class="text-center">{{ $evacuee->family_members }}</td>
               <td>{{ $evacuee->barangay_origin ?? '—' }}</td>
               <td><small>{{ $evacuee->needs ?? '—' }}</small></td>

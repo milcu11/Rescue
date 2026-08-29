@@ -75,9 +75,11 @@
     <h3 class="card-title mb-0">
       <i class="bi bi-truck me-2"></i>Operations List
     </h3>
-    <a href="{{ route('relief.create') }}" class="btn btn-sm btn-danger">
-      <i class="bi bi-plus-lg me-1"></i>New Operation
-    </a>
+    @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
+      <a href="{{ route('relief.create') }}" class="btn btn-sm btn-danger">
+        <i class="bi bi-plus-lg me-1"></i>New Operation
+      </a>
+    @endif
   </div>
   <div class="card-body">
     <table id="reliefTable" class="table table-bordered table-hover table-striped align-middle">
@@ -122,16 +124,18 @@
             <a href="{{ route('relief.show', $op) }}" class="btn btn-sm btn-outline-info" title="View">
               <i class="bi bi-eye"></i>
             </a>
-            <a href="{{ route('relief.edit', $op) }}" class="btn btn-sm btn-outline-primary" title="Edit">
-              <i class="bi bi-pencil"></i>
-            </a>
-            <form action="{{ route('relief.destroy', $op) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this operation?')">
-              @csrf
-              @method('DELETE')
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </form>
+            @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
+              <a href="{{ route('relief.edit', $op) }}" class="btn btn-sm btn-outline-primary" title="Edit">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <form action="{{ route('relief.destroy', $op) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this operation?')">
+                @csrf
+                @method('DELETE')
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            @endif
           </td>
         </tr>
         @empty
@@ -139,7 +143,9 @@
           <td colspan="8" class="text-center text-muted py-4">
             <i class="bi bi-inbox fs-4 d-block mb-2"></i>
             No relief operations yet.
-            <a href="{{ route('relief.create') }}">Create the first one.</a>
+            @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
+              <a href="{{ route('relief.create') }}">Create the first one.</a>
+            @endif
           </td>
         </tr>
         @endforelse

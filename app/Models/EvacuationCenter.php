@@ -12,9 +12,10 @@ class EvacuationCenter extends Model
 
     protected $fillable = [
         'name', 'barangay', 'address', 'capacity',
-        'current_occupancy', 'status', 'contact_person',
-        'contact_number', 'latitude', 'longitude',
-        'notes', 'created_by',
+        'current_occupancy', 'status', 'families_registered',
+        'medical_needs_count', 'contact_person', 'contact_phone',
+        'latitude', 'longitude', 'notes', 'created_by',
+        'intake_procedures', 'required_items',
     ];
 
     public function evacuees()
@@ -33,6 +34,16 @@ class EvacuationCenter extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function getStatusAttribute($value): string
+    {
+        return $value === 'active' ? 'open' : $value;
+    }
+
+    public function setStatusAttribute($value): void
+    {
+        $this->attributes['status'] = $value === 'open' ? 'active' : $value;
+    }
+
     public function getOccupancyPercentAttribute(): int
     {
         if ($this->capacity === 0) return 0;
@@ -47,7 +58,7 @@ class EvacuationCenter extends Model
         if ($this->current_occupancy >= $this->capacity) {
             $this->status = 'full';
         } elseif ($this->status === 'full') {
-            $this->status = 'active';
+            $this->status = 'open';
         }
 
         $this->save();

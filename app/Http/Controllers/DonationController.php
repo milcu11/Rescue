@@ -14,6 +14,9 @@ class DonationController extends Controller
     public function index()
     {
         $donations = Donation::with('creator')
+            ->when(Auth::user()?->role?->slug === 'lgu_staff', function ($query) {
+                $query->where('type', 'in-kind');
+            })
             ->orderByDesc('created_at')
             ->get();
 
@@ -57,7 +60,7 @@ class DonationController extends Controller
                 'type', 'amount', 'items_description',
                 'location', 'notes',
             ]),
-            'created_by' => Auth::id(),
+            'created_by' => Auth::id() ?? \App\Models\User::query()->value('id') ?? 1,
         ]);
 
         AuditService::created(
@@ -77,8 +80,10 @@ class DonationController extends Controller
             ->with('success', 'Donation recorded successfully.');
     }
 
-    public function show(Donation $donation)
+    public function show($donation)
     {
+        $donation = Donation::withTrashed()->findOrFail($donation);
+
         return view('donations.show', compact('donation'));
     }
 

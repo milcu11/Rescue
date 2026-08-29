@@ -32,13 +32,20 @@ class InventoryController extends Controller
         return view('inventory.create');
     }
 
+    public function show(InventoryItem $inventoryItem)
+    {
+        return redirect()->route('inventory.edit', $inventoryItem);
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'sku'               => 'nullable|string|max:100',
             'name'              => 'required|string|max:255',
             'category'          => 'required|in:food,medicine,clothing,tools,other',
             'quantity'          => 'required|integer|min:0',
             'unit'              => 'required|string|max:50',
+            'expires_at'        => 'nullable|date',
             'minimum_threshold' => 'required|integer|min:0',
             'location'          => 'nullable|string|max:255',
             'notes'             => 'nullable|string',
@@ -52,8 +59,8 @@ class InventoryController extends Controller
 
         $item = InventoryItem::create([
             ...$request->only([
-                'name', 'category', 'quantity',
-                'unit', 'minimum_threshold', 'location', 'notes'
+                'sku', 'name', 'category', 'quantity',
+                'unit', 'expires_at', 'minimum_threshold', 'warehouse', 'location', 'notes'
             ]),
             'created_by' => Auth::id(),
         ]);
@@ -77,10 +84,12 @@ class InventoryController extends Controller
     public function update(Request $request, InventoryItem $inventoryItem)
     {
         $validator = Validator::make($request->all(), [
+            'sku'               => 'nullable|string|max:100',
             'name'              => 'required|string|max:255',
             'category'          => 'required|in:food,medicine,clothing,tools,other',
             'quantity'          => 'required|integer|min:0',
             'unit'              => 'required|string|max:50',
+            'expires_at'        => 'nullable|date',
             'minimum_threshold' => 'required|integer|min:0',
             'location'          => 'nullable|string|max:255',
             'notes'             => 'nullable|string',
@@ -95,8 +104,8 @@ class InventoryController extends Controller
         $old = $inventoryItem->toArray();
 
         $inventoryItem->update($request->only([
-            'name', 'category', 'quantity',
-            'unit', 'minimum_threshold', 'location', 'notes'
+            'sku', 'name', 'category', 'quantity',
+            'unit', 'expires_at', 'minimum_threshold', 'warehouse', 'location', 'notes'
         ]));
 
         AuditService::updated(

@@ -15,12 +15,23 @@
     <h3 class="card-title"><i class="bi bi-truck me-2"></i>New Relief Operation</h3>
   </div>
   <div class="card-body">
+    @if($errors->any())
+      <div class="alert alert-danger">
+        <strong>Unable to create operation.</strong>
+        <ul class="mb-0 mt-2">
+          @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
     <form action="{{ route('relief.store') }}" method="POST">
       @csrf
 
       <div class="mb-3">
         <label class="form-label fw-semibold">Operation Name <span class="text-danger">*</span></label>
-        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="e.g. Typhoon Carina Relief — Wave 1">
+        <input type="text" name="name" required class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="e.g. Typhoon Carina Relief - Wave 1">
         @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
       </div>
 
@@ -33,7 +44,7 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
-          <select name="status" class="form-select @error('status') is-invalid @enderror">
+          <select name="status" required class="form-select @error('status') is-invalid @enderror">
             @foreach(['planned','active','completed','cancelled'] as $s)
               <option value="{{ $s }}" {{ old('status', 'planned') === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
             @endforeach
@@ -50,7 +61,7 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
-          <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date', date('Y-m-d')) }}">
+          <input type="date" name="start_date" required class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date', date('Y-m-d')) }}">
           @error('start_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="col-md-6 mb-3">

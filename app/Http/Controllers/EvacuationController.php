@@ -22,7 +22,7 @@ class EvacuationController extends Controller
 
         $summary = [
             'total'       => $centers->count(),
-            'active'      => $centers->where('status', 'active')->count(),
+            'active'      => $centers->where('status', 'open')->count(),
             'full'        => $centers->where('status', 'full')->count(),
             'closed'      => $centers->where('status', 'closed')->count(),
             'total_evacuees' => $centers->sum('current_occupancy'),
@@ -39,15 +39,21 @@ class EvacuationController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'           => 'required|string|max:255',
-            'barangay'       => 'required|string|max:255',
-            'address'        => 'required|string|max:255',
-            'capacity'       => 'required|integer|min:1',
-            'contact_person' => 'nullable|string|max:255',
-            'contact_number' => 'nullable|string|max:20',
-            'latitude'       => 'nullable|numeric',
-            'longitude'      => 'nullable|numeric',
-            'notes'          => 'nullable|string',
+            'name'                => 'required|string|max:255',
+            'barangay'            => 'required|string|max:255',
+            'address'             => 'required|string|max:255',
+            'capacity'            => 'required|integer|min:1',
+            'current_occupancy'   => 'nullable|integer|min:0',
+            'status'              => 'required|in:open,full,closed',
+            'families_registered' => 'nullable|integer|min:0',
+            'medical_needs_count' => 'nullable|integer|min:0',
+            'contact_person'      => 'nullable|string|max:255',
+            'contact_phone'       => 'nullable|string|max:20',
+            'intake_procedures'   => 'nullable|string',
+            'required_items'      => 'nullable|string',
+            'latitude'            => 'nullable|numeric',
+            'longitude'           => 'nullable|numeric',
+            'notes'               => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -56,12 +62,19 @@ class EvacuationController extends Controller
                 ->withInput();
         }
 
+        $coordinates = $this->resolveCoordinates($request->latitude, $request->longitude, $request->barangay);
+
         $center = EvacuationCenter::create([
             ...$request->only([
                 'name', 'barangay', 'address', 'capacity',
-                'contact_person', 'contact_number',
-                'latitude', 'longitude', 'notes',
+                'current_occupancy', 'status',
+                'families_registered', 'medical_needs_count',
+                'contact_person', 'contact_phone',
+                'intake_procedures', 'required_items',
+                'notes',
             ]),
+            'latitude' => $coordinates['latitude'],
+            'longitude' => $coordinates['longitude'],
             'created_by' => Auth::id(),
         ]);
 
@@ -85,6 +98,32 @@ class EvacuationController extends Controller
         return view('evacuation.show', compact('evacuation', 'evacuees'));
     }
 
+    public function evacuees(EvacuationCenter $evacuation)
+    {
+        $evacuees = $evacuation->evacuees()
+            ->orderByDesc('checked_in_at')
+            ->get()
+            ->map(function ($evacuee) {
+                return [
+                    'id' => $evacuee->id,
+                    'name' => $evacuee->name,
+                    'family_group' => $evacuee->family_group,
+                    'family_members' => $evacuee->family_members,
+                    'barangay_origin' => $evacuee->barangay_origin,
+                    'needs' => $evacuee->needs,
+                    'id_presented' => $evacuee->id_presented,
+                    'status' => $evacuee->status,
+                    'checked_in_at' => optional($evacuee->checked_in_at)->toDateTimeString(),
+                    'checked_out_at' => optional($evacuee->checked_out_at)->toDateTimeString(),
+                ];
+            });
+
+        return response()->json([
+            'data' => $evacuees,
+            'total' => $evacuees->count(),
+        ]);
+    }
+
     public function edit(EvacuationCenter $evacuation)
     {
         return view('evacuation.edit', compact('evacuation'));
@@ -93,16 +132,21 @@ class EvacuationController extends Controller
     public function update(Request $request, EvacuationCenter $evacuation)
     {
         $validator = Validator::make($request->all(), [
-            'name'           => 'required|string|max:255',
-            'barangay'       => 'required|string|max:255',
-            'address'        => 'required|string|max:255',
-            'capacity'       => 'required|integer|min:1',
-            'status'         => 'required|in:active,full,closed',
-            'contact_person' => 'nullable|string|max:255',
-            'contact_number' => 'nullable|string|max:20',
-            'latitude'       => 'nullable|numeric',
-            'longitude'      => 'nullable|numeric',
-            'notes'          => 'nullable|string',
+            'name'                => 'required|string|max:255',
+            'barangay'            => 'required|string|max:255',
+            'address'             => 'required|string|max:255',
+            'capacity'            => 'required|integer|min:1',
+            'status'              => 'required|in:open,full,closed',
+            'current_occupancy'   => 'nullable|integer|min:0',
+            'families_registered' => 'nullable|integer|min:0',
+            'medical_needs_count' => 'nullable|integer|min:0',
+            'contact_person'      => 'nullable|string|max:255',
+            'contact_phone'       => 'nullable|string|max:20',
+            'intake_procedures'   => 'nullable|string',
+            'required_items'      => 'nullable|string',
+            'latitude'            => 'nullable|numeric',
+            'longitude'           => 'nullable|numeric',
+            'notes'               => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -111,13 +155,18 @@ class EvacuationController extends Controller
                 ->withInput();
         }
 
+        $coordinates = $this->resolveCoordinates($request->latitude, $request->longitude, $request->barangay);
         $old = $evacuation->toArray();
 
         $evacuation->update($request->only([
             'name', 'barangay', 'address', 'capacity', 'status',
-            'contact_person', 'contact_number',
-            'latitude', 'longitude', 'notes',
+            'current_occupancy', 'families_registered', 'medical_needs_count',
+            'contact_person', 'contact_phone',
+            'intake_procedures', 'required_items',
+            'notes',
         ]));
+
+        $evacuation->update($coordinates);
 
         AuditService::updated(
             'evacuation',
@@ -129,6 +178,28 @@ class EvacuationController extends Controller
 
         return redirect()->route('evacuation.index')
             ->with('success', 'Center updated successfully.');
+    }
+
+    private function resolveCoordinates($latitude, $longitude, ?string $barangay = null): array
+    {
+        if (is_numeric($latitude) && is_numeric($longitude)) {
+            return [
+                'latitude' => (float) $latitude,
+                'longitude' => (float) $longitude,
+            ];
+        }
+
+        $barangayCoordinates = [
+            'san jose' => [14.5220, 121.2584],
+            'san juan' => [14.5240455, 121.2676781],
+        ];
+        $normalizedBarangay = strtolower(trim((string) $barangay));
+        $coordinates = $barangayCoordinates[$normalizedBarangay] ?? [14.5171, 121.2672];
+
+        return [
+            'latitude' => $coordinates[0],
+            'longitude' => $coordinates[1],
+        ];
     }
 
     public function destroy(EvacuationCenter $evacuation)
@@ -145,6 +216,7 @@ class EvacuationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name'            => 'required|string|max:255',
+            'family_group'    => 'nullable|string|max:255',
             'family_members'  => 'required|integer|min:1',
             'barangay_origin' => 'nullable|string|max:255',
             'needs'           => 'nullable|string',
@@ -160,7 +232,7 @@ class EvacuationController extends Controller
 
         $evacuee = Evacuee::create([
             ...$request->only([
-                'name', 'family_members', 'barangay_origin',
+                'name', 'family_group', 'family_members', 'barangay_origin',
                 'needs', 'id_presented', 'notes',
             ]),
             'evacuation_center_id' => $evacuation->id,

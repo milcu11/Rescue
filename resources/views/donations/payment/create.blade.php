@@ -28,7 +28,7 @@
           </tr>
           <tr>
             <th class="text-muted">Amount</th>
-            <td class="font-weight-bold" style="font-size:1.2rem;color:#7B1113;">
+            <td class="font-weight-bold" style="font-size:1.2rem;color:#3b0b0d;">
               ₱{{ number_format($donation->amount, 2) }}
             </td>
           </tr>
@@ -39,7 +39,7 @@
 
   <div class="col-md-7">
     <div class="card">
-      <div class="card-header" style="background:#7B1113;">
+      <div class="card-header" style="background:#3b0b0d;">
         <h3 class="card-title text-white"><i class="fas fa-credit-card mr-2"></i>Choose Payment Method</h3>
       </div>
       <div class="card-body">
@@ -124,7 +124,7 @@
     background: #fff;
   }
   .payment-card-inner:hover { border-color: #aaa; }
-  .payment-card-inner.selected { border-color: #7B1113; background: #fff5f5; }
+  .payment-card-inner.selected { border-color: #3b0b0d; background: #fff5f5; }
 </style>
 @endpush
 

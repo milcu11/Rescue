@@ -6,6 +6,7 @@ use App\Models\Donation;
 use App\Models\EvacuationCenter;
 use App\Models\InventoryItem;
 use App\Models\ReliefOperation;
+use App\Models\ReliefDistribution;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -13,44 +14,50 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $role = $user->role->slug;
 
-        if ($user->role->slug === 'donor') {
+        if ($role === 'donor') {
             return redirect()->route('donor.index');
         }
 
-        if ($user->role->slug === 'volunteer') {
-            Auth::logout();
-
+        if ($role === 'volunteer' || $role === 'resident') {
             return redirect()->route('login')
-                ->with('error', 'Volunteers are not permitted to access the dashboard.');
+                ->with('error', 'Your portal is managed by Group 1.');
         }
 
-        $activeOps = ReliefOperation::where('status', 'active')->count();
-        $totalDistributions = \App\Models\ReliefDistribution::count();
+        $stats = $this->getStats($role);
 
-        $totalCapacity = EvacuationCenter::where('status', '!=', 'closed')->sum('capacity');
-        $totalOccupancy = EvacuationCenter::where('status', '!=', 'closed')->sum('current_occupancy');
-        $occupancyPercent = $totalCapacity > 0
-            ? round(($totalOccupancy / $totalCapacity) * 100)
+        return view('dashboard', compact('stats', 'role'));
+    }
+
+    private function getStats(string $role): array
+    {
+        $base = [
+            'active_ops'          => ReliefOperation::where('status','active')->count(),
+            'total_distributions' => ReliefDistribution::count(),
+            'total_capacity'      => EvacuationCenter::where('status','!=','closed')->sum('capacity'),
+            'total_occupancy'     => EvacuationCenter::where('status','!=','closed')->sum('current_occupancy'),
+            'total_donations'     => Donation::where('status','received')->count(),
+            'low_stock_items'     => InventoryItem::whereIn('status',['low_stock','depleted'])->get(),
+            'active_operations'   => ReliefOperation::where('status','active')->latest()->take(5)->get(),
+        ];
+
+        $base['occupancy_percent'] = $base['total_capacity'] > 0
+            ? round(($base['total_occupancy'] / $base['total_capacity']) * 100)
             : 0;
 
-        $totalDonations = Donation::where('status', 'received')->count();
-        $lowStockItems = collect();
-        $inventoryCount = null;
-
-        if (in_array($user->role->slug, ['super_admin', 'drrm_officer', 'warehouse_staff'])) {
-            $inventoryCount = InventoryItem::count();
-            $lowStockItems = InventoryItem::whereIn('status', ['low_stock', 'depleted'])->get();
+        if ($role === 'evac_manager') {
+            $base['centers_active'] = EvacuationCenter::where('status','active')->count();
+            $base['centers_full']   = EvacuationCenter::where('status','full')->count();
+            $base['recent_centers'] = EvacuationCenter::latest()->take(5)->get();
         }
 
-        return view('dashboard', compact(
-            'activeOps',
-            'totalDistributions',
-            'occupancyPercent',
-            'totalDonations',
-            'lowStockItems',
-            'inventoryCount'
-        ));
+        if ($role === 'lgu_staff') {
+            $base['available_items'] = InventoryItem::where('status','available')->count();
+            $base['depleted_items']  = InventoryItem::where('status','depleted')->count();
+        }
+
+        return $base;
     }
 }
 

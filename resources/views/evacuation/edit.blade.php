@@ -44,7 +44,7 @@
       <div class="mb-3">
         <label class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
         <select name="status" class="form-select">
-          @foreach(['active','full','closed'] as $s)
+          @foreach(['open','full','closed'] as $s)
             <option value="{{ $s }}" {{ old('status', $evacuation->status) === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
           @endforeach
         </select>
@@ -56,8 +56,8 @@
           <input type="text" name="contact_person" class="form-control" value="{{ old('contact_person', $evacuation->contact_person) }}">
         </div>
         <div class="col-md-6 mb-3">
-          <label class="form-label fw-semibold">Contact Number</label>
-          <input type="text" name="contact_number" class="form-control" value="{{ old('contact_number', $evacuation->contact_number) }}">
+          <label class="form-label fw-semibold">Contact Phone</label>
+          <input type="text" name="contact_phone" class="form-control" value="{{ old('contact_phone', $evacuation->contact_phone) }}">
         </div>
       </div>
 
@@ -70,6 +70,18 @@
           <label class="form-label fw-semibold">Longitude</label>
           <input type="text" name="longitude" class="form-control" value="{{ old('longitude', $evacuation->longitude) }}">
         </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Check-in Procedures for Families</label>
+        <textarea name="intake_procedures" rows="4" class="form-control">{{ old('intake_procedures', $evacuation->intake_procedures) }}</textarea>
+        <small class="text-muted">Instructions shown to families on the public evacuation page.</small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Required Documents & Items</label>
+        <textarea name="required_items" rows="3" class="form-control">{{ old('required_items', $evacuation->required_items) }}</textarea>
+        <small class="text-muted">What families must bring to be admitted.</small>
       </div>
 
       <div class="mb-3">

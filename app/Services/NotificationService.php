@@ -44,6 +44,33 @@ class NotificationService
         ]);
     }
 
+    public static function sendToSuppliers(
+        string $type,
+        string $title,
+        string $message,
+        ?string $link = null
+    ): Notification {
+        return self::sendToRole('supplier', $type, $title, $message, $link);
+    }
+
+    public static function sendToVolunteers(
+        string $type,
+        string $title,
+        string $message,
+        ?string $link = null
+    ): Notification {
+        return self::sendToRole('volunteer', $type, $title, $message, $link);
+    }
+
+    public static function sendToResidents(
+        string $type,
+        string $title,
+        string $message,
+        ?string $link = null
+    ): Notification {
+        return self::sendToRole('resident', $type, $title, $message, $link);
+    }
+
     public static function sendToAll(
         string $type,
         string $title,
@@ -61,7 +88,7 @@ class NotificationService
     public static function lowStock(string $itemName, int $quantity, string $unit, string $link): Notification
     {
         return self::sendToRole(
-            'warehouse_staff',
+            'lgu_staff',
             'low_stock',
             'Low Stock Alert',
             "{$itemName} is running low — only {$quantity} {$unit} remaining.",
@@ -72,7 +99,7 @@ class NotificationService
     public static function centerFull(string $centerName, string $link): Notification
     {
         return self::sendToRole(
-            'drrm_officer',
+            'mdrrmo',
             'center_full',
             'Evacuation Center Full',
             "{$centerName} has reached full capacity.",
@@ -83,7 +110,7 @@ class NotificationService
     public static function newDonation(string $donorName, string $code, string $link): Notification
     {
         return self::sendToRole(
-            'drrm_officer',
+            'mdrrmo',
             'new_donation',
             'New Donation Received',
             "Donation {$code} from {$donorName} has been recorded.",
@@ -96,12 +123,23 @@ class NotificationService
         string $centerName,
         string $link
     ): Notification {
-        return self::sendToAll(
+        $notification = self::sendToRole(
+            'mdrrmo',
             'distribution_recorded',
             'Distribution Recorded',
             "Items distributed to {$centerName} under operation: {$operationName}.",
             $link
         );
+
+        self::sendToRole(
+            'lgu_staff',
+            'distribution_recorded',
+            'Distribution Recorded',
+            "Items distributed to {$centerName} under operation: {$operationName}.",
+            $link
+        );
+
+        return $notification;
     }
 
     public function unreadCountForUser(?int $userId = null, ?string $roleTarget = null): int

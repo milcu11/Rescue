@@ -41,9 +41,17 @@ class Donation extends Model
 
     private static function generateTrackingCode(): string
     {
-        $year   = date('Y');
-        $count  = self::whereYear('created_at', $year)->count() + 1;
-        return 'DON-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        $year = date('Y');
+        $sequence = self::withTrashed()
+            ->whereYear('created_at', $year)
+            ->count() + 1;
+
+        do {
+            $trackingCode = 'DON-' . $year . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+            $sequence++;
+        } while (self::withTrashed()->where('tracking_code', $trackingCode)->exists());
+
+        return $trackingCode;
     }
 
     public function creator()

@@ -22,19 +22,19 @@ class UserSeeder extends Seeder
                 'name'     => 'DRRM Officer',
                 'email'    => 'drrm@resqlink.ph',
                 'password' => Hash::make('password'),
-                'slug'     => 'drrm_officer',
+                'slug'     => 'mdrrmo',
             ],
             [
-                'name'     => 'Warehouse Staff',
+                'name'     => 'LGU Staff',
                 'email'    => 'warehouse@resqlink.ph',
                 'password' => Hash::make('password'),
-                'slug'     => 'warehouse_staff',
+                'slug'     => 'lgu_staff',
             ],
             [
                 'name'     => 'Evacuation Manager',
                 'email'    => 'evac@resqlink.ph',
                 'password' => Hash::make('password'),
-                'slug'     => 'evacuation_manager',
+                'slug'     => 'evac_manager',
             ],
             [
                 'name'     => 'Donor User',

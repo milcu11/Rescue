@@ -133,7 +133,7 @@ class DonationPaymentController extends Controller
                 );
 
                 NotificationService::sendToRole(
-                    'drrm_officer',
+                    'mdrrmo',
                     'new_donation',
                     'Donation Payment Confirmed',
                     "Online payment confirmed for donation {$donation->tracking_code} — ₱" . number_format($donation->amount, 2),
