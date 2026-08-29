@@ -165,110 +165,13 @@
 <script>
   $(document).ready(function () {
     var $inv = $('#inventoryTable');
-    var externalEndpoint = 'https://drvms.freedev.app/api/v1/public/inventory?limit=100';
-    var localEndpoint = '{{ url('/api/v1/public/inventory') }}?limit=100';
-
-    function fetchJson(url) {
-      return fetch(url, {
-        headers: { 'Accept': 'application/json' }
-      }).then(function (response) {
-        if (!response.ok) {
-          throw new Error('Request failed: ' + response.status);
-        }
-        return response.json();
+    if (window.safeInit) {
+      safeInit($inv, {
+        pageLength: 25,
+        order: [[2, 'asc']],
+        columnDefs: [{ orderable: false, targets: [-1] }]
       });
     }
-
-    function formatDate(value) {
-      if (!value) return '—';
-      var date = new Date(value);
-      if (Number.isNaN(date.getTime())) return value;
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    function categoryLabel(item) {
-      return item.category_label || item.category || 'Other';
-    }
-
-    function statusBadge(item) {
-      var quantity = Number(item.quantity ?? 0);
-      if (quantity <= 0) {
-        return '<span class="badge bg-danger">Depleted</span>';
-      }
-      if (Boolean(item.is_low_stock)) {
-        return '<span class="badge bg-warning text-dark">Low Stock</span>';
-      }
-      return '<span class="badge bg-success">Available</span>';
-    }
-
-    function renderInventoryRows(rows) {
-      var $body = $('#inventoryTableBody');
-      if (!rows.length) {
-        $body.html('<tr><td colspan="12" class="text-center text-muted py-4"><i class="bi bi-inbox fs-4 d-block mb-2"></i>No inventory items available.</td></tr>');
-        return;
-      }
-
-      var html = rows.map(function (item, index) {
-        var quantity = Number(item.quantity ?? 0);
-        var sku = item.sku || '—';
-        var expires = formatDate(item.expires_at);
-        var unit = item.unit || 'units';
-        var category = categoryLabel(item);
-
-        return '<tr>' +
-          '<td>' + (index + 1) + '</td>' +
-          '<td><small><code>' + sku + '</code></small></td>' +
-          '<td>' + (item.name || 'Unnamed item') + '</td>' +
-          '<td><span class="badge bg-secondary">' + category + '</span></td>' +
-          '<td>' + quantity.toLocaleString() + '</td>' +
-          '<td>' + unit + '</td>' +
-          '<td>' + expires + '</td>' +
-          '<td>—</td>' +
-          '<td>—</td>' +
-          '<td>—</td>' +
-          '<td>' + statusBadge(item) + '</td>' +
-          '<td><button type="button" class="btn btn-sm btn-outline-primary" disabled><i class="bi bi-pencil"></i></button></td>' +
-          '</tr>';
-      }).join('');
-
-      $body.html(html);
-    }
-
-    fetchJson(externalEndpoint)
-      .then(function (payload) {
-        var rows = Array.isArray(payload && payload.data) ? payload.data : [];
-        renderInventoryRows(rows);
-        if (window.safeInit) {
-          safeInit($inv, {
-            pageLength: 25,
-            order: [[7, 'asc']],
-            columnDefs: [{ orderable: false, targets: [-1] }]
-          });
-        }
-      })
-      .catch(function () {
-        return fetchJson(localEndpoint)
-          .then(function (payload) {
-            var rows = Array.isArray(payload && payload.data) ? payload.data : [];
-            renderInventoryRows(rows);
-            if (window.safeInit) {
-              safeInit($inv, {
-                pageLength: 25,
-                order: [[7, 'asc']],
-                columnDefs: [{ orderable: false, targets: [-1] }]
-              });
-            }
-          })
-          .catch(function () {
-            if (window.safeInit) {
-              safeInit($inv, {
-                pageLength: 25,
-                order: [[7, 'asc']],
-                columnDefs: [{ orderable: false, targets: [-1] }]
-              });
-            }
-          });
-      });
   });
 </script>
 @endpush
