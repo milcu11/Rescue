@@ -135,7 +135,8 @@
         </h3>
       </div>
       <div class="card-body">
-        <table id="evacueesTable" class="table table-bordered table-hover table-sm align-middle">
+        <div class="table-responsive">
+          <table id="evacueesTable" class="table table-bordered table-hover table-sm align-middle">
           <thead class="table-dark">
             <tr>
               <th>Name</th>
@@ -182,7 +183,8 @@
             </tr>
             @endforelse
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
 

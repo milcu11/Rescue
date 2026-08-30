@@ -41,7 +41,8 @@
     <h3 class="card-title mb-0"><i class="fas fa-history mr-2"></i>All Payment Transactions</h3>
   </div>
   <div class="card-body p-0">
-    <table id="paymentsTable" class="table table-bordered table-hover table-sm mb-0 align-middle">
+    <div class="table-responsive">
+      <table id="paymentsTable" class="table table-bordered table-hover table-sm mb-0 align-middle">
       <thead class="thead-dark">
         <tr>
           <th>Tracking Code</th>
@@ -72,7 +73,8 @@
           </tr>
         @endforelse
       </tbody>
-    </table>
+      </table>
+    </div>
   </div>
   @if($payments->hasPages())
     <div class="card-footer clearfix">{{ $payments->links() }}</div>

@@ -85,7 +85,8 @@
         </h3>
       </div>
       <div class="card-body p-0">
-        <table class="table table-sm mb-0">
+        <div class="table-responsive">
+          <table class="table table-sm mb-0">
           <thead class="thead-dark">
             <tr>
               <th>Field</th>
@@ -131,7 +132,8 @@
               @endif
             @endforeach
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
     @else

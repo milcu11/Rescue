@@ -87,7 +87,8 @@
     </div>
   </div>
   <div class="card-body">
-    <table id="donationsTable" class="table table-bordered table-hover table-striped align-middle">
+    <div class="table-responsive">
+      <table id="donationsTable" class="table table-bordered table-hover table-striped align-middle">
       <thead class="table-dark">
         <tr>
           <th>Tracking Code</th>
@@ -165,7 +166,8 @@
         </tr>
         @endforelse
       </tbody>
-    </table>
+      </table>
+    </div>
   </div>
 </div>
 

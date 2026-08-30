@@ -139,7 +139,8 @@
         <h3 class="card-title"><i class="bi bi-list-check me-2"></i>Distribution Log</h3>
       </div>
       <div class="card-body">
-        <table id="distTable" class="table table-bordered table-sm table-hover align-middle">
+        <div class="table-responsive">
+          <table id="distTable" class="table table-bordered table-sm table-hover align-middle">
           <thead class="table-dark">
             <tr>
               <th>Center</th>
@@ -166,7 +167,8 @@
             </tr>
             @endforelse
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
 

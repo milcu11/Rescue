@@ -85,7 +85,8 @@
     </h3>
   </div>
   <div class="card-body p-0">
-    <table class="table table-hover table-sm mb-0">
+    <div class="table-responsive">
+      <table class="table table-hover table-sm mb-0">
       <thead class="thead-dark">
         <tr>
           <th style="width:140px;">Date &amp; Time</th>
@@ -146,7 +147,8 @@
           </tr>
         @endforelse
       </tbody>
-    </table>
+      </table>
+    </div>
   </div>
   @if($logs->hasPages())
     <div class="card-footer clearfix">
