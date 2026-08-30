@@ -348,27 +348,6 @@
               <p>User Management</p>
             </a>
           </li>
-
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-exclamation-triangle"></i>
-              <p>Incidents</p>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-hands-helping"></i>
-              <p>Volunteers</p>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-project-diagram"></i>
-              <p>Volunteer Dispatch</p>
-            </a>
-          </li>
           @endif
 
           @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'drrm_officer', 'evacuation_manager', 'evac_manager']))
