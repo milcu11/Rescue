@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Evacuee extends Model
 {
     protected $fillable = [
-        'evacuation_center_id', 'name', 'family_group', 'family_members',
-        'barangay_origin', 'needs', 'id_presented',
+        'evacuation_center_id', 'family_qr_token', 'name', 'family_group', 'family_members',
+        'barangay_origin', 'needs', 'contact_phone', 'id_presented',
         'status', 'checked_in_at', 'checked_out_at',
         'notes', 'recorded_by',
     ];
