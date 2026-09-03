@@ -51,6 +51,24 @@
       </div>
 
       <div class="row">
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-semibold">Current Occupancy</label>
+          <input type="number" name="current_occupancy" min="0" class="form-control" value="{{ old('current_occupancy', $evacuation->current_occupancy) }}">
+          <small class="text-muted">Headcount physically inside</small>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-semibold">Families Registered</label>
+          <input type="number" name="families_registered" min="0" class="form-control" value="{{ old('families_registered', $evacuation->families_registered) }}">
+          <small class="text-muted">Pre-registered families count</small>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-semibold">Medical Needs Flagged</label>
+          <input type="number" name="medical_needs_count" min="0" class="form-control" value="{{ old('medical_needs_count', $evacuation->medical_needs_count) }}">
+          <small class="text-muted">Cases needing medical attention</small>
+        </div>
+      </div>
+
+      <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Contact Person</label>
           <input type="text" name="contact_person" class="form-control" value="{{ old('contact_person', $evacuation->contact_person) }}">

@@ -21,11 +21,13 @@ class EvacuationController extends Controller
             ->get();
 
         $summary = [
-            'total'       => $centers->count(),
-            'active'      => $centers->where('status', 'open')->count(),
-            'full'        => $centers->where('status', 'full')->count(),
-            'closed'      => $centers->where('status', 'closed')->count(),
+            'total'          => $centers->count(),
+            'active'         => $centers->where('status', 'open')->count(),
+            'full'           => $centers->where('status', 'full')->count(),
+            'closed'         => $centers->where('status', 'closed')->count(),
             'total_evacuees' => $centers->sum('current_occupancy'),
+            'total_families' => (int) $centers->sum('families_registered') ?: (int) $centers->sum('active_count'),
+            'total_medical'  => (int) $centers->sum('medical_needs_count'),
         ];
 
         return view('evacuation.index', compact('centers', 'summary'));

@@ -41,7 +41,7 @@
     <div class="col-lg-3 col-6">
       <div class="small-box bg-warning">
         <div class="inner">
-          <h3 id="evacKpiFamilies">{{ $centers->sum('active_count') }}</h3>
+          <h3 id="evacKpiFamilies">{{ $summary['total_families'] ?? ($centers->sum('families_registered') ?: $centers->sum('active_count')) }}</h3>
           <p>Families registered</p>
         </div>
         <div class="icon"><i class="fas fa-people-arrows"></i></div>
@@ -50,7 +50,7 @@
     <div class="col-lg-3 col-6">
       <div class="small-box bg-danger">
         <div class="inner">
-          <h3 id="evacKpiMedical">0</h3>
+          <h3 id="evacKpiMedical">{{ $summary['total_medical'] ?? $centers->sum('medical_needs_count') }}</h3>
           <p>Medical needs</p>
         </div>
         <div class="icon"><i class="fas fa-ambulance"></i></div>
@@ -122,9 +122,9 @@
               <div class="progress-bar {{ $pct >= 90 ? 'bg-danger' : ($pct >= 70 ? 'bg-warning' : 'bg-success') }}" style="width: {{ min(100, $pct) }}%"></div>
             </div>
             <div class="small text-muted">
-              {{ $center->active_count ?? 0 }} families ·
+              {{ $center->families_registered ?? $center->active_count ?? 0 }} families ·
               {{ max(0, $center->capacity - $center->current_occupancy) }} slots open ·
-              0 medical
+              {{ $center->medical_needs_count ?? 0 }} medical
             </div>
           </div>
           <div class="card-footer py-2 bg-white border-top-0">
@@ -410,7 +410,6 @@
 
     $(function () {
       var csrfToken = '{{ csrf_token() }}';
-      var externalEndpoint = 'https://drvms.freedev.app/api/v1/public/evacuation-centers?limit=100';
       var localEndpoint = '{{ url('/api/v1/public/evacuation-centers') }}?limit=100';
       var table = null;
       var redrawEvacMap = null;
@@ -473,29 +472,13 @@
       }
 
       function loadCentersFromApi() {
-        fetchJson(externalEndpoint)
+        fetchJson(localEndpoint)
           .then(function (payload) {
-            var externalCenters = Array.isArray(payload && payload.data) ? payload.data : [];
-            return fetchJson(localEndpoint).then(function (localPayload) {
-              var localCenters = Array.isArray(localPayload && localPayload.data) ? localPayload.data : [];
-              var merged = {};
-              localCenters.concat(externalCenters).forEach(function (center) {
-                if (center && center.id !== undefined) {
-                  merged[center.id] = center;
-                }
-              });
-              applyCenters(Object.keys(merged).map(function (id) { return merged[id]; }));
-            });
+            var centers = Array.isArray(payload && payload.data) ? payload.data : [];
+            applyCenters(centers);
           })
           .catch(function () {
-            return fetchJson(localEndpoint)
-              .then(function (payload) {
-                var centers = Array.isArray(payload && payload.data) ? payload.data : [];
-                applyCenters(centers);
-              })
-              .catch(function () {
-                applyCenters([]);
-              });
+            applyCenters(mapCenters);
           });
       }
 
