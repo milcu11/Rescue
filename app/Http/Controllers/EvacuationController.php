@@ -26,7 +26,7 @@ class EvacuationController extends Controller
             'full'           => $centers->where('status', 'full')->count(),
             'closed'         => $centers->where('status', 'closed')->count(),
             'total_evacuees' => $centers->sum('current_occupancy'),
-            'total_families' => (int) $centers->sum('families_registered') ?: (int) $centers->sum('active_count'),
+            'total_families' => (int) $centers->sum('families_registered'),
             'total_medical'  => (int) $centers->sum('medical_needs_count'),
         ];
 
@@ -46,11 +46,11 @@ class EvacuationController extends Controller
             'address'             => 'required|string|max:255',
             'capacity'            => 'required|integer|min:1',
             'current_occupancy'   => 'nullable|integer|min:0',
-            'status'              => 'required|in:open,full,closed',
+            'status'              => 'required|in:open,full,closed,active',
             'families_registered' => 'nullable|integer|min:0',
             'medical_needs_count' => 'nullable|integer|min:0',
             'contact_person'      => 'nullable|string|max:255',
-            'contact_phone'       => 'nullable|string|max:20',
+            'contact_phone'       => 'nullable|string|max:50',
             'intake_procedures'   => 'nullable|string',
             'required_items'      => 'nullable|string',
             'latitude'            => 'nullable|numeric',
@@ -59,6 +59,12 @@ class EvacuationController extends Controller
         ]);
 
         if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
@@ -66,19 +72,21 @@ class EvacuationController extends Controller
 
         $coordinates = $this->resolveCoordinates($request->latitude, $request->longitude, $request->barangay);
 
-        $center = EvacuationCenter::create([
-            ...$request->only([
-                'name', 'barangay', 'address', 'capacity',
-                'current_occupancy', 'status',
-                'families_registered', 'medical_needs_count',
-                'contact_person', 'contact_phone',
-                'intake_procedures', 'required_items',
-                'notes',
-            ]),
-            'latitude' => $coordinates['latitude'],
-            'longitude' => $coordinates['longitude'],
-            'created_by' => Auth::id(),
+        $centerData = $request->only([
+            'name', 'barangay', 'address', 'status',
+            'contact_person', 'contact_phone',
+            'intake_procedures', 'required_items',
+            'notes',
         ]);
+        $centerData['capacity'] = (int) $request->input('capacity', 1);
+        $centerData['current_occupancy'] = (int) ($request->input('current_occupancy', 0) ?? 0);
+        $centerData['families_registered'] = (int) ($request->input('families_registered', 0) ?? 0);
+        $centerData['medical_needs_count'] = (int) ($request->input('medical_needs_count', 0) ?? 0);
+        $centerData['latitude'] = $coordinates['latitude'];
+        $centerData['longitude'] = $coordinates['longitude'];
+        $centerData['created_by'] = Auth::id() ?? 1;
+
+        $center = EvacuationCenter::create($centerData);
 
         AuditService::created(
             'evacuation',
@@ -86,6 +94,14 @@ class EvacuationController extends Controller
             $center->id,
             $center->toArray()
         );
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Evacuation center registered successfully.',
+                'data' => $center,
+            ]);
+        }
 
         return redirect()->route('evacuation.index')
             ->with('success', 'Evacuation center registered successfully.');
@@ -138,12 +154,12 @@ class EvacuationController extends Controller
             'barangay'            => 'required|string|max:255',
             'address'             => 'required|string|max:255',
             'capacity'            => 'required|integer|min:1',
-            'status'              => 'required|in:open,full,closed',
+            'status'              => 'required|in:open,full,closed,active',
             'current_occupancy'   => 'nullable|integer|min:0',
             'families_registered' => 'nullable|integer|min:0',
             'medical_needs_count' => 'nullable|integer|min:0',
             'contact_person'      => 'nullable|string|max:255',
-            'contact_phone'       => 'nullable|string|max:20',
+            'contact_phone'       => 'nullable|string|max:50',
             'intake_procedures'   => 'nullable|string',
             'required_items'      => 'nullable|string',
             'latitude'            => 'nullable|numeric',
@@ -152,6 +168,12 @@ class EvacuationController extends Controller
         ]);
 
         if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
@@ -160,15 +182,20 @@ class EvacuationController extends Controller
         $coordinates = $this->resolveCoordinates($request->latitude, $request->longitude, $request->barangay);
         $old = $evacuation->toArray();
 
-        $evacuation->update($request->only([
-            'name', 'barangay', 'address', 'capacity', 'status',
-            'current_occupancy', 'families_registered', 'medical_needs_count',
+        $updateData = $request->only([
+            'name', 'barangay', 'address', 'status',
             'contact_person', 'contact_phone',
             'intake_procedures', 'required_items',
             'notes',
-        ]));
+        ]);
+        $updateData['capacity'] = (int) $request->input('capacity', 1);
+        $updateData['current_occupancy'] = (int) ($request->input('current_occupancy', 0) ?? 0);
+        $updateData['families_registered'] = (int) ($request->input('families_registered', 0) ?? 0);
+        $updateData['medical_needs_count'] = (int) ($request->input('medical_needs_count', 0) ?? 0);
+        $updateData['latitude'] = $coordinates['latitude'];
+        $updateData['longitude'] = $coordinates['longitude'];
 
-        $evacuation->update($coordinates);
+        $evacuation->update($updateData);
 
         AuditService::updated(
             'evacuation',
@@ -177,6 +204,14 @@ class EvacuationController extends Controller
             $old,
             $evacuation->fresh()->toArray()
         );
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Center updated successfully.',
+                'data' => $evacuation->fresh(),
+            ]);
+        }
 
         return redirect()->route('evacuation.index')
             ->with('success', 'Center updated successfully.');

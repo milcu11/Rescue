@@ -41,7 +41,7 @@
     <div class="col-lg-3 col-6">
       <div class="small-box bg-warning">
         <div class="inner">
-          <h3 id="evacKpiFamilies">{{ $summary['total_families'] ?? ($centers->sum('families_registered') ?: $centers->sum('active_count')) }}</h3>
+          <h3 id="evacKpiFamilies">{{ $summary['total_families'] ?? $centers->sum('families_registered') }}</h3>
           <p>Families registered</p>
         </div>
         <div class="icon"><i class="fas fa-people-arrows"></i></div>
@@ -181,8 +181,16 @@
               <label for="evacBarangay">Barangay</label>
               <select name="barangay" id="evacBarangay" class="form-control" required>
                 <option value="">— Select barangay —</option>
+                <option value="Concepcion">Concepcion</option>
+                <option value="Evangelista">Evangelista</option>
+                <option value="Mabini">Mabini</option>
+                <option value="Pinugay">Pinugay</option>
+                <option value="Rizal">Rizal</option>
                 <option value="San Jose">San Jose</option>
                 <option value="San Juan">San Juan</option>
+                <option value="San Pedro">San Pedro</option>
+                <option value="San Salvador">San Salvador</option>
+                <option value="Santiago">Santiago</option>
               </select>
               <small class="form-text text-muted">Used for map pin and filtering.</small>
             </div>
@@ -398,6 +406,8 @@
         'medical_needs_count' => (int) ($c->medical_needs_count ?? 0),
         'contact_person' => $c->contact_person,
         'contact_phone' => $c->contact_phone,
+        'intake_procedures' => $c->intake_procedures,
+        'required_items' => $c->required_items,
         'notes' => $c->notes,
         'latitude' => $c->latitude ? (float)$c->latitude : null,
         'longitude' => $c->longitude ? (float)$c->longitude : null,
@@ -410,20 +420,8 @@
 
     $(function () {
       var csrfToken = '{{ csrf_token() }}';
-      var localEndpoint = '{{ url('/api/v1/public/evacuation-centers') }}?limit=100';
       var table = null;
       var redrawEvacMap = null;
-
-      function fetchJson(url) {
-        return fetch(url, {
-          headers: { 'Accept': 'application/json' }
-        }).then(function (response) {
-          if (!response.ok) {
-            throw new Error('Request failed: ' + response.status);
-          }
-          return response.json();
-        });
-      }
 
       function initializeTable(centers) {
         if (table) {
@@ -471,18 +469,7 @@
         }
       }
 
-      function loadCentersFromApi() {
-        fetchJson(localEndpoint)
-          .then(function (payload) {
-            var centers = Array.isArray(payload && payload.data) ? payload.data : [];
-            applyCenters(centers);
-          })
-          .catch(function () {
-            applyCenters(mapCenters);
-          });
-      }
-
-      loadCentersFromApi();
+      initializeTable(mapCenters);
 
       var activeFamiliesCenterId = 0;
       var activeFamiliesCenterName = '';
@@ -556,6 +543,9 @@
         $('#crudFormMethod').val('PUT');
         $('#evacModalTitle').text('Edit evacuation center');
         $('#evacName').val(center.name || '');
+        if (center.barangay && !$('#evacBarangay option[value="' + center.barangay + '"]').length) {
+          $('#evacBarangay').append(new Option(center.barangay, center.barangay));
+        }
         $('#evacBarangay').val(center.barangay || '');
         $('#evacStatus').val(center.status || 'open');
         $('#evacAddress').val(center.address || '');
@@ -629,11 +619,21 @@
         $.ajax({
           url: url,
           method: 'POST',
-          data: data
-        }).done(function () {
+          data: data,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          }
+        }).done(function (res) {
           window.location.reload();
-        }).fail(function () {
-          alert('Unable to save evacuation center. Please check your input and try again.');
+        }).fail(function (xhr) {
+          var errorMsg = 'Unable to save evacuation center. Please check your input and try again.';
+          if (xhr.responseJSON && xhr.responseJSON.errors) {
+            errorMsg = Object.values(xhr.responseJSON.errors).flat().join('\n');
+          } else if (xhr.responseJSON && xhr.responseJSON.message) {
+            errorMsg = xhr.responseJSON.message;
+          }
+          alert(errorMsg);
         });
       });
 
