@@ -262,7 +262,7 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{{ $profileUrl }}" title="Profile">
-          <img src="{{ asset('assets/logo/default-user.svg') }}"
+          <img src="{{ asset('assets/adminlte/dist/img/user2-160x160.jpg') }}"
                alt=""
                class="img-circle mr-1"
                style="width:28px;height:28px;object-fit:cover;">
@@ -298,7 +298,7 @@
       {{-- User Panel (reference-style compact profile card) --}}
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="{{ asset('assets/logo/default-user.svg') }}" class="img-circle elevation-2"
+          <img src="{{ asset('assets/adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2"
                alt="{{ Auth::user()->name }}" style="width:2.1rem;height:2.1rem;object-fit:cover;">
         </div>
         <div class="info drms-user-info">
