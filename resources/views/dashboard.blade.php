@@ -152,9 +152,19 @@
   var centers = @json($evacuationCenters);
 
   centers.forEach(function(c) {
-    var color = c.status === 'full' ? 'red' : (c.status === 'closed' ? 'grey' : 'green');
-    var marker = L.circleMarker([c.latitude, c.longitude], {
-      color: color, fillColor: color, fillOpacity: 0.8, radius: 10
+    var markerStyle = c.status === 'full'
+      ? { background: '#757575', border: '#424242' }
+      : (c.status === 'closed'
+        ? { background: '#424242', border: '#212121' }
+        : { background: '#2e7d32', border: '#1b5e20' });
+    var marker = L.marker([c.latitude, c.longitude], {
+      icon: L.divIcon({
+        className: '',
+        html: '<div style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:3px solid ' + markerStyle.border + ';border-radius:50%;background:' + markerStyle.background + ';color:#fff;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.25);"><i class="fas fa-home"></i></div>',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        popupAnchor: [0, -18]
+      })
     }).addTo(map);
     marker.bindPopup(
       '<strong>' + c.name + '</strong><br>' +
