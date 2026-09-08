@@ -18,8 +18,7 @@
   <link rel="stylesheet" href="/assets/adminlte/dist/css/adminlte.min.css">
   <!-- DataTables -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
-  <!-- Group 1 DRMS admin overrides (match visuals exactly) -->
-  <link rel="stylesheet" href="https://drvms.freedev.app/assets/css/drms-admin.css">
+  <!-- DRMS admin overrides -->
   <link rel="stylesheet" href="/assets/css/drms-admin.css">
 
   <style>
@@ -263,7 +262,7 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{{ $profileUrl }}" title="Profile">
-          <img src="https://drvms.freedev.app/assets/adminlte/dist/img/user2-160x160.jpg"
+          <img src="{{ asset('assets/logo/default-user.svg') }}"
                alt=""
                class="img-circle mr-1"
                style="width:28px;height:28px;object-fit:cover;">
@@ -299,7 +298,7 @@
       {{-- User Panel (reference-style compact profile card) --}}
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="https://drvms.freedev.app/assets/adminlte/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
+          <img src="{{ asset('assets/logo/default-user.svg') }}" class="img-circle elevation-2"
                alt="{{ Auth::user()->name }}" style="width:2.1rem;height:2.1rem;object-fit:cover;">
         </div>
         <div class="info drms-user-info">
