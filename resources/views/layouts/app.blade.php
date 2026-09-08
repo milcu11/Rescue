@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" href="/assets/logo/baras_seal_l.png">
 
   <!-- Google Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <!-- Bootstrap Icons -->
@@ -22,6 +22,10 @@
   <link rel="stylesheet" href="/assets/css/drms-admin.css">
 
   <style>
+    body.drms-admin-theme {
+      font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
     /* Ensure modals and backdrops show correctly without changing the theme visuals */
     body.drms-admin-theme .modal,
     body.drms-admin-theme .modal.fade.show,

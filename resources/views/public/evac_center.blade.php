@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ $center->name }} — Evacuation Center</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&display=fallback">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Source Sans Pro', sans-serif; background: #f4f6f9; color: #232323; }
-    .top-nav { background: #3b0b0d; padding: 14px 32px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
-    .top-nav .brand { color: #fff; font-size: 1.3rem; font-weight: 700; text-decoration: none; }
+    body { font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f9f5f4; color: #2c1819; }
+    .top-nav { background: linear-gradient(90deg, #3d1419 0%, #6d1f2a 55%, #8b2635 100%); padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 24px rgba(61,20,25,0.25); }
+    .top-nav .brand { color: #fff; font-size: 1.3rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; }
+    .top-nav .brand img { width: 34px; height: 36px; margin-right: .5rem; object-fit: contain; }
     .top-nav .nav-links a { color: rgba(255,255,255,0.85); margin-left: 22px; font-size: 14px; text-decoration: none; }
     .top-nav .nav-links .btn-nav { background: #fff; color: #3b0b0d; padding: 6px 18px; border-radius: 24px; font-weight: 700; }
     .top-nav .nav-links a:hover, .top-nav .nav-links .btn-nav:hover { color: #fff; }
@@ -30,7 +31,7 @@
 </head>
 <body>
 <nav class="top-nav">
-  <a href="{{ route('public.home') }}" class="brand"><i class="fas fa-shield-alt mr-2"></i>RescuePH</a>
+  <a href="{{ route('public.home') }}" class="brand"><img src="{{ asset('assets/logo/baras_seal_l.png') }}" alt="Municipality of Baras seal">DRMS</a>
   <div class="nav-links d-flex align-items-center">
     <a href="{{ route('public.home') }}">Home</a>
     <a href="{{ route('public.evac_centers') }}">Evacuation centers</a>

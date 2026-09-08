@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Donate to RescuePH</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&display=fallback">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <style>
-    body { font-family: 'Source Sans Pro', sans-serif; background: #f7f7f7; }
+    body { font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f9f5f4; }
     .card { border-radius: 16px; border: 0; box-shadow: 0 8px 30px rgba(0,0,0,.08); }
     .btn-donate { background: #3b0b0d; color: #fff; }
     .btn-donate:hover { background: #4b0f11; color: #fff; }

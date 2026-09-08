@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RescuePH | Sign In</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700&display=fallback">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/css/adminlte.min.css">
   <style>
-    .login-page  { background: #f4f6f9; }
-    .login-logo a { color: #3b0b0d; }
-    .login-logo a b { color: #3b0b0d; }
+    .login-page  { background: #f9f5f4; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    .login-logo a { color: #6d1f2a; }
+    .login-logo a b { color: #c62828; }
     .login-logo small {
       display: block;
       font-size: .85rem;
@@ -52,8 +52,8 @@
 <div class="login-box">
   <div class="login-logo">
     <a href="#">
-      <b>Rescue</b>PH
-      <small>Disaster Relief Operations Management</small>
+      <b>DRMS</b>
+      <small>Disaster Response &amp; Volunteer Matching System</small>
     </a>
   </div>
 
