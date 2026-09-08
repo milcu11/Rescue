@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'api/*',
             'api/webhooks/paymongo',
+            'logout',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
