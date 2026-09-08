@@ -177,116 +177,13 @@
 <script>
   $(document).ready(function () {
     var $donTable = $('#donationsTable');
-    var externalEndpoint = 'https://drvms.freedev.app/api/v1/public/donations?limit=100';
-    var localEndpoint = '{{ url('/api/v1/public/donations') }}?limit=100';
-    var donationBaseUrl = '{{ url('/donations') }}';
-    var canManage = @json(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']));
-
-    function fetchJson(url) {
-      return fetch(url, {
-        headers: { 'Accept': 'application/json' }
-      }).then(function (response) {
-        if (!response.ok) {
-          throw new Error('Request failed: ' + response.status);
-        }
-        return response.json();
+    if (window.safeInit) {
+      safeInit($donTable, {
+        pageLength: 25,
+        order: [[5, 'desc']],
+        columnDefs: [{ orderable: false, targets: [-1] }]
       });
     }
-
-    function formatDate(value) {
-      if (!value) return '—';
-      var date = new Date(value);
-      if (Number.isNaN(date.getTime())) return value;
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    function statusBadge(status) {
-      if (status === 'pending') {
-        return '<span class="badge bg-warning text-dark">Pending</span>';
-      }
-      if (status === 'received') {
-        return '<span class="badge bg-success">Received</span>';
-      }
-      return '<span class="badge bg-primary">Distributed</span>';
-    }
-
-    function typeBadge(type) {
-      if (type === 'monetary') {
-        return '<span class="badge bg-success">Monetary</span>';
-      }
-      return '<span class="badge bg-info text-dark">In-Kind</span>';
-    }
-
-    function renderDonationRows(rows) {
-      var $body = $('#donationsTableBody');
-      if (!rows.length) {
-        $body.html('<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-inbox fs-4 d-block mb-2"></i>No donation records available.</td></tr>');
-        return;
-      }
-
-      var html = rows.map(function (item) {
-        var donorName = item.donor_name || 'Unknown Donor';
-        var donorContact = item.donor_contact ? '<small class="text-muted">' + item.donor_contact + '</small>' : '';
-        var detail = item.type === 'monetary'
-          ? '₱' + Number(item.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-          : (item.items_description || '—');
-
-        var actionButtons = '<a href="' + donationBaseUrl + '/' + item.id + '" class="btn btn-sm btn-outline-info" title="View"><i class="bi bi-eye"></i></a>';
-        if (canManage) {
-          actionButtons += ' <a href="' + donationBaseUrl + '/' + item.id + '/edit" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>';
-        }
-
-        return '<tr>' +
-          '<td><span class="badge bg-dark font-monospace">' + (item.tracking_code || '—') + '</span></td>' +
-          '<td><div class="fw-semibold">' + donorName + '</div>' + donorContact + '</td>' +
-          '<td>' + typeBadge(item.type) + '</td>' +
-          '<td>' + detail + '</td>' +
-          '<td>' + statusBadge(item.status) + '</td>' +
-          '<td>' + formatDate(item.created_at) + '</td>' +
-          '<td>' +
-            actionButtons +
-          '</td>' +
-          '</tr>';
-      }).join('');
-
-      $body.html(html);
-    }
-
-    fetchJson(localEndpoint)
-      .then(function (payload) {
-        var rows = Array.isArray(payload && payload.data) ? payload.data : [];
-        renderDonationRows(rows);
-        if (window.safeInit) {
-          safeInit($donTable, {
-            pageLength: 25,
-            order: [[5, 'desc']],
-            columnDefs: [{ orderable: false, targets: [-1] }]
-          });
-        }
-      })
-      .catch(function () {
-        return fetchJson(externalEndpoint)
-          .then(function (payload) {
-            var rows = Array.isArray(payload && payload.data) ? payload.data : [];
-            renderDonationRows(rows);
-            if (window.safeInit) {
-              safeInit($donTable, {
-                pageLength: 25,
-                order: [[5, 'desc']],
-                columnDefs: [{ orderable: false, targets: [-1] }]
-              });
-            }
-          })
-          .catch(function () {
-            if (window.safeInit) {
-              safeInit($donTable, {
-                pageLength: 25,
-                order: [[5, 'desc']],
-                columnDefs: [{ orderable: false, targets: [-1] }]
-              });
-            }
-          });
-      });
   });
 </script>
 @endpush

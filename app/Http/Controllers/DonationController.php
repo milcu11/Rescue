@@ -14,9 +14,6 @@ class DonationController extends Controller
     public function index()
     {
         $donations = Donation::with('creator')
-            ->when(Auth::user()?->role?->slug === 'lgu_staff', function ($query) {
-                $query->where('type', 'in-kind');
-            })
             ->orderByDesc('created_at')
             ->get();
 

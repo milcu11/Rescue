@@ -37,7 +37,8 @@ class DashboardController extends Controller
             'total_distributions' => ReliefDistribution::count(),
             'total_capacity'      => EvacuationCenter::where('status','!=','closed')->sum('capacity'),
             'total_occupancy'     => EvacuationCenter::where('status','!=','closed')->sum('current_occupancy'),
-            'total_donations'     => Donation::where('status','received')->count(),
+            'received_donations'  => Donation::where('status', 'received')->count(),
+            'pending_donations'   => Donation::where('status', 'pending')->count(),
             'low_stock_items'     => InventoryItem::whereIn('status',['low_stock','depleted'])->get(),
             'active_operations'   => ReliefOperation::where('status','active')->latest()->take(5)->get(),
         ];
