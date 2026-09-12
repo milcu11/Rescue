@@ -198,9 +198,8 @@
   @stack('styles')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed drms-admin-theme">
+@php $profileUrl = \Illuminate\Support\Facades\Route::has('profile') ? route('profile') : '#'; @endphp
 <div class="wrapper">
-
-  @php $profileUrl = \Illuminate\Support\Facades\Route::has('profile') ? route('profile') : '#'; @endphp
 
   {{-- ═══ NAVBAR ═══ --}}
   <nav class="main-header navbar navbar-expand navbar-white navbar-light border-bottom-0">
@@ -306,7 +305,6 @@
                alt="{{ Auth::user()->name }}" style="width:2.1rem;height:2.1rem;object-fit:cover;">
         </div>
         <div class="info drms-user-info">
-          @php $profileUrl = \Illuminate\Support\Facades\Route::has('profile') ? route('profile') : '#'; @endphp
           @php
             $accessLabel = match (Auth::user()->role->slug) {
               'super_admin' => 'System administration',
