@@ -33,18 +33,17 @@
       text-align: center;
     }
     .dev-box p { font-size: 11px; color: #aaa; margin-bottom: 6px; }
-    .dev-btn {
-      display: inline-block;
-      font-size: 11px;
-      padding: 3px 9px;
-      margin: 2px;
+    .dev-select {
+      width: 100%;
+      font-size: 12px;
+      padding: 5px 9px;
       border: 1px solid #ddd;
       border-radius: 4px;
       background: #fff;
       cursor: pointer;
       color: #555;
     }
-    .dev-btn:hover { background: #f0f0f0; }
+    .dev-select:focus { border-color: #c62828; outline: none; }
   </style>
 </head>
 <body class="hold-transition login-page">
@@ -116,11 +115,15 @@
 
       <div class="dev-box">
         <p>Dev accounts | password: <code>password</code></p>
-        <button type="button" class="dev-btn" onclick="fill('admin@resqlink.ph')">Super Admin</button>
-        <button type="button" class="dev-btn" onclick="fill('drrm@resqlink.ph')">DRRM Officer</button>
-        <button type="button" class="dev-btn" onclick="fill('warehouse@resqlink.ph')">Warehouse</button>
-        <button type="button" class="dev-btn" onclick="fill('evac@resqlink.ph')">Evac Manager</button>
-        <button type="button" class="dev-btn" onclick="fill('donor@resqlink.ph')">Donor</button>
+        <label class="sr-only" for="dev-role">Select a role</label>
+        <select id="dev-role" class="dev-select" onchange="fillSelectedRole(this)">
+          <option value="">Select a role</option>
+          <option value="admin@resqlink.ph">Super Admin</option>
+          <option value="drrm@resqlink.ph">DRRM Officer</option>
+          <option value="warehouse@resqlink.ph">Warehouse</option>
+          <option value="evac@resqlink.ph">Evac Manager</option>
+          <option value="donor@resqlink.ph">Donor</option>
+        </select>
       </div>
     </div>
   </div>
@@ -133,6 +136,16 @@
   function fill(email) {
     document.querySelector('input[name="email"]').value = email;
     document.querySelector('input[name="password"]').value = 'password';
+  }
+
+  function fillSelectedRole(select) {
+    if (select.value) {
+      fill(select.value);
+      return;
+    }
+
+    document.querySelector('input[name="email"]').value = '';
+    document.querySelector('input[name="password"]').value = '';
   }
 </script>
 </body>
