@@ -13,6 +13,7 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\ReliefController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\UserGuideController;
 
 // ── Public routes ──────────────────────────────
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
@@ -240,6 +241,10 @@ Route::middleware('auth')->group(function () {
           Route::get('/audit/{auditLog}', [AuditLogController::class, 'show'])
               ->name('audit.show');
         });
+
+        // User guide
+        Route::get('/user-guide', [UserGuideController::class, 'index'])
+            ->name('user-guide');
 
     // Donor portal
     Route::middleware('role:donor')

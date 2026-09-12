@@ -471,6 +471,13 @@
             </a>
           </li>
 
+          <li class="nav-item">
+            <a href="{{ route('user-guide') }}" class="nav-link {{ request()->routeIs('user-guide') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-book-open"></i>
+              <p>User Guide</p>
+            </a>
+          </li>
+
         </ul>
       </nav>
     </div>
