@@ -222,9 +222,13 @@
         $currentUser = auth()->user();
         $currentUserId = $currentUser?->id;
         $currentRole = $currentUser?->role?->slug;
-        $notificationService = app(\App\Services\NotificationService::class);
-        $bellCount = $notificationService->unreadCountForUser($currentUserId, $currentRole);
-        $recentNotifs = $notificationService->recentForUser($currentUserId, $currentRole, 5);
+        $bellCount = 0;
+        $recentNotifs = collect();
+        if (\Illuminate\Support\Facades\Schema::hasTable('notifications')) {
+          $notificationService = app(\App\Services\NotificationService::class);
+          $bellCount = $notificationService->unreadCountForUser($currentUserId, $currentRole);
+          $recentNotifs = $notificationService->recentForUser($currentUserId, $currentRole, 5);
+        }
       @endphp
       <li class="nav-item dropdown" id="navNotifDropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
