@@ -182,7 +182,7 @@
         'Use the linked donation record when the payment needs operational follow-up.',
         'Do not mark a payment as complete without confirmation from the payment record.',
       ],
-      'check' => Match the payment amount and donor before treating the donation as paid.',
+      'check' => 'Match the payment amount and donor before treating the donation as paid.',
     ],
     [
       'title' => 'Reports & Analytics',
@@ -193,7 +193,7 @@
         'Review the totals on screen before choosing Print, Excel, or PDF.',
         'Use the exported report for coordination or filing, and return to the live page for the latest data.',
       ],
-      'check' => Confirm the report date and scope before sharing it.',
+      'check' => 'Confirm the report date and scope before sharing it.',
     ],
     [
       'title' => 'Audit Trail',
@@ -204,7 +204,7 @@
         'Open an entry to see the affected record and the recorded details.',
         'Use the trail to verify what happened before correcting a record or escalating an issue.',
       ],
-      'check' => Treat the audit trail as a record of events; make corrections through the original page.',
+      'check' => 'Treat the audit trail as a record of events; make corrections through the original page.',
     ],
     [
       'title' => 'My Profile',
@@ -215,7 +215,7 @@
         'Check that your name, email, and role information are correct.',
         'Contact an administrator if your role or access does not match your assignment.',
       ],
-      'check' => Never share your password or use another person\'s account.',
+      'check' => 'Never share your password or use another person\'s account.',
     ],
   ];
 @endphp
