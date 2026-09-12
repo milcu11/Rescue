@@ -116,6 +116,108 @@
       'Ask your coordinator if you are unsure which page or status to use.',
     ],
   ];
+
+  $pageInstructions = [
+    [
+      'title' => 'Dashboard',
+      'icon' => 'fas fa-tachometer-alt text-primary',
+      'purpose' => 'Use the dashboard as your starting point for the current response picture.',
+      'steps' => [
+        'Review active operations, evacuation capacity, distributions, donations, and stock warnings.',
+        'Open the related page from the sidebar when a number or warning needs attention.',
+        'Return to the dashboard after updating a record to confirm the summary reflects the change.',
+      ],
+      'check' => 'Treat the dashboard as a summary. Open the source page before making a decision.',
+    ],
+    [
+      'title' => 'Evacuation Centers',
+      'icon' => 'fas fa-home text-danger',
+      'purpose' => 'Maintain shelter information and record who is currently staying in each center.',
+      'steps' => [
+        'Select a center to review its status, capacity, contact details, and current occupancy.',
+        'Use Create or Edit to update center information, procedures, and capacity when needed.',
+        'Open the center details page to check in an evacuee, then check them out when they leave.',
+      ],
+      'check' => 'Confirm the center status and available slots before directing a family there.',
+    ],
+    [
+      'title' => 'Emergency Supplies',
+      'icon' => 'fas fa-boxes text-warning',
+      'purpose' => 'Keep item quantities and stock status accurate for the response team.',
+      'steps' => [
+        'Search or scan the list to find an item and review its current quantity and status.',
+        'Create an item when supplies arrive; edit it when the quantity, location, or status changes.',
+        'Use the item details to confirm its history before preparing a release.',
+      ],
+      'check' => 'Save the received or remaining quantity, not the requested quantity.',
+    ],
+    [
+      'title' => 'Distributions',
+      'icon' => 'fas fa-truck text-success',
+      'purpose' => 'Record relief items sent to evacuation centers or response operations.',
+      'steps' => [
+        'Create a distribution after the release is approved and select the destination center.',
+        'Add each item and the exact quantity released, then include the responsible person or notes.',
+        'Review the distribution details and save it so inventory and reports reflect the release.',
+      ],
+      'check' => 'Verify the destination and quantities before saving because a distribution affects stock totals.',
+    ],
+    [
+      'title' => 'Donations',
+      'icon' => 'fas fa-donate text-info',
+      'purpose' => 'Capture donated goods or money and follow their status through receipt and use.',
+      'steps' => [
+        'Create a donation with the donor details, donation type, items or amount, and contact information.',
+        'Open the donation record to update its status when it is received, verified, or distributed.',
+        'Use the tracking code when a donor asks for an update or proof of status.',
+      ],
+      'check' => 'Use the correct donation type and preserve the tracking code for follow-up.',
+    ],
+    [
+      'title' => 'Payment History',
+      'icon' => 'fas fa-money-bill-wave text-success',
+      'purpose' => 'Review payment records connected to monetary donations.',
+      'steps' => [
+        'Open a payment entry to compare the donor, amount, donation, and payment status.',
+        'Use the linked donation record when the payment needs operational follow-up.',
+        'Do not mark a payment as complete without confirmation from the payment record.',
+      ],
+      'check' => Match the payment amount and donor before treating the donation as paid.',
+    ],
+    [
+      'title' => 'Reports & Analytics',
+      'icon' => 'fas fa-chart-bar text-primary',
+      'purpose' => 'Review totals and produce printable or downloadable operational reports.',
+      'steps' => [
+        'Choose the report that matches the information you need, such as inventory, evacuation, relief, or donations.',
+        'Review the totals on screen before choosing Print, Excel, or PDF.',
+        'Use the exported report for coordination or filing, and return to the live page for the latest data.',
+      ],
+      'check' => Confirm the report date and scope before sharing it.',
+    ],
+    [
+      'title' => 'Audit Trail',
+      'icon' => 'fas fa-history text-secondary',
+      'purpose' => 'Trace important account activity and changes made in the system.',
+      'steps' => [
+        'Search or review entries by user, action, or date when checking an activity.',
+        'Open an entry to see the affected record and the recorded details.',
+        'Use the trail to verify what happened before correcting a record or escalating an issue.',
+      ],
+      'check' => Treat the audit trail as a record of events; make corrections through the original page.',
+    ],
+    [
+      'title' => 'My Profile',
+      'icon' => 'fas fa-user text-dark',
+      'purpose' => 'Review your account identity and the role that controls your available pages.',
+      'steps' => [
+        'Open your profile from the top navigation or the System menu.',
+        'Check that your name, email, and role information are correct.',
+        'Contact an administrator if your role or access does not match your assignment.',
+      ],
+      'check' => Never share your password or use another person\'s account.',
+    ],
+  ];
 @endphp
 
 @section('content')
@@ -173,6 +275,34 @@
         <p class="mb-0 small text-muted">Update a record as soon as the real-world action happens. This keeps dashboards, stock counts, and reports aligned for the next person.</p>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="card card-outline card-primary mt-3">
+  <div class="card-header">
+    <h3 class="card-title"><i class="fas fa-book-open mr-2"></i>How to use each page</h3>
+    <div class="card-tools"><span class="text-muted small">Select a page to see its steps</span></div>
+  </div>
+  <div class="card-body" id="page-instructions">
+    @foreach($pageInstructions as $index => $instruction)
+      <div class="border-bottom py-2">
+        <button type="button" class="btn btn-link btn-block text-left px-0 text-dark" data-toggle="collapse" data-target="#page-instruction-{{ $index }}" aria-expanded="{{ $index === 0 ? 'true' : 'false' }}" aria-controls="page-instruction-{{ $index }}">
+          <i class="{{ $instruction['icon'] }} mr-2"></i><strong>{{ $instruction['title'] }}</strong>
+          <i class="fas fa-chevron-down float-right mt-1 text-muted"></i>
+        </button>
+        <div id="page-instruction-{{ $index }}" class="collapse {{ $index === 0 ? 'show' : '' }}" data-parent="#page-instructions">
+          <div class="pb-3 pl-4">
+            <p class="mb-2">{{ $instruction['purpose'] }}</p>
+            <ol class="pl-4 mb-2">
+              @foreach($instruction['steps'] as $step)
+                <li class="mb-1">{{ $step }}</li>
+              @endforeach
+            </ol>
+            <p class="small text-muted mb-0"><strong>Before saving or sharing:</strong> {{ $instruction['check'] }}</p>
+          </div>
+        </div>
+      </div>
+    @endforeach
   </div>
 </div>
 @endsection
