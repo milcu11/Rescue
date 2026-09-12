@@ -273,7 +273,7 @@
                alt=""
                class="img-circle mr-1"
                style="width:28px;height:28px;object-fit:cover;">
-          <span class="d-none d-md-inline">{{ Auth::user()->role->slug === 'super_admin' ? 'admin' : (in_array(Auth::user()->role->slug, ['mdrrmo', 'drrm_officer']) ? 'MDRRMO' : str_replace('_', ' ', Auth::user()->role->slug)) }}</span>
+          <span class="d-none d-md-inline">{{ $currentRole === 'super_admin' ? 'admin' : (in_array($currentRole, ['mdrrmo', 'drrm_officer']) ? 'MDRRMO' : str_replace('_', ' ', $currentRole ?? 'user')) }}</span>
         </a>
       </li>
       <li class="nav-item">
@@ -310,7 +310,7 @@
         </div>
         <div class="info drms-user-info">
           @php
-            $accessLabel = match (Auth::user()->role->slug) {
+            $accessLabel = match ($currentRole) {
               'super_admin' => 'System administration',
               'mdrrmo', 'drrm_officer' => 'Disaster response coordination',
               'lgu_staff', 'warehouse_staff' => 'Inventory and LGU operations',
@@ -322,7 +322,7 @@
               default => 'Account access',
             };
           @endphp
-          <a href="{{ $profileUrl }}" class="d-block">{{ in_array(Auth::user()->role->slug, ['mdrrmo', 'drrm_officer']) ? 'MDRRMO' : (in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']) ? 'LGU Staff' : (Auth::user()->role->slug === 'super_admin' ? 'admin' : Auth::user()->name)) }}</a>
+          <a href="{{ $profileUrl }}" class="d-block">{{ in_array($currentRole, ['mdrrmo', 'drrm_officer']) ? 'MDRRMO' : (in_array($currentRole, ['lgu_staff', 'warehouse_staff']) ? 'LGU Staff' : ($currentRole === 'super_admin' ? 'admin' : Auth::user()->name)) }}</a>
           <small class="text-muted">{{ $accessLabel }}</small>
         </div>
       </div>
@@ -332,11 +332,11 @@
         <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent"
             data-widget="treeview" role="menu" data-accordion="false">
 
-          @if(Auth::user()->role->slug !== 'donor')
+          @if($currentRole !== 'donor')
             <li class="nav-header">OPERATIONS</li>
           @endif
 
-          @if(Auth::user()->role->slug !== 'donor')
+          @if($currentRole !== 'donor')
             <li class="nav-item">
               <a href="{{ route('dashboard') }}"
                  class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -346,7 +346,7 @@
             </li>
           @endif
 
-          @if(!in_array(Auth::user()->role->slug, ['donor', 'lgu_staff', 'warehouse_staff', 'evac_manager', 'evacuation_manager']))
+          @if(!in_array($currentRole, ['donor', 'lgu_staff', 'warehouse_staff', 'evac_manager', 'evacuation_manager']))
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
@@ -355,7 +355,7 @@
           </li>
           @endif
 
-          @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'drrm_officer', 'evacuation_manager', 'evac_manager']))
+          @if(in_array($currentRole, ['super_admin', 'mdrrmo', 'drrm_officer', 'evacuation_manager', 'evac_manager']))
             <li class="nav-item">
               <a href="{{ route('evacuation.index') }}"
                  class="nav-link {{ request()->routeIs('evacuation.*') ? 'active' : '' }}">
@@ -365,7 +365,7 @@
             </li>
           @endif
 
-          @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer', 'warehouse_staff', 'evac_manager', 'evacuation_manager']))
+          @if(in_array($currentRole, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer', 'warehouse_staff', 'evac_manager', 'evacuation_manager']))
             <li class="nav-item">
               <a href="{{ route('inventory.index') }}"
                  class="nav-link {{ request()->routeIs('inventory.*') ? 'active' : '' }}">
@@ -375,7 +375,7 @@
             </li>
           @endif
 
-          @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer', 'evac_manager', 'evacuation_manager']))
+          @if(in_array($currentRole, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer', 'evac_manager', 'evacuation_manager']))
             <li class="nav-item">
               <a href="{{ route('relief.index') }}"
                  class="nav-link {{ request()->routeIs('relief.*') ? 'active' : '' }}">
@@ -385,7 +385,7 @@
             </li>
           @endif
 
-          @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer']))
+          @if(in_array($currentRole, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer']))
             <li class="nav-item">
               <a href="{{ route('donations.index') }}"
                  class="nav-link {{ request()->routeIs('donations.*') ? 'active' : '' }}">
@@ -395,7 +395,7 @@
             </li>
           @endif
 
-          @if(in_array(Auth::user()->role->slug, ['super_admin', 'drrm_officer']))
+          @if(in_array($currentRole, ['super_admin', 'drrm_officer']))
             <li class="nav-item">
               <a href="{{ route('donations.payment.history') }}"
                  class="nav-link {{ request()->routeIs('donations.payment.*') ? 'active' : '' }}">
@@ -405,7 +405,7 @@
             </li>
           @endif
 
-          @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer']))
+          @if(in_array($currentRole, ['super_admin', 'mdrrmo', 'lgu_staff', 'drrm_officer']))
             <li class="nav-item">
               <a href="{{ route('reports.index') }}"
                  class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
@@ -415,7 +415,7 @@
             </li>
           @endif
 
-          @if(in_array(Auth::user()->role->slug, ['super_admin', 'drrm_officer']))
+          @if(in_array($currentRole, ['super_admin', 'drrm_officer']))
             <li class="nav-item">
               <a href="{{ route('audit.index') }}"
                  class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}">
@@ -425,7 +425,7 @@
             </li>
           @endif
 
-          @if(Auth::user()->role->slug === 'donor')
+          @if($currentRole === 'donor')
             <li class="nav-header">MY PORTAL</li>
             <li class="nav-item">
               <a href="{{ route('donor.index') }}" class="nav-link {{ request()->routeIs('donor.*') ? 'active' : '' }}">
@@ -449,7 +449,7 @@
 
           <li class="nav-header">PUBLIC</li>
 
-          @if(Auth::user()->role->slug !== 'donor')
+          @if($currentRole !== 'donor')
             <li class="nav-item">
               <a href="#" class="nav-link disabled" onclick="event.preventDefault(); return false;" aria-disabled="true" tabindex="-1">
                 <i class="nav-icon fas fa-bullhorn"></i>
