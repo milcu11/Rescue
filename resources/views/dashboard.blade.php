@@ -231,11 +231,11 @@
     text-align: center;
   }
 
-  .dashboard-title-alerts { color: #9b2c2c; }
-  .dashboard-title-inventory { color: #b45309; }
-  .dashboard-title-relief { color: #166534; }
-  .dashboard-title-map { color: #0f766e; }
-  .dashboard-title-activity { color: #1d4ed8; }
+  body.drms-admin-theme .card-header .card-title.dashboard-title-alerts { color: #9b2c2c; }
+  body.drms-admin-theme .card-header .card-title.dashboard-title-inventory { color: #b45309; }
+  body.drms-admin-theme .card-header .card-title.dashboard-title-relief { color: #166534; }
+  body.drms-admin-theme .card-header .card-title.dashboard-title-map { color: #0f766e; }
+  body.drms-admin-theme .card-header .card-title.dashboard-title-activity { color: #1d4ed8; }
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 @endpush
@@ -274,10 +274,8 @@
     });
   }
 
-  renderCenters(@json($stats['map_centers'] ?? []));
-
   function refreshMapOccupancy() {
-    fetch('{{ route('public.evac_centers.map_data') }}', {
+    fetch('{{ route('public.evac_centers.map_data') }}?t=' + Date.now(), {
       headers: { 'Accept': 'application/json' },
       cache: 'no-store'
     })
@@ -286,6 +284,7 @@
       .catch(function() { /* Keep the last known map state when polling is unavailable. */ });
   }
 
+  refreshMapOccupancy();
   window.setInterval(refreshMapOccupancy, 30000);
 </script>
 @endpush
