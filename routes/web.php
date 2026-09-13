@@ -143,6 +143,9 @@ Route::middleware('auth')->group(function () {
           Route::patch('/evacuation/{evacuation}/checkout/{evacuee}',
              [EvacuationController::class, 'checkout'])
              ->name('evacuation.checkout');
+             Route::patch('/evacuation/{evacuation}/evacuees/{evacuee}/transfer',
+                 [EvacuationController::class, 'transfer'])
+                 ->name('evacuation.transfer');
         });
 
     // Evacuation - delete

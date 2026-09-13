@@ -51,9 +51,11 @@ class EvacuationCenter extends Model
     }
 
     // Auto-update status based on occupancy
-    public function updateStatus(): void
+    public function updateStatus(?int $previousOccupancy = null): void
     {
         $originalStatus = $this->status;
+        $originalOccupancy = $previousOccupancy ?? (int) $this->getOriginal('current_occupancy');
+        $nearCapacityThreshold = max(1, (int) ceil($this->capacity * 0.8));
 
         if ($this->current_occupancy >= $this->capacity) {
             $this->status = 'full';
@@ -71,5 +73,27 @@ class EvacuationCenter extends Model
                 'link' => route('evacuation.show', $this),
             ]);
         }
+
+        if ($originalOccupancy < $nearCapacityThreshold
+            && $this->current_occupancy >= $nearCapacityThreshold
+            && $this->current_occupancy < $this->capacity) {
+            app(NotificationService::class)->create([
+                'type' => 'near_capacity',
+                'title' => 'Evacuation center nearing capacity',
+                'message' => "Evacuation center '{$this->name}' is at {$this->occupancy_percent}% capacity.",
+                'link' => route('evacuation.show', $this),
+            ]);
+        }
+    }
+
+    public function syncOccupancy(): int
+    {
+        $occupancy = (int) $this->activeEvacuees()->sum('family_members');
+
+        if ((int) $this->current_occupancy !== $occupancy) {
+            $this->forceFill(['current_occupancy' => $occupancy])->saveQuietly();
+        }
+
+        return $occupancy;
     }
 }

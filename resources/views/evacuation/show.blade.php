@@ -172,6 +172,21 @@
                     @method('PATCH')
                     <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-box-arrow-right"></i> Check Out</button>
                   </form>
+                  @if($availableCenters->isNotEmpty())
+                    <form action="{{ route('evacuation.transfer', [$evacuation, $evacuee]) }}" method="POST" class="mt-1">
+                      @csrf
+                      @method('PATCH')
+                      <div class="input-group input-group-sm">
+                        <select name="target_center_id" class="form-select" required>
+                          <option value="">Transfer to...</option>
+                          @foreach($availableCenters as $targetCenter)
+                            <option value="{{ $targetCenter->id }}">{{ $targetCenter->name }} ({{ $targetCenter->capacity - $targetCenter->current_occupancy }} slots)</option>
+                          @endforeach
+                        </select>
+                        <button class="btn btn-outline-primary" title="Transfer evacuee"><i class="bi bi-arrow-left-right"></i></button>
+                      </div>
+                    </form>
+                  @endif
                 @else
                   <small class="text-muted">{{ $evacuee->checked_out_at?->format('M d, h:i A') }}</small>
                 @endif

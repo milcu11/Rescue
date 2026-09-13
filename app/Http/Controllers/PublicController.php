@@ -43,6 +43,7 @@ class PublicController extends Controller
             ->orWhereNull('status')
             ->orderBy('name')
             ->get();
+        $allCenters->each->syncOccupancy();
 
         $openCenters = $allCenters->filter(fn($c) => in_array($c->status, ['open', 'active', 'full']));
 
@@ -276,6 +277,23 @@ class PublicController extends Controller
         }
 
         $center = EvacuationCenter::findOrFail($request->evacuation_center_id);
+        $duplicate = Evacuee::whereIn('status', ['registered', 'checked_in'])
+            ->whereRaw('LOWER(name) = ?', [strtolower($request->family_head_name)])
+            ->when($request->filled('contact_phone'), fn ($query) => $query->where('contact_phone', $request->contact_phone))
+            ->exists();
+
+        if ($duplicate) {
+            return redirect()->back()
+                ->withErrors(['family_head_name' => 'This household is already registered or checked in.'])
+                ->withInput();
+        }
+
+        $center->syncOccupancy();
+        if ($center->current_occupancy + (int) $request->members_count > $center->capacity) {
+            return redirect()->back()
+                ->withErrors(['evacuation_center_id' => 'The selected evacuation center does not have enough capacity.'])
+                ->withInput();
+        }
         $token = 'FAM-' . strtoupper(Str::random(8));
 
         $evacuee = Evacuee::create([
@@ -335,6 +353,7 @@ class PublicController extends Controller
         }
 
         $center = $evacuee->center;
+        $center?->syncOccupancy();
         $alreadyCheckedIn = $evacuee->status === 'checked_in' && !empty($evacuee->checked_in_at);
 
         $responseData = [
@@ -359,14 +378,23 @@ class PublicController extends Controller
             ]);
         }
 
+        if (!$center || $center->current_occupancy + (int) $evacuee->family_members > $center->capacity) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This evacuation center does not have enough capacity.',
+                'data' => $responseData,
+            ], 422);
+        }
+
         $evacuee->update([
             'status' => 'checked_in',
             'checked_in_at' => now(),
         ]);
 
         if ($center) {
+            $previousOccupancy = $center->current_occupancy;
             $center->increment('current_occupancy', (int) ($evacuee->family_members ?: 1));
-            $center->updateStatus();
+            $center->updateStatus($previousOccupancy);
         }
 
         $responseData['checked_in_at'] = now()->format('M d, Y h:i A');

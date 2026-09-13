@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Donation;
 use App\Models\EvacuationCenter;
+use App\Models\Evacuee;
 use App\Models\InventoryItem;
 use App\Models\ReliefOperation;
 use App\Models\ReliefDistribution;
@@ -36,7 +37,7 @@ class DashboardController extends Controller
             'active_ops'          => ReliefOperation::where('status','active')->count(),
             'total_distributions' => ReliefDistribution::count(),
             'total_capacity'      => EvacuationCenter::where('status','!=','closed')->sum('capacity'),
-            'total_occupancy'     => EvacuationCenter::where('status','!=','closed')->sum('current_occupancy'),
+            'total_occupancy'     => Evacuee::where('status', 'checked_in')->sum('family_members'),
             'received_donations'  => Donation::where('status', 'received')->count(),
             'low_stock_items'     => InventoryItem::whereIn('status',['low_stock','depleted'])->get(),
             'active_operations'   => ReliefOperation::where('status','active')->latest()->take(5)->get(),

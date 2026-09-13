@@ -51,13 +51,14 @@ class ApiEvacuationController extends Controller
             ])
             ->orderBy('status')
             ->get();
+        $centers->each->syncOccupancy();
 
         $summary = [
             'total_centers'   => $centers->count(),
             'active'          => $centers->where('status', 'open')->count(),
             'full'            => $centers->where('status', 'full')->count(),
             'closed'          => $centers->where('status', 'closed')->count(),
-            'total_evacuees'  => $centers->sum('current_occupancy'),
+            'total_evacuees'  => $centers->sum('active_count'),
         ];
 
         return response()->json([
@@ -84,6 +85,7 @@ class ApiEvacuationController extends Controller
     public function show(int $id)
     {
         $center = EvacuationCenter::findOrFail($id);
+        $center->syncOccupancy();
         $center->load('activeEvacuees');
 
         return response()->json([

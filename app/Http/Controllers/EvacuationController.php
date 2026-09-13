@@ -7,7 +7,9 @@ use App\Models\Evacuee;
 use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class EvacuationController extends Controller
 {
@@ -19,6 +21,8 @@ class EvacuationController extends Controller
             ])
             ->orderBy('status')
             ->get();
+
+        $centers->each->syncOccupancy();
 
         $summary = [
             'total'          => $centers->count(),
@@ -109,11 +113,21 @@ class EvacuationController extends Controller
 
     public function show(EvacuationCenter $evacuation)
     {
+        $evacuation->syncOccupancy();
         $evacuees = $evacuation->evacuees()
             ->orderByDesc('checked_in_at')
             ->get();
 
-        return view('evacuation.show', compact('evacuation', 'evacuees'));
+        $availableCenters = EvacuationCenter::where('id', '!=', $evacuation->id)
+            ->whereIn('status', ['active', 'full'])
+            ->orderBy('name')
+            ->get()
+            ->filter(function (EvacuationCenter $center) {
+                $center->syncOccupancy();
+                return $center->current_occupancy < $center->capacity;
+            });
+
+        return view('evacuation.show', compact('evacuation', 'evacuees', 'availableCenters'));
     }
 
     public function evacuees(EvacuationCenter $evacuation)
@@ -267,12 +281,37 @@ class EvacuationController extends Controller
                 ->withInput();
         }
 
+        $duplicate = $evacuation->activeEvacuees()
+            ->where(function ($query) use ($request) {
+                if ($request->filled('id_presented')) {
+                    $query->where('id_presented', $request->id_presented);
+                } else {
+                    $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)])
+                        ->when($request->filled('family_group'), fn ($q) => $q->where('family_group', $request->family_group));
+                }
+            })
+            ->exists();
+
+        if ($duplicate) {
+            return redirect()->back()
+                ->withErrors(['name' => 'This evacuee or household is already checked in.'])
+                ->withInput();
+        }
+
+        $evacuation->syncOccupancy();
+        if ($evacuation->current_occupancy + (int) $request->family_members > $evacuation->capacity) {
+            return redirect()->back()
+                ->withErrors(['family_members' => 'This check-in would exceed the center capacity.'])
+                ->withInput();
+        }
+
         $evacuee = Evacuee::create([
             ...$request->only([
                 'name', 'family_group', 'family_members', 'barangay_origin',
                 'needs', 'id_presented', 'notes',
             ]),
             'evacuation_center_id' => $evacuation->id,
+                'status'              => 'checked_in',
             'checked_in_at'        => now(),
             'recorded_by'          => Auth::id(),
         ]);
@@ -287,8 +326,9 @@ class EvacuationController extends Controller
         );
 
         // Update occupancy count
+        $previousOccupancy = $evacuation->current_occupancy;
         $evacuation->increment('current_occupancy', $request->family_members);
-        $evacuation->updateStatus();
+        $evacuation->updateStatus($previousOccupancy);
 
         return redirect()->route('evacuation.show', $evacuation)
             ->with('success', 'Evacuee checked in successfully.');
@@ -297,6 +337,10 @@ class EvacuationController extends Controller
     // Check out an evacuee
     public function checkout(EvacuationCenter $evacuation, Evacuee $evacuee)
     {
+        if ($evacuee->evacuation_center_id !== $evacuation->id || $evacuee->status !== 'checked_in') {
+            return redirect()->back()->withErrors(['evacuee' => 'This evacuee is not actively checked in at this center.']);
+        }
+
         $evacuee->update([
             'status'         => 'checked_out',
             'checked_out_at' => now(),
@@ -318,5 +362,63 @@ class EvacuationController extends Controller
 
         return redirect()->route('evacuation.show', $evacuation)
             ->with('success', 'Evacuee checked out.');
+    }
+
+    public function transfer(Request $request, EvacuationCenter $evacuation, Evacuee $evacuee)
+    {
+        $validator = Validator::make($request->all(), [
+            'target_center_id' => 'required|exists:evacuation_centers,id',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        if ($evacuee->evacuation_center_id !== $evacuation->id || $evacuee->status !== 'checked_in') {
+            return redirect()->back()->withErrors(['target_center_id' => 'This evacuee is not actively checked in at this center.']);
+        }
+
+        $target = EvacuationCenter::findOrFail($request->target_center_id);
+        if ($target->id === $evacuation->id) {
+            return redirect()->back()->withErrors(['target_center_id' => 'Choose a different evacuation center.']);
+        }
+
+        [$source, $target] = DB::transaction(function () use ($evacuation, $target, $evacuee, $request) {
+            $source = EvacuationCenter::whereKey($evacuation->id)->lockForUpdate()->firstOrFail();
+            $target = EvacuationCenter::whereKey($target->id)->lockForUpdate()->firstOrFail();
+            $source->syncOccupancy();
+            $target->syncOccupancy();
+
+            if (!in_array($target->status, ['open', 'active'], true)
+                || $target->current_occupancy + $evacuee->family_members > $target->capacity) {
+                throw ValidationException::withMessages([
+                    'target_center_id' => 'The selected center is closed or does not have enough capacity.',
+                ]);
+            }
+
+            $evacuee->update([
+                'evacuation_center_id' => $target->id,
+                'notes' => trim(($evacuee->notes ? $evacuee->notes . "\n" : '') . 'Transferred: ' . ($request->notes ?: 'No transfer note.')),
+            ]);
+            $source->syncOccupancy();
+            $target->syncOccupancy();
+            $source->updateStatus();
+            $target->updateStatus();
+
+            return [$source, $target];
+        });
+
+        AuditService::log(
+            'updated',
+            'evacuation',
+            "Evacuee transfer: {$evacuee->name}",
+            $evacuee->id,
+            ['from_center' => $source->name],
+            ['to_center' => $target->name]
+        );
+
+        return redirect()->route('evacuation.show', $target)
+            ->with('success', 'Evacuee transferred successfully.');
     }
 }
