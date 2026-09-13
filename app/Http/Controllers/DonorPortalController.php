@@ -11,7 +11,7 @@ class DonorPortalController extends Controller
     {
         $user = Auth::user();
         $donations = Donation::query()
-            ->where('donor_email', $user->email)
+            ->whereRaw('LOWER(donor_email) = ?', [strtolower($user->email)])
             ->latest()
             ->get();
 

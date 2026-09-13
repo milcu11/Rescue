@@ -9,6 +9,10 @@
 
 ## About Laravel
 
+## RescuePH Donation Scope
+
+RescuePH includes online monetary donation processing through PayMongo. The application creates checkout sessions, supports GCash, PayMaya, card, and GrabPay methods, verifies completed payments, handles payment webhooks, and records payment history. In-kind donations are recorded by authorized staff and can be verified into inventory.
+
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).

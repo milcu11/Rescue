@@ -17,6 +17,9 @@ class Donation extends Model
         'type',
         'amount',
         'items_description',
+        'inventory_item_id',
+        'inventory_quantity',
+        'inventory_linked_at',
         'status',
         'received_by',
         'received_at',
@@ -30,6 +33,7 @@ class Donation extends Model
 
     protected $casts = [
         'received_at' => 'datetime',
+        'inventory_linked_at' => 'datetime',
     ];
 
     protected static function booted(): void
@@ -72,5 +76,23 @@ class Donation extends Model
     public function latestPayment()
     {
         return $this->hasOne(DonationPayment::class)->latestOfMany();
+    }
+
+    public function inventoryItem()
+    {
+        return $this->belongsTo(InventoryItem::class);
+    }
+
+    public function canTransitionTo(string $nextStatus): bool
+    {
+        $allowed = [
+            'pending' => ['pending', 'received'],
+            'received' => ['received', 'verified', 'allocated'],
+            'verified' => ['verified', 'allocated'],
+            'allocated' => ['allocated', 'distributed'],
+            'distributed' => ['distributed'],
+        ];
+
+        return in_array($nextStatus, $allowed[$this->status] ?? [], true);
     }
 }

@@ -10,7 +10,7 @@
 @section('content')
   @php
     $totalDonations = $donations->count();
-    $receivedDonations = $donations->whereIn('status', ['received', 'distributed'])->count();
+    $receivedDonations = $donations->whereIn('status', ['received', 'verified', 'allocated', 'distributed'])->count();
     $pendingDonations = $donations->where('status', 'pending')->count();
     $inKindDonations = $donations->where('type', 'in-kind')->count();
   @endphp
@@ -84,6 +84,8 @@
                       <td>
                         @if($donation->status === 'pending')<span class="badge badge-warning">Pending</span>
                         @elseif($donation->status === 'received')<span class="badge badge-success">Received</span>
+                        @elseif($donation->status === 'verified')<span class="badge badge-info">Verified</span>
+                        @elseif($donation->status === 'allocated')<span class="badge badge-primary">Allocated</span>
                         @else<span class="badge badge-primary">Distributed</span>@endif
                       </td>
                       <td>{{ $donation->created_at->format('M d, Y') }}</td>

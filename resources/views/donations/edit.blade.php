@@ -86,12 +86,38 @@
       <div class="mb-3">
         <label class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
         <select name="status" class="form-select @error('status') is-invalid @enderror">
-          @foreach(['pending','received','distributed'] as $s)
+          @foreach(['pending','received','verified','allocated','distributed'] as $s)
             <option value="{{ $s }}" {{ old('status', $donation->status) === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
           @endforeach
         </select>
         @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
       </div>
+
+      @if($donation->type === 'in-kind' && !$donation->inventory_linked_at)
+        <div class="border rounded p-3 mb-3 bg-light">
+          <h6 class="text-muted text-uppercase mb-3" style="font-size:11px;letter-spacing:.05em;">Inventory Verification</h6>
+          <div class="row">
+            <div class="col-md-7 mb-3">
+              <label class="form-label fw-semibold">Inventory Item</label>
+              <select name="inventory_item_id" class="form-select @error('inventory_item_id') is-invalid @enderror">
+                <option value="">Select matching inventory item</option>
+                @foreach($inventoryItems as $item)
+                  <option value="{{ $item->id }}" {{ old('inventory_item_id') == $item->id ? 'selected' : '' }}>{{ $item->name }} ({{ $item->unit }})</option>
+                @endforeach
+              </select>
+              @error('inventory_item_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="col-md-5 mb-3">
+              <label class="form-label fw-semibold">Quantity Received</label>
+              <input type="number" name="inventory_quantity" min="1" class="form-control @error('inventory_quantity') is-invalid @enderror" value="{{ old('inventory_quantity', $donation->inventory_quantity) }}">
+              @error('inventory_quantity')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+          </div>
+          <small class="text-muted">Choose status <strong>Verified</strong> to add this donation to inventory.</small>
+        </div>
+      @elseif($donation->inventory_linked_at)
+        <div class="alert alert-success">Linked to inventory on {{ $donation->inventory_linked_at->format('M d, Y h:i A') }}.</div>
+      @endif
 
       <div class="row">
         <div class="col-md-6 mb-3">

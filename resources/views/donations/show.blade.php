@@ -21,6 +21,10 @@
           <span class="badge bg-warning text-dark fs-6">Pending</span>
         @elseif($donation->status === 'received')
           <span class="badge bg-success fs-6">Received</span>
+        @elseif($donation->status === 'verified')
+          <span class="badge bg-info fs-6">Verified</span>
+        @elseif($donation->status === 'allocated')
+          <span class="badge bg-primary fs-6">Allocated</span>
         @else
           <span class="badge bg-primary fs-6">Distributed</span>
         @endif

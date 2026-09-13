@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Donation;
+use App\Models\InventoryItem;
+use App\Models\InventoryMovement;
 use App\Services\AuditService;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class DonationController extends Controller
@@ -21,6 +24,8 @@ class DonationController extends Controller
             'total'       => $donations->count(),
             'pending'     => $donations->where('status', 'pending')->count(),
             'received'    => $donations->where('status', 'received')->count(),
+            'verified'    => $donations->where('status', 'verified')->count(),
+            'allocated'   => $donations->where('status', 'allocated')->count(),
             'distributed' => $donations->where('status', 'distributed')->count(),
         ];
 
@@ -48,6 +53,25 @@ class DonationController extends Controller
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
+                ->withInput();
+        }
+
+        $duplicate = Donation::where('created_at', '>=', now()->subDay())
+            ->where('type', $request->type)
+            ->where(function ($query) use ($request) {
+                if ($request->filled('donor_email')) {
+                    $query->where('donor_email', $request->donor_email);
+                } else {
+                    $query->where('donor_name', $request->donor_name);
+                }
+            })
+            ->when($request->type === 'monetary', fn ($query) => $query->where('amount', $request->amount))
+            ->when($request->type === 'in-kind', fn ($query) => $query->where('items_description', $request->items_description))
+            ->exists();
+
+        if ($duplicate) {
+            return redirect()->back()
+                ->withErrors(['donor_name' => 'A matching donation was already recorded within the last 24 hours.'])
                 ->withInput();
         }
 
@@ -86,7 +110,11 @@ class DonationController extends Controller
 
     public function edit(Donation $donation)
     {
-        return view('donations.edit', compact('donation'));
+        $inventoryItems = InventoryItem::where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        return view('donations.edit', compact('donation', 'inventoryItems'));
     }
 
     public function update(Request $request, Donation $donation)
@@ -98,7 +126,9 @@ class DonationController extends Controller
             'type'              => 'required|in:in-kind,monetary',
             'amount'            => 'nullable|numeric|min:0|required_if:type,monetary',
             'items_description' => 'nullable|string|required_if:type,in-kind',
-            'status'            => 'required|in:pending,received,distributed',
+            'status'            => 'required|in:pending,received,verified,allocated,distributed',
+            'inventory_item_id' => 'nullable|exists:inventory_items,id|required_if:status,verified',
+            'inventory_quantity'=> 'nullable|integer|min:1|required_if:status,verified',
             'received_by'       => 'nullable|string|max:255',
             'received_at'       => 'nullable|date',
             'location'          => 'nullable|string|max:255',
@@ -111,14 +141,62 @@ class DonationController extends Controller
                 ->withInput();
         }
 
+        if (!$donation->canTransitionTo($request->status)) {
+            return redirect()->back()
+                ->withErrors(['status' => "Donation status cannot move from {$donation->status} to {$request->status}."])
+                ->withInput();
+        }
+
+        if ($request->status === 'verified' && $donation->type !== 'in-kind') {
+            return redirect()->back()
+                ->withErrors(['status' => 'Only in-kind donations require inventory verification.'])
+                ->withInput();
+        }
+
         $old = $donation->toArray();
 
-        $donation->update($request->only([
-            'donor_name', 'donor_contact', 'donor_email',
-            'type', 'amount', 'items_description',
-            'status', 'received_by', 'received_at',
-            'location', 'notes',
-        ]));
+        DB::transaction(function () use ($request, $donation) {
+            if ($request->status === 'verified' && !$donation->inventory_linked_at) {
+                $item = InventoryItem::whereKey($request->inventory_item_id)
+                    ->where('is_active', true)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$item) {
+                    abort(422, 'The selected inventory item is inactive or unavailable.');
+                }
+
+                $before = $item->quantity;
+                $item->increment('quantity', (int) $request->inventory_quantity);
+                $item->refresh()->syncStatus();
+
+                InventoryMovement::create([
+                    'inventory_item_id' => $item->id,
+                    'type' => 'stock_in',
+                    'quantity' => $request->inventory_quantity,
+                    'quantity_before' => $before,
+                    'quantity_after' => $item->quantity,
+                    'reference' => 'IN-DON-' . $donation->tracking_code,
+                    'user_id' => Auth::id(),
+                    'occurred_at' => now(),
+                    'source_type' => Donation::class,
+                    'source_id' => $donation->id,
+                    'notes' => "Verified in-kind donation {$donation->tracking_code}.",
+                ]);
+
+                $donation->inventory_item_id = $item->id;
+                $donation->inventory_quantity = $request->inventory_quantity;
+                $donation->inventory_linked_at = now();
+            }
+
+            $donation->fill($request->only([
+                'donor_name', 'donor_contact', 'donor_email',
+                'type', 'amount', 'items_description',
+                'status', 'received_by', 'received_at',
+                'location', 'notes',
+            ]));
+            $donation->save();
+        });
 
         AuditService::updated(
             'donations',

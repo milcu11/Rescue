@@ -131,6 +131,10 @@
               <span class="badge bg-warning text-dark">Pending</span>
             @elseif($donation->status === 'received')
               <span class="badge bg-success">Received</span>
+            @elseif($donation->status === 'verified')
+              <span class="badge bg-info">Verified</span>
+            @elseif($donation->status === 'allocated')
+              <span class="badge bg-primary">Allocated</span>
             @else
               <span class="badge bg-primary">Distributed</span>
             @endif
