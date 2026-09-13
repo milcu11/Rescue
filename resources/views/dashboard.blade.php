@@ -108,7 +108,7 @@
   <div class="col-md-6">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-bell mr-2"></i>Operational Alerts</h3>
+        <h3 class="card-title dashboard-section-title dashboard-title-alerts"><i class="fas fa-bell mr-2"></i>Operational Alerts</h3>
       </div>
       <div class="card-body p-0">
         <ul class="list-group list-group-flush">
@@ -129,7 +129,7 @@
   <div class="col-md-6">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-exclamation-triangle mr-2"></i>Low Stock Items</h3>
+        <h3 class="card-title dashboard-section-title dashboard-title-inventory"><i class="fas fa-exclamation-triangle mr-2"></i>Low Stock Items</h3>
       </div>
       <div class="card-body">
         @php $low = $stats['low_stock_items'] ?? collect(); @endphp
@@ -172,9 +172,9 @@
 </div>
 
 <div class="row">
-  <div class="col-lg-6">
+  <div class="col-12">
     <div class="card">
-      <div class="card-header"><h3 class="card-title"><i class="fas fa-box-open mr-2"></i>Most-Needed Items</h3></div>
+      <div class="card-header"><h3 class="card-title dashboard-section-title dashboard-title-relief"><i class="fas fa-box-open mr-2"></i>Most-Needed Items</h3></div>
       <div class="card-body p-0">
         <ul class="list-group list-group-flush">
           @forelse($stats['most_needed_items'] ?? [] as $needed)
@@ -186,9 +186,12 @@
       </div>
     </div>
   </div>
-  <div class="col-lg-6">
+</div>
+
+<div class="row">
+  <div class="col-12">
     <div class="card">
-      <div class="card-header"><h3 class="card-title"><i class="fas fa-history mr-2"></i>Recent Activity</h3></div>
+      <div class="card-header"><h3 class="card-title dashboard-section-title dashboard-title-activity"><i class="fas fa-history mr-2"></i>Recent Activity</h3></div>
       <div class="card-body p-0">
         <ul class="list-group list-group-flush">
           @forelse($stats['recent_activity'] ?? [] as $activity)
@@ -222,6 +225,21 @@
 @endsection
 
 @push('styles')
+<style>
+  .dashboard-section-title {
+    font-weight: 600;
+  }
+
+  .dashboard-section-title i {
+    width: 1.25rem;
+    text-align: center;
+  }
+
+  .dashboard-title-alerts { color: #9b2c2c; }
+  .dashboard-title-inventory { color: #b45309; }
+  .dashboard-title-relief { color: #166534; }
+  .dashboard-title-activity { color: #1d4ed8; }
+</style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 @endpush
 
