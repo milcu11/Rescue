@@ -11,6 +11,7 @@ use App\Models\EvacuationCenter;
 use App\Models\InventoryItem;
 use App\Models\ReliefDistribution;
 use App\Models\ReliefOperation;
+use App\Models\Evacuee;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -37,7 +38,7 @@ class ReportController extends Controller
                 'total' => EvacuationCenter::count(),
                 'active' => EvacuationCenter::where('status', 'active')->count(),
                 'full' => EvacuationCenter::where('status', 'full')->count(),
-                'occupancy' => EvacuationCenter::sum('current_occupancy'),
+                'occupancy' => Evacuee::where('status', 'checked_in')->sum('family_members'),
                 'capacity' => EvacuationCenter::sum('capacity'),
             ],
             'relief' => [

@@ -13,6 +13,10 @@
 
 RescuePH includes online monetary donation processing through PayMongo. The application creates checkout sessions, supports GCash, PayMaya, card, and GrabPay methods, verifies completed payments, handles payment webhooks, and records payment history. In-kind donations are recorded by authorized staff and can be verified into inventory.
 
+## Dashboard and Map Scope
+
+Dashboard totals are calculated from the database on each page request. The dashboard map uses Leaflet with OpenStreetMap tiles loaded over the internet. Evacuation center coordinates come from stored latitude/longitude values; when those are missing, the application uses municipality/barangay fallback coordinates. Map markers refresh when the dashboard page is loaded. The map is not a continuous real-time feed and does not claim live tracking.
+
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).

@@ -8,28 +8,29 @@ use App\Models\Donation;
 use App\Models\EvacuationCenter;
 use App\Models\ReliefOperation;
 use App\Models\ReliefDistribution;
+use App\Models\Evacuee;
 
 class ApiStatsController extends Controller
 {
     public function index()
     {
         $totalCapacity  = EvacuationCenter::where('status','!=','closed')->sum('capacity');
-        $totalOccupancy = EvacuationCenter::where('status','!=','closed')->sum('current_occupancy');
+        $totalOccupancy = Evacuee::where('status', 'checked_in')->sum('family_members');
 
         return response()->json([
             'success' => true,
             'data' => [
                 'inventory' => [
-                    'total'     => InventoryItem::count(),
-                    'low_stock' => InventoryItem::whereIn('status',['low_stock','depleted'])->count(),
-                    'depleted'  => InventoryItem::where('status','depleted')->count(),
+                    'total'     => InventoryItem::where('is_active', true)->count(),
+                    'low_stock' => InventoryItem::where('is_active', true)->whereIn('status',['low_stock','depleted'])->count(),
+                    'depleted'  => InventoryItem::where('is_active', true)->where('status','depleted')->count(),
                 ],
                 'donations' => [
                     'total'           => Donation::count(),
-                    'received'        => Donation::where('status','received')->count(),
+                    'received'        => Donation::whereIn('status', ['received', 'verified', 'allocated', 'distributed'])->count(),
                     'pending'         => Donation::where('status','pending')->count(),
                     'monetary_total'  => Donation::where('type','monetary')
-                                            ->where('status','received')
+                                            ->whereIn('status', ['received', 'verified', 'allocated', 'distributed'])
                                             ->sum('amount'),
                 ],
                 'evacuation' => [

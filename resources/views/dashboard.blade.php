@@ -9,6 +9,24 @@
 
 @section('content')
 
+<div class="card mb-3">
+  <div class="card-body d-flex flex-wrap justify-content-between align-items-center py-2">
+    <div>
+      <strong>Operational snapshot</strong>
+      <span class="text-muted ml-2">Database totals for the selected activity window.</span>
+    </div>
+    <form method="GET" action="{{ route('dashboard') }}" class="form-inline mt-2 mt-md-0">
+      <label for="dashboardPeriod" class="mr-2 mb-0 text-muted">Activity period</label>
+      <select id="dashboardPeriod" name="period" class="form-control form-control-sm" onchange="this.form.submit()">
+        <option value="7" {{ ($stats['period'] ?? '30') === '7' ? 'selected' : '' }}>Last 7 days</option>
+        <option value="30" {{ ($stats['period'] ?? '30') === '30' ? 'selected' : '' }}>Last 30 days</option>
+        <option value="90" {{ ($stats['period'] ?? '30') === '90' ? 'selected' : '' }}>Last 90 days</option>
+        <option value="all" {{ ($stats['period'] ?? '30') === 'all' ? 'selected' : '' }}>All time</option>
+      </select>
+    </form>
+  </div>
+</div>
+
 <div class="row">
   <div class="col-lg-3 col-6">
     <div class="small-box small-box-red text-white">
@@ -72,6 +90,21 @@
 </div>
 
 <div class="row">
+  <div class="col-lg-3 col-6">
+    <div class="small-box small-box-purple text-white"><div class="inner"><h3>{{ $stats['total_centers'] ?? 0 }}</h3><p>Evacuation Centers</p></div><div class="icon"><i class="fas fa-building"></i></div></div>
+  </div>
+  <div class="col-lg-3 col-6">
+    <div class="small-box small-box-yellow text-white"><div class="inner"><h3>{{ $stats['total_evacuees'] ?? 0 }}</h3><p>Active Evacuees</p></div><div class="icon"><i class="fas fa-users"></i></div></div>
+  </div>
+  <div class="col-lg-3 col-6">
+    <div class="small-box small-box-brown text-white"><div class="inner"><h3>{{ $stats['inventory_total'] ?? 0 }}</h3><p>Active Inventory Items</p></div><div class="icon"><i class="fas fa-boxes"></i></div></div>
+  </div>
+  <div class="col-lg-3 col-6">
+    <div class="small-box small-box-red text-white"><div class="inner"><h3>{{ $stats['donations_total'] ?? 0 }}</h3><p>Total Donations</p></div><div class="icon"><i class="fas fa-heart"></i></div></div>
+  </div>
+</div>
+
+<div class="row">
   <div class="col-md-6">
     <div class="card">
       <div class="card-header">
@@ -80,7 +113,11 @@
       <div class="card-body p-0">
         <ul class="list-group list-group-flush">
           <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span><span class="badge badge-warning mr-2">Warning</span> No active relief operations</span>
+            @if(($stats['active_ops'] ?? 0) > 0)
+              <span><span class="badge badge-success mr-2">Active</span> {{ $stats['active_ops'] }} relief operation(s) in progress</span>
+            @else
+              <span><span class="badge badge-warning mr-2">Warning</span> No active relief operations</span>
+            @endif
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <span><span class="badge badge-info mr-2">Info</span> System ready</span>
@@ -113,6 +150,58 @@
   </div>
 </div>
 
+<div class="card mb-3">
+  <div class="card-header"><h3 class="card-title"><i class="fas fa-chart-bar mr-2"></i>Operational Metrics</h3></div>
+  <div class="card-body">
+    @php
+      $metricValues = [
+        'Occupancy' => (int) ($stats['occupancy_percent'] ?? 0),
+        'Distributions' => (int) ($stats['total_distributions'] ?? 0),
+        'Donations' => (int) ($stats['donations_total'] ?? 0),
+        'Low-stock items' => count($stats['low_stock_items'] ?? []),
+      ];
+      $metricMax = max(1, max($metricValues));
+    @endphp
+    @foreach($metricValues as $label => $value)
+      <div class="mb-3">
+        <div class="d-flex justify-content-between small mb-1"><span>{{ $label }}</span><strong>{{ number_format($value) }}{{ $label === 'Occupancy' ? '%' : '' }}</strong></div>
+        <div class="progress" style="height:10px;"><div class="progress-bar bg-danger" role="progressbar" style="width:{{ min(100, round(($value / $metricMax) * 100)) }}%" aria-label="{{ $label }}"></div></div>
+      </div>
+    @endforeach
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header"><h3 class="card-title"><i class="fas fa-box-open mr-2"></i>Most-Needed Items</h3></div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          @forelse($stats['most_needed_items'] ?? [] as $needed)
+            <li class="list-group-item d-flex justify-content-between"><span>{{ $needed->item?->name ?? 'Item' }}</span><strong>{{ number_format($needed->total_quantity) }} distributed</strong></li>
+          @empty
+            <li class="list-group-item text-muted">No distribution data yet.</li>
+          @endforelse
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header"><h3 class="card-title"><i class="fas fa-history mr-2"></i>Recent Activity</h3></div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          @forelse($stats['recent_activity'] ?? [] as $activity)
+            <li class="list-group-item d-flex justify-content-between"><span><strong>{{ ucfirst($activity->action) }}</strong> {{ $activity->record_label ?? $activity->module }}</span><small class="text-muted">{{ $activity->created_at->diffForHumans() }}</small></li>
+          @empty
+            <li class="list-group-item text-muted">No activity in this period.</li>
+          @endforelse
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row">
   <div class="col-12">
     <div class="card">
@@ -124,6 +213,7 @@
       </div>
       <div class="card-body p-0">
         <div id="evacuationMap" style="height:400px;"></div>
+        <div class="px-3 py-2 small text-muted">Map source: Leaflet with OpenStreetMap tiles. Center coordinates come from the database; missing coordinates use configured municipality fallbacks. Data refreshes when this page is loaded and is not continuous real-time tracking.</div>
       </div>
     </div>
   </div>
@@ -143,13 +233,7 @@
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
-  @php
-    $evacuationCenters = \App\Models\EvacuationCenter::whereNotNull('latitude')
-        ->whereNotNull('longitude')
-        ->get(['name','latitude','longitude','status','current_occupancy','capacity']);
-  @endphp
-
-  var centers = @json($evacuationCenters);
+  var centers = @json($stats['map_centers'] ?? []);
 
   centers.forEach(function(c) {
     var markerStyle = c.status === 'full'
