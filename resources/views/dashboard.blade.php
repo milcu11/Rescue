@@ -227,6 +227,7 @@
 
   .dashboard-section-title i {
     width: 1.25rem;
+    color: inherit !important;
     text-align: center;
   }
 
@@ -281,7 +282,7 @@
       cache: 'no-store'
     })
       .then(function(response) { return response.ok ? response.json() : Promise.reject(response.status); })
-      .then(renderCenters)
+      .then(function(payload) { renderCenters(Array.isArray(payload) ? payload : (payload.data || [])); })
       .catch(function() { /* Keep the last known map state when polling is unavailable. */ });
   }
 

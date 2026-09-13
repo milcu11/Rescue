@@ -34,10 +34,19 @@
     body.drms-admin-theme .card-header .card-title {
       color: #6d1f2a;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      line-height: 1.25;
     }
 
     body.drms-admin-theme .card-header .card-title i {
       color: inherit;
+      flex: 0 0 1.15rem;
+      font-size: 0.95em;
+      line-height: 1;
+      margin-right: 0 !important;
+      text-align: center;
     }
 
     /* Ensure modals and backdrops show correctly without changing the theme visuals */

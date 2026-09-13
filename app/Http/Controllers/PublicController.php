@@ -428,7 +428,7 @@ class PublicController extends Controller
             'san juan' => [14.5240455, 121.2676781],
         ];
 
-        return EvacuationCenter::whereIn('status', ['active', 'full'])
+        $centers = EvacuationCenter::whereIn('status', ['active', 'full'])
             ->get(['id', 'name', 'barangay', 'latitude', 'longitude', 'capacity', 'current_occupancy', 'status'])
             ->map(function (EvacuationCenter $center) use ($barangayCoordinates) {
                 $center->syncOccupancy();
@@ -442,7 +442,19 @@ class PublicController extends Controller
                 $center->longitude = $fallback[1];
 
                 return $center;
-            });
+            })
+            ->values()
+            ->map(fn (EvacuationCenter $center) => [
+                'id' => $center->id,
+                'name' => $center->name,
+                'latitude' => (float) $center->latitude,
+                'longitude' => (float) $center->longitude,
+                'capacity' => (int) $center->capacity,
+                'current_occupancy' => (int) $center->current_occupancy,
+                'status' => $center->status,
+            ]);
+
+        return response()->json($centers);
     }
 
     public function evacCenter(EvacuationCenter $evacuationCenter)

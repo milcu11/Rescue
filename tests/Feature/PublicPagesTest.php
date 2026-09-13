@@ -97,6 +97,15 @@ class PublicPagesTest extends TestCase
             'nearest',
         ]);
     }
+    
+    public function test_evacuation_map_data_returns_synchronized_occupancy(): void
+    {
+        $response = $this->getJson(route('public.evac_centers.map_data'));
+
+        $response->assertOk()
+            ->assertJsonPath('0.name', 'San Juan Evacuation')
+            ->assertJsonPath('0.current_occupancy', 0);
+    }
 
     public function test_family_registration_and_checkin_flow(): void
     {
