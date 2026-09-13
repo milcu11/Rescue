@@ -135,4 +135,20 @@ class EvacuationManagementTest extends TestCase
 
         $response->assertOk()->assertSee('4');
     }
+
+    public function test_legacy_registered_record_with_checkin_time_counts_as_occupied(): void
+    {
+        $user = $this->user();
+        $center = $this->center($user, 'Legacy Center', 20);
+        Evacuee::create([
+            'evacuation_center_id' => $center->id,
+            'name' => 'Legacy Family',
+            'family_members' => 3,
+            'status' => 'registered',
+            'checked_in_at' => now(),
+            'recorded_by' => $user->id,
+        ]);
+
+        $this->assertSame(3, $center->fresh()->syncOccupancy());
+    }
 }

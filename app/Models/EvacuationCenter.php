@@ -26,7 +26,13 @@ class EvacuationCenter extends Model
     public function activeEvacuees()
     {
         return $this->hasMany(Evacuee::class)
-            ->where('status', 'checked_in');
+            ->where(function ($query) {
+                $query->where('status', 'checked_in')
+                    ->orWhere(function ($legacy) {
+                        $legacy->where('status', 'registered')
+                            ->whereNotNull('checked_in_at');
+                    });
+            });
     }
 
     public function creator()

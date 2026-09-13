@@ -174,18 +174,6 @@
 <div class="row">
   <div class="col-12">
     <div class="card">
-      <div class="card-header"><h3 class="card-title dashboard-section-title dashboard-title-map"><i class="fas fa-map-marker-alt mr-2"></i>Active Evacuation Centers — Map View</h3></div>
-      <div class="card-body p-0">
-        <div id="evacuationMap" style="height:400px;"></div>
-        <div class="px-3 py-2 small text-muted">Map source: Leaflet with OpenStreetMap tiles. Occupancy refreshes from active check-ins every 30 seconds. Center coordinates come from the database; missing coordinates use configured municipality fallbacks.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-12">
-    <div class="card">
       <div class="card-header"><h3 class="card-title dashboard-section-title dashboard-title-relief"><i class="fas fa-box-open mr-2"></i>Most-Needed Items</h3></div>
       <div class="card-body p-0">
         <ul class="list-group list-group-flush">
@@ -195,6 +183,18 @@
             <li class="list-group-item text-muted">No distribution data yet.</li>
           @endforelse
         </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header"><h3 class="card-title dashboard-section-title dashboard-title-map"><i class="fas fa-map-marker-alt mr-2"></i>Active Evacuation Centers — Map View</h3></div>
+      <div class="card-body p-0">
+        <div id="evacuationMap" style="height:400px;"></div>
+        <div class="px-3 py-2 small text-muted">Map source: Leaflet with OpenStreetMap tiles. Occupancy refreshes from active check-ins every 30 seconds. Center coordinates come from the database; missing coordinates use configured municipality fallbacks.</div>
       </div>
     </div>
   </div>
