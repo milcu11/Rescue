@@ -196,7 +196,7 @@
         <span class="badge badge-light">Live occupancy polling</span>
       </div>
       <div class="card-body p-0">
-        <div id="evacuationMap" class="dashboard-map"></div>
+        <div id="evacuationMap" class="drms-internal-evac-map"></div>
         <div class="dashboard-map-legend px-3 py-2 border-top small text-muted">
           <span class="dashboard-map-legend__dot dashboard-map-legend__dot--open"></span> Open with slots
           <span class="dashboard-map-legend__dot dashboard-map-legend__dot--full ml-3"></span> Full
@@ -244,7 +244,7 @@
   body.drms-admin-theme .card-header .card-title.dashboard-title-map { color: #0f766e; }
   body.drms-admin-theme .card-header .card-title.dashboard-title-activity { color: #1d4ed8; }
   .dashboard-map-card { border-radius: 10px; overflow: hidden; }
-  .dashboard-map { height: 400px; min-height: 320px; width: 100%; }
+  .drms-internal-evac-map { height: 380px; min-height: 320px; width: 100%; }
   .dashboard-map-legend { background: #fff; }
   .dashboard-map-legend__dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 4px; }
   .dashboard-map-legend__dot--open { background: #2e7d32; border: 2px solid #1b5e20; }
@@ -272,8 +272,8 @@
         : { background: '#2e7d32', border: '#1b5e20' };
       var marker = L.marker([c.latitude, c.longitude], {
         icon: L.divIcon({
-          className: '',
-          html: '<div style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:3px solid ' + markerStyle.border + ';border-radius:50%;background:' + markerStyle.background + ';color:#fff;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.25);"><i class="fas fa-home"></i></div>',
+          className: 'drms-internal-evac-marker-wrap',
+          html: '<div class="drms-internal-evac-marker" style="background:' + markerStyle.background + ';border-color:' + markerStyle.border + '"><i class="fas fa-home"></i></div>',
           iconSize: [36, 36],
           iconAnchor: [18, 18],
           popupAnchor: [0, -18]

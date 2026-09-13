@@ -399,10 +399,30 @@
       text-align: center;
     }
 
+    .drms-internal-evac-map,
     .drms-evac-admin-map {
       height: 380px;
       min-height: 320px;
       width: 100%;
+    }
+
+    .drms-internal-evac-marker-wrap {
+      background: transparent;
+      border: none;
+    }
+
+    .drms-internal-evac-marker,
+    .drms-evac-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border: 3px solid;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
     }
 
     .drms-admin-map-legend {
@@ -819,8 +839,8 @@
             var icon = L.divIcon({
               className: 'drms-evac-marker-wrap',
               html: '<div class="drms-evac-marker" style="background:' + (m.marker_bg || '#2e7d32') + ';border-color:' + (m.border_color || '#1b5e20') + '"><i class="fas ' + (m.icon || 'fa-home') + '"></i></div>',
-              iconSize: [30, 30],
-              iconAnchor: [15, 15]
+              iconSize: [36, 36],
+              iconAnchor: [18, 18]
             });
             var locationNote = hasCoordinates ? '' : '<br><small>Exact location not provided</small>';
             var mk = L.marker([latitude, longitude], { icon: icon })
