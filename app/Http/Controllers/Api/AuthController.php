@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -35,10 +36,14 @@ class AuthController extends Controller
         $user = Auth::guard('api')->user();
 
         if ($user->status !== 'active') {
+            Auth::guard('api')->logout();
+
             return response()->json([
                 'message' => 'Your account is inactive.',
             ], 403);
         }
+
+        AuditService::login($user->name, $user);
 
         return response()->json([
             'token'      => $token,
@@ -67,6 +72,8 @@ class AuthController extends Controller
 
     public function logout()
     {
+        $user = Auth::guard('api')->user();
+        AuditService::logout($user->name, $user);
         Auth::guard('api')->logout();
 
         return response()->json([

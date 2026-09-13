@@ -33,14 +33,14 @@ class LoginController extends Controller
 
             $user = Auth::user();
 
-            AuditService::login($user->name);
-
             if ($user->status !== 'active') {
                 Auth::logout();
                 return back()->withErrors([
                     'email' => 'Your account is inactive. Contact the administrator.',
                 ]);
             }
+
+            AuditService::login($user->name);
 
             return redirect()->intended(route('dashboard'));
         }
