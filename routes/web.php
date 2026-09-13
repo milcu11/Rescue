@@ -173,6 +173,10 @@ Route::middleware('auth')->group(function () {
               ->name('relief.edit');
           Route::put('/relief/{relief}', [ReliefController::class, 'update'])
               ->name('relief.update');
+          Route::patch('/relief/{relief}/approve', [ReliefController::class, 'approve'])
+              ->name('relief.approve');
+          Route::patch('/relief/{relief}/reject', [ReliefController::class, 'reject'])
+              ->name('relief.reject');
           Route::post('/relief/{relief}/distribute',
              [ReliefController::class, 'distribute'])
              ->name('relief.distribute');

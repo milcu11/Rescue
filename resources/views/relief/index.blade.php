@@ -90,6 +90,7 @@
           <th>Operation Name</th>
           <th>Incident</th>
           <th>Status</th>
+          <th>Approval</th>
           <th>Start Date</th>
           <th>Distributions</th>
           <th>Beneficiaries</th>
@@ -118,6 +119,15 @@
               <span class="badge bg-secondary">Cancelled</span>
             @endif
           </td>
+          <td>
+            @if($op->approval_status === 'approved')
+              <span class="badge bg-success">Approved</span>
+            @elseif($op->approval_status === 'rejected')
+              <span class="badge bg-danger">Rejected</span>
+            @else
+              <span class="badge bg-warning text-dark">Pending</span>
+            @endif
+          </td>
           <td>{{ $op->start_date->format('M d, Y') }}</td>
           <td class="text-center">{{ $op->distributions->count() }}</td>
           <td class="text-center">{{ number_format($op->total_beneficiaries) }}</td>
@@ -141,7 +151,7 @@
         </tr>
         @empty
         <tr>
-          <td colspan="8" class="text-center text-muted py-4">
+          <td colspan="9" class="text-center text-muted py-4">
             <i class="bi bi-inbox fs-4 d-block mb-2"></i>
             No relief operations yet.
             @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))

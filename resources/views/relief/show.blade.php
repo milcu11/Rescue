@@ -35,6 +35,18 @@
             </td>
           </tr>
           <tr>
+            <th class="text-muted">Approval</th>
+            <td>
+              @if($relief->approval_status === 'approved')
+                <span class="badge bg-success">Approved</span>
+              @elseif($relief->approval_status === 'rejected')
+                <span class="badge bg-danger">Rejected</span>
+              @else
+                <span class="badge bg-warning text-dark">Pending approval</span>
+              @endif
+            </td>
+          </tr>
+          <tr>
             <th class="text-muted">Incident</th>
             <td>{{ $relief->incident_name ?? '—' }}</td>
           </tr>
@@ -66,6 +78,20 @@
 
         @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
           <a href="{{ route('relief.edit', $relief) }}" class="btn btn-sm btn-outline-primary mt-2"><i class="bi bi-pencil me-1"></i>Edit Operation</a>
+          @if($relief->approval_status !== 'approved')
+            <form action="{{ route('relief.approve', $relief) }}" method="POST" class="d-inline">
+              @csrf
+              @method('PATCH')
+              <button class="btn btn-sm btn-success mt-2"><i class="bi bi-check-circle me-1"></i>Approve</button>
+            </form>
+          @endif
+          @if($relief->approval_status !== 'rejected')
+            <form action="{{ route('relief.reject', $relief) }}" method="POST" class="d-inline">
+              @csrf
+              @method('PATCH')
+              <button class="btn btn-sm btn-outline-danger mt-2"><i class="bi bi-x-circle me-1"></i>Reject</button>
+            </form>
+          @endif
         @endif
       </div>
     </div>
@@ -75,7 +101,7 @@
   <div class="col-md-8">
 
     {{-- Distribute Form --}}
-    @if($relief->status !== 'completed' && $relief->status !== 'cancelled' && !in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
+    @if($relief->approval_status === 'approved' && $relief->status === 'active' && !in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
     <div class="card mb-3">
       <div class="card-header">
         <h3 class="card-title"><i class="bi bi-box-arrow-right me-2"></i>Record Distribution</h3>

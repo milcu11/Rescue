@@ -10,7 +10,7 @@ class ReliefOperation extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name', 'description', 'status',
+        'name', 'description', 'status', 'approval_status',
         'start_date', 'end_date',
         'incident_name', 'incident_id',
         'notes', 'created_by',

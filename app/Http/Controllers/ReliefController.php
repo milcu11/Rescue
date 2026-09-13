@@ -142,9 +142,52 @@ class ReliefController extends Controller
             ->with('success', 'Operation removed.');
     }
 
+    public function approve(ReliefOperation $relief)
+    {
+        $old = $relief->toArray();
+        $relief->update([
+            'approval_status' => 'approved',
+            'status' => $relief->status === 'planned' ? 'active' : $relief->status,
+        ]);
+
+        AuditService::updated(
+            'relief_operations',
+            $relief->name,
+            $relief->id,
+            $old,
+            $relief->fresh()->toArray()
+        );
+
+        return redirect()->route('relief.show', $relief)
+            ->with('success', 'Relief operation approved for distribution.');
+    }
+
+    public function reject(ReliefOperation $relief)
+    {
+        $old = $relief->toArray();
+        $relief->update(['approval_status' => 'rejected']);
+
+        AuditService::updated(
+            'relief_operations',
+            $relief->name,
+            $relief->id,
+            $old,
+            $relief->fresh()->toArray()
+        );
+
+        return redirect()->route('relief.show', $relief)
+            ->with('success', 'Relief operation rejected.');
+    }
+
     // Record a distribution under an operation
     public function distribute(Request $request, ReliefOperation $relief)
     {
+        if ($relief->approval_status !== 'approved' || $relief->status !== 'active') {
+            return redirect()->back()
+                ->withErrors(['distribution' => 'Only approved and active relief operations can release items.'])
+                ->withInput();
+        }
+
         $validator = Validator::make($request->all(), [
             'evacuation_center_id'  => 'required|exists:evacuation_centers,id',
             'inventory_item_id'     => 'required|exists:inventory_items,id',
@@ -156,6 +199,20 @@ class ReliefController extends Controller
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
+                ->withInput();
+        }
+
+        $duplicate = $relief->distributions()
+            ->where('evacuation_center_id', $request->evacuation_center_id)
+            ->where('inventory_item_id', $request->inventory_item_id)
+            ->where('quantity_distributed', $request->quantity_distributed)
+            ->where('beneficiaries_count', $request->beneficiaries_count)
+            ->where('created_at', '>=', now()->subDay())
+            ->exists();
+
+        if ($duplicate) {
+            return redirect()->back()
+                ->withErrors(['quantity_distributed' => 'A matching distribution was already recorded within the last 24 hours.'])
                 ->withInput();
         }
 
