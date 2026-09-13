@@ -249,6 +249,19 @@
   .dashboard-map-legend__dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 4px; }
   .dashboard-map-legend__dot--open { background: #2e7d32; border: 2px solid #1b5e20; }
   .dashboard-map-legend__dot--full { background: #757575; border: 2px solid #424242; }
+  .drms-internal-evac-marker-wrap { background: transparent; border: none; }
+  .drms-internal-evac-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 3px solid;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+  }
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 @endpush
