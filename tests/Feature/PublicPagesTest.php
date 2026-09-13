@@ -97,7 +97,7 @@ class PublicPagesTest extends TestCase
             'nearest',
         ]);
     }
-    
+
     public function test_evacuation_map_data_returns_synchronized_occupancy(): void
     {
         $response = $this->getJson(route('public.evac_centers.map_data'));
