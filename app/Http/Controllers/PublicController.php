@@ -428,9 +428,10 @@ class PublicController extends Controller
             'san juan' => [14.5240455, 121.2676781],
         ];
 
-        return EvacuationCenter::where('status', 'active')
-            ->get(['id', 'name', 'barangay', 'latitude', 'longitude', 'capacity', 'current_occupancy'])
+        return EvacuationCenter::whereIn('status', ['active', 'full'])
+            ->get(['id', 'name', 'barangay', 'latitude', 'longitude', 'capacity', 'current_occupancy', 'status'])
             ->map(function (EvacuationCenter $center) use ($barangayCoordinates) {
+                $center->syncOccupancy();
                 if (is_numeric($center->latitude) && is_numeric($center->longitude)) {
                     return $center;
                 }

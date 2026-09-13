@@ -26,6 +26,20 @@
       font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
 
+    body.drms-admin-theme .content-header h1 {
+      color: #6d1f2a;
+      font-weight: 700;
+    }
+
+    body.drms-admin-theme .card-header .card-title {
+      color: #6d1f2a;
+      font-weight: 600;
+    }
+
+    body.drms-admin-theme .card-header .card-title i {
+      color: inherit;
+    }
+
     /* Ensure modals and backdrops show correctly without changing the theme visuals */
     body.drms-admin-theme .modal,
     body.drms-admin-theme .modal.fade.show,

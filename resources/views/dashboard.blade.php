@@ -174,6 +174,18 @@
 <div class="row">
   <div class="col-12">
     <div class="card">
+      <div class="card-header"><h3 class="card-title dashboard-section-title dashboard-title-map"><i class="fas fa-map-marker-alt mr-2"></i>Active Evacuation Centers — Map View</h3></div>
+      <div class="card-body p-0">
+        <div id="evacuationMap" style="height:400px;"></div>
+        <div class="px-3 py-2 small text-muted">Map source: Leaflet with OpenStreetMap tiles. Occupancy refreshes from active check-ins every 30 seconds. Center coordinates come from the database; missing coordinates use configured municipality fallbacks.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
       <div class="card-header"><h3 class="card-title dashboard-section-title dashboard-title-relief"><i class="fas fa-box-open mr-2"></i>Most-Needed Items</h3></div>
       <div class="card-body p-0">
         <ul class="list-group list-group-flush">
@@ -205,23 +217,6 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="fas fa-map-marker-alt mr-2"></i>
-          Active Evacuation Centers — Map View
-        </h3>
-      </div>
-      <div class="card-body p-0">
-        <div id="evacuationMap" style="height:400px;"></div>
-        <div class="px-3 py-2 small text-muted">Map source: Leaflet with OpenStreetMap tiles. Center coordinates come from the database; missing coordinates use configured municipality fallbacks. Data refreshes when this page is loaded and is not continuous real-time tracking.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 @endsection
 
 @push('styles')
@@ -238,6 +233,7 @@
   .dashboard-title-alerts { color: #9b2c2c; }
   .dashboard-title-inventory { color: #b45309; }
   .dashboard-title-relief { color: #166534; }
+  .dashboard-title-map { color: #0f766e; }
   .dashboard-title-activity { color: #1d4ed8; }
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -251,28 +247,44 @@
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
-  var centers = @json($stats['map_centers'] ?? []);
+  var markerLayer = L.layerGroup().addTo(map);
 
-  centers.forEach(function(c) {
-    var markerStyle = c.status === 'full'
-      ? { background: '#757575', border: '#424242' }
-      : (c.status === 'closed'
-        ? { background: '#424242', border: '#212121' }
-        : { background: '#2e7d32', border: '#1b5e20' });
-    var marker = L.marker([c.latitude, c.longitude], {
-      icon: L.divIcon({
-        className: '',
-        html: '<div style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:3px solid ' + markerStyle.border + ';border-radius:50%;background:' + markerStyle.background + ';color:#fff;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.25);"><i class="fas fa-home"></i></div>',
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
-        popupAnchor: [0, -18]
-      })
-    }).addTo(map);
-    marker.bindPopup(
-      '<strong>' + c.name + '</strong><br>' +
-      'Status: ' + c.status + '<br>' +
-      'Occupancy: ' + c.current_occupancy + ' / ' + c.capacity
-    );
-  });
+  function renderCenters(centers) {
+    markerLayer.clearLayers();
+
+    centers.forEach(function(c) {
+      var markerStyle = c.status === 'full'
+        ? { background: '#757575', border: '#424242' }
+        : { background: '#2e7d32', border: '#1b5e20' };
+      var marker = L.marker([c.latitude, c.longitude], {
+        icon: L.divIcon({
+          className: '',
+          html: '<div style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:3px solid ' + markerStyle.border + ';border-radius:50%;background:' + markerStyle.background + ';color:#fff;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.25);"><i class="fas fa-home"></i></div>',
+          iconSize: [36, 36],
+          iconAnchor: [18, 18],
+          popupAnchor: [0, -18]
+        })
+      }).addTo(markerLayer);
+      marker.bindPopup(
+        '<strong>' + c.name + '</strong><br>' +
+        'Status: ' + c.status + '<br>' +
+        'Occupancy: ' + c.current_occupancy + ' / ' + c.capacity
+      );
+    });
+  }
+
+  renderCenters(@json($stats['map_centers'] ?? []));
+
+  function refreshMapOccupancy() {
+    fetch('{{ route('public.evac_centers.map_data') }}', {
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store'
+    })
+      .then(function(response) { return response.ok ? response.json() : Promise.reject(response.status); })
+      .then(renderCenters)
+      .catch(function() { /* Keep the last known map state when polling is unavailable. */ });
+  }
+
+  window.setInterval(refreshMapOccupancy, 30000);
 </script>
 @endpush
