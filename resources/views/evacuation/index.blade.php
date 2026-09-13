@@ -60,13 +60,16 @@
 
   <div class="row">
     <div class="col-lg-8">
-      <div class="card card-outline card-primary">
-        <div class="card-header">
-          <h3 class="card-title"><i class="fas fa-map mr-1"></i> Center locations</h3>
-          <span class="badge badge-light ml-2">{{ $centers->count() }} on map</span>
+      <div class="card card-outline card-primary drms-admin-map-card">
+        <div class="card-header bg-white d-flex flex-wrap align-items-center justify-content-between">
+          <h3 class="card-title"><i class="fas fa-map-marker-alt"></i> Center locations</h3>
+          <div>
+            <span class="badge badge-light mr-2">{{ $centers->count() }} on map</span>
+            <span class="drms-admin-map-legend"><span class="drms-admin-map-legend__dot drms-admin-map-legend__dot--open"></span> Open <span class="drms-admin-map-legend__dot drms-admin-map-legend__dot--full ml-2"></span> Full</span>
+          </div>
         </div>
         <div class="card-body p-0">
-          <div id="drmsEvacAdminMap" class="drms-evac-admin-map" style="height:360px;"></div>
+          <div id="drmsEvacAdminMap" class="drms-evac-admin-map"></div>
         </div>
       </div>
     </div>
@@ -372,6 +375,53 @@
       justify-content: flex-end;
       max-width: 100%;
     }
+
+    .drms-admin-map-card {
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .drms-admin-map-card .card-header {
+      min-height: 52px;
+    }
+
+    .drms-admin-map-card .card-title {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      color: #0f766e;
+      font-weight: 600;
+    }
+
+    .drms-admin-map-card .card-title i {
+      width: 1.15rem;
+      color: inherit;
+      text-align: center;
+    }
+
+    .drms-evac-admin-map {
+      height: 380px;
+      min-height: 320px;
+      width: 100%;
+    }
+
+    .drms-admin-map-legend {
+      color: #6b5b5b;
+      font-size: .8rem;
+      white-space: nowrap;
+    }
+
+    .drms-admin-map-legend__dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 3px;
+    }
+
+    .drms-admin-map-legend__dot--open { background: #2e7d32; border: 2px solid #1b5e20; }
+    .drms-admin-map-legend__dot--full { background: #757575; border: 2px solid #424242; }
 
     @media (max-width: 575.98px) {
       #evacKpiRow .small-box .icon {

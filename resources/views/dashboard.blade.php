@@ -190,10 +190,17 @@
 
 <div class="row">
   <div class="col-12">
-    <div class="card">
-      <div class="card-header"><h3 class="card-title dashboard-section-title dashboard-title-map"><i class="fas fa-map-marker-alt mr-2"></i>Active Evacuation Centers — Map View</h3></div>
+    <div class="card dashboard-map-card shadow-sm border-0">
+      <div class="card-header bg-white d-flex flex-wrap align-items-center justify-content-between">
+        <h3 class="card-title dashboard-section-title dashboard-title-map"><i class="fas fa-map-marker-alt"></i>Active Evacuation Centers — Map View</h3>
+        <span class="badge badge-light">Live occupancy polling</span>
+      </div>
       <div class="card-body p-0">
-        <div id="evacuationMap" style="height:400px;"></div>
+        <div id="evacuationMap" class="dashboard-map"></div>
+        <div class="dashboard-map-legend px-3 py-2 border-top small text-muted">
+          <span class="dashboard-map-legend__dot dashboard-map-legend__dot--open"></span> Open with slots
+          <span class="dashboard-map-legend__dot dashboard-map-legend__dot--full ml-3"></span> Full
+        </div>
         <div class="px-3 py-2 small text-muted">Map source: Leaflet with OpenStreetMap tiles. Occupancy refreshes from active check-ins every 30 seconds. Center coordinates come from the database; missing coordinates use configured municipality fallbacks.</div>
       </div>
     </div>
@@ -236,6 +243,12 @@
   body.drms-admin-theme .card-header .card-title.dashboard-title-relief { color: #166534; }
   body.drms-admin-theme .card-header .card-title.dashboard-title-map { color: #0f766e; }
   body.drms-admin-theme .card-header .card-title.dashboard-title-activity { color: #1d4ed8; }
+  .dashboard-map-card { border-radius: 10px; overflow: hidden; }
+  .dashboard-map { height: 400px; min-height: 320px; width: 100%; }
+  .dashboard-map-legend { background: #fff; }
+  .dashboard-map-legend__dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 4px; }
+  .dashboard-map-legend__dot--open { background: #2e7d32; border: 2px solid #1b5e20; }
+  .dashboard-map-legend__dot--full { background: #757575; border: 2px solid #424242; }
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 @endpush
