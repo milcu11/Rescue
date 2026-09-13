@@ -843,8 +843,16 @@
               iconAnchor: [18, 18]
             });
             var locationNote = hasCoordinates ? '' : '<br><small>Exact location not provided</small>';
+            var popupHtml = '<strong>' + escHtml(c.name || '') + '</strong>'
+              + (c.barangay ? '<div class="text-muted small">' + escHtml(c.barangay) + '</div>' : '')
+              + (c.address ? '<div>' + escHtml(c.address) + '</div>' : '')
+              + '<div>Occupancy: ' + (c.current_occupancy || 0) + ' / ' + (c.capacity || 0) + '</div>'
+              + ((c.status === 'full' || (c.available_slots || 0) <= 0)
+                ? '<div class="text-danger"><strong>Full</strong></div>'
+                : '<div class="text-success">' + (c.available_slots || 0) + ' slots available</div>')
+              + locationNote;
             var mk = L.marker([latitude, longitude], { icon: icon })
-              .bindPopup('<strong>' + (c.name || '') + '</strong><br>' + (c.current_occupancy || 0) + ' / ' + (c.capacity || 0) + '<br>' + (c.available_slots || 0) + ' slots open' + locationNote)
+              .bindPopup(popupHtml)
               .addTo(map);
             markers[c.id] = mk;
             bounds.push([latitude, longitude]);

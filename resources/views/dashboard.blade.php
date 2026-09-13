@@ -266,6 +266,15 @@
   function renderCenters(centers) {
     markerLayer.clearLayers();
 
+    function escapeMapText(value) {
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     centers.forEach(function(c) {
       var markerStyle = c.status === 'full'
         ? { background: '#757575', border: '#424242' }
@@ -279,10 +288,17 @@
           popupAnchor: [0, -18]
         })
       }).addTo(markerLayer);
+      var occupancy = Number(c.current_occupancy || 0);
+      var capacity = Number(c.capacity || 0);
+      var available = c.available_slots != null ? c.available_slots : Math.max(0, capacity - occupancy);
       marker.bindPopup(
-        '<strong>' + c.name + '</strong><br>' +
-        'Status: ' + c.status + '<br>' +
-        'Occupancy: ' + c.current_occupancy + ' / ' + c.capacity
+        '<strong>' + escapeMapText(c.name) + '</strong>' +
+        (c.barangay ? '<div class="text-muted small">' + escapeMapText(c.barangay) + '</div>' : '') +
+        (c.address ? '<div>' + escapeMapText(c.address) + '</div>' : '') +
+        '<div>Occupancy: ' + occupancy + ' / ' + capacity + '</div>' +
+        (c.status === 'full' || available <= 0
+          ? '<div class="text-danger"><strong>Full</strong></div>'
+          : '<div class="text-success">' + available + ' slots available</div>')
       );
     });
   }

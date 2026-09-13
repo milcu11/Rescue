@@ -447,10 +447,13 @@ class PublicController extends Controller
             ->map(fn (EvacuationCenter $center) => [
                 'id' => $center->id,
                 'name' => $center->name,
+                'barangay' => $center->barangay,
+                'address' => $center->address,
                 'latitude' => (float) $center->latitude,
                 'longitude' => (float) $center->longitude,
                 'capacity' => (int) $center->capacity,
                 'current_occupancy' => (int) $center->current_occupancy,
+                'available_slots' => max(0, (int) $center->capacity - (int) $center->current_occupancy),
                 'status' => $center->status,
             ]);
 
