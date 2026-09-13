@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Services\NotificationService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class InventoryItem extends Model
 {
@@ -19,6 +20,7 @@ class InventoryItem extends Model
         'expires_at',
         'minimum_threshold',
         'status',
+        'is_active',
         'warehouse',
         'location',
         'notes',
@@ -27,12 +29,14 @@ class InventoryItem extends Model
 
     protected $casts = [
         'expires_at' => 'date',
+        'is_active' => 'boolean',
     ];
 
     protected static function booted(): void
     {
         static::saving(function ($item) {
             $originalStatus = $item->getOriginal('status');
+            $itemLink = $item->exists ? route('inventory.edit', $item) : route('inventory.index');
 
             $item->status = $item->calculatedStatus();
 
@@ -44,7 +48,7 @@ class InventoryItem extends Model
                         'type' => 'low_stock',
                         'title' => 'Low stock alert',
                         'message' => "Inventory item '{$item->name}' is running low ({$item->quantity} {$item->unit}).",
-                        'link' => route('inventory.edit', $item),
+                        'link' => $itemLink,
                     ]);
                 }
 
@@ -56,6 +60,22 @@ class InventoryItem extends Model
                         'link' => route('inventory.edit', $item),
                     ]);
                 }
+            }
+
+            $expiresSoon = $item->expires_at
+                && $item->expires_at->isFuture()
+                && $item->expires_at->diffInDays(Carbon::now(), true) <= 30;
+            $originalExpiry = $item->getOriginal('expires_at');
+            $wasOutsideExpiryWindow = !$originalExpiry
+                || Carbon::parse($originalExpiry)->diffInDays(Carbon::now(), true) > 30;
+
+            if ($expiresSoon && $wasOutsideExpiryWindow) {
+                app(NotificationService::class)->create([
+                    'type' => 'near_expiration',
+                    'title' => 'Item expiring soon',
+                    'message' => "Inventory item '{$item->name}' expires on {$item->expires_at->format('M d, Y')}.",
+                    'link' => $itemLink,
+                ]);
             }
         });
     }
@@ -81,6 +101,11 @@ class InventoryItem extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function movements()
+    {
+        return $this->hasMany(InventoryMovement::class)->latest('occurred_at');
     }
 
     public function isLowStock(): bool

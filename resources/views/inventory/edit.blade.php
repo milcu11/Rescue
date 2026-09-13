@@ -112,4 +112,54 @@
   </div>
 </div>
 
+<div class="card mt-3" style="max-width:700px;">
+  <div class="card-header">
+    <h3 class="card-title"><i class="bi bi-box-arrow-in-down me-2"></i>Record Stock-in</h3>
+  </div>
+  <div class="card-body">
+    <form action="{{ route('inventory.stock-in', $inventoryItem) }}" method="POST">
+      @csrf
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Quantity <span class="text-danger">*</span></label>
+          <input type="number" name="quantity" min="1" class="form-control @error('quantity') is-invalid @enderror" value="{{ old('quantity') }}">
+          @error('quantity')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="col-md-5">
+          <label class="form-label fw-semibold">Reference notes</label>
+          <input type="text" name="notes" class="form-control" value="{{ old('notes') }}" placeholder="Supplier, donation, or batch note">
+        </div>
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-success w-100"><i class="bi bi-plus-circle me-1"></i>Stock in</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-header">
+    <h3 class="card-title"><i class="bi bi-clock-history me-2"></i>Movement History</h3>
+  </div>
+  <div class="card-body table-responsive">
+    <table class="table table-sm table-hover align-middle mb-0">
+      <thead><tr><th>Reference</th><th>Type</th><th>Qty</th><th>Balance</th><th>User</th><th>Date</th></tr></thead>
+      <tbody>
+        @forelse($inventoryItem->movements as $movement)
+          <tr>
+            <td><code>{{ $movement->reference }}</code></td>
+            <td><span class="badge bg-{{ $movement->type === 'stock_in' ? 'success' : 'danger' }}">{{ str_replace('_', ' ', ucfirst($movement->type)) }}</span></td>
+            <td>{{ number_format($movement->quantity) }} {{ $inventoryItem->unit }}</td>
+            <td>{{ number_format($movement->quantity_before) }} &rarr; {{ number_format($movement->quantity_after) }}</td>
+            <td>{{ $movement->user->name ?? 'System' }}</td>
+            <td>{{ $movement->occurred_at->format('M d, Y h:i A') }}</td>
+          </tr>
+        @empty
+          <tr><td colspan="6" class="text-muted text-center">No movements recorded yet.</td></tr>
+        @endforelse
+      </tbody>
+    </table>
+  </div>
+</div>
+
 @endsection

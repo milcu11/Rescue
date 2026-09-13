@@ -61,6 +61,8 @@ Route::middleware('auth')->group(function () {
               ->name('inventory.edit');
           Route::put('/inventory/{inventoryItem}', [InventoryController::class, 'update'])
               ->name('inventory.update');
+          Route::post('/inventory/{inventoryItem}/stock-in', [InventoryController::class, 'stockIn'])
+              ->name('inventory.stock-in');
         });
 
         // Keep the static create path before the dynamic {inventoryItem} path.
@@ -73,6 +75,8 @@ Route::middleware('auth')->group(function () {
     // Inventory - delete
     Route::middleware('role:super_admin')
         ->group(function () {
+                    Route::patch('/inventory/{inventoryItem}/toggle-active', [InventoryController::class, 'toggleActive'])
+                            ->name('inventory.toggle-active');
           Route::delete('/inventory/{inventoryItem}', [InventoryController::class, 'destroy'])
               ->name('inventory.destroy');
         });

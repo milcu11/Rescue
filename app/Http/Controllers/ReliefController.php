@@ -6,12 +6,14 @@ use App\Models\ReliefOperation;
 use App\Models\ReliefDistribution;
 use App\Models\EvacuationCenter;
 use App\Models\InventoryItem;
+use App\Models\InventoryMovement;
 use App\Services\AuditService;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ReliefController extends Controller
 {
@@ -83,7 +85,7 @@ class ReliefController extends Controller
         ]);
 
         $centers = EvacuationCenter::where('status', '!=', 'closed')->get();
-        $items   = InventoryItem::where('quantity', '>', 0)->get();
+        $items   = InventoryItem::where('is_active', true)->where('quantity', '>', 0)->get();
 
         return view('relief.show', compact('relief', 'centers', 'items'));
     }
@@ -157,21 +159,24 @@ class ReliefController extends Controller
                 ->withInput();
         }
 
-        $item = InventoryItem::findOrFail($request->inventory_item_id);
-
-        // Check if enough stock
-        if ($item->quantity < $request->quantity_distributed) {
-            return redirect()->back()
-                ->withErrors(['quantity_distributed' =>
-                    "Not enough stock. Available: {$item->quantity} {$item->unit}."])
-                ->withInput();
-        }
-
         $center = EvacuationCenter::findOrFail($request->evacuation_center_id);
 
-        DB::transaction(function () use ($request, $relief, $item) {
+        [$item, $distribution] = DB::transaction(function () use ($request, $relief) {
+            $item = InventoryItem::whereKey($request->inventory_item_id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($item->quantity < $request->quantity_distributed) {
+                throw ValidationException::withMessages([
+                    'quantity_distributed' =>
+                        "Not enough stock. Available: {$item->quantity} {$item->unit}.",
+                ]);
+            }
+
+            $before = $item->quantity;
+
             // Record distribution
-            ReliefDistribution::create([
+            $distribution = ReliefDistribution::create([
                 ...$request->only([
                     'evacuation_center_id',
                     'inventory_item_id',
@@ -187,6 +192,22 @@ class ReliefController extends Controller
             // Deduct from inventory
             $item->decrement('quantity', $request->quantity_distributed);
             $item->refresh()->syncStatus();
+
+            InventoryMovement::create([
+                'inventory_item_id' => $item->id,
+                'type' => 'stock_out',
+                'quantity' => $request->quantity_distributed,
+                'quantity_before' => $before,
+                'quantity_after' => $item->quantity,
+                'reference' => 'OUT-DIST-' . $distribution->id,
+                'user_id' => Auth::id(),
+                'occurred_at' => now(),
+                'source_type' => ReliefDistribution::class,
+                'source_id' => $distribution->id,
+                'notes' => $request->notes,
+            ]);
+
+            return [$item, $distribution];
         });
 
         AuditService::log(

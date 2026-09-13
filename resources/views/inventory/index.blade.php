@@ -125,7 +125,9 @@
           <td>{{ $item->warehouse ?? '—' }}</td>
           <td>{{ $item->location ?? '—' }}</td>
           <td>
-            @if($item->status === 'available')
+            @if(!$item->is_active)
+              <span class="badge bg-secondary">Inactive</span>
+            @elseif($item->status === 'available')
               <span class="badge bg-success">Available</span>
             @elseif($item->status === 'low_stock')
               <span class="badge bg-warning text-dark">Low Stock</span>
@@ -137,6 +139,15 @@
             <a href="{{ route('inventory.edit', $item) }}" class="btn btn-sm btn-outline-primary">
               <i class="bi bi-pencil"></i>
             </a>
+            @if(auth()->user()->role?->slug === 'super_admin')
+              <form action="{{ route('inventory.toggle-active', $item) }}" method="POST" class="d-inline">
+                @csrf
+                @method('PATCH')
+                <button type="submit" class="btn btn-sm btn-outline-{{ $item->is_active ? 'warning' : 'success' }}" title="{{ $item->is_active ? 'Deactivate' : 'Activate' }} item">
+                  <i class="bi bi-{{ $item->is_active ? 'pause' : 'play' }}-circle"></i>
+                </button>
+              </form>
+            @endif
             <form action="{{ route('inventory.destroy', $item) }}" method="POST" class="d-inline" onsubmit="return confirm('Remove this item from inventory?')">
               @csrf
               @method('DELETE')

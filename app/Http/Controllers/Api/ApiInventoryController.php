@@ -11,6 +11,7 @@ class ApiInventoryController extends Controller
     protected function buildInventoryListQuery(Request $request, bool $publicOnly = false)
     {
         $query = InventoryItem::query();
+        $query->where('is_active', true);
 
         if ($publicOnly) {
             $query->where('quantity', '>', 0);
