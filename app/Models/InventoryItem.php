@@ -41,41 +41,42 @@ class InventoryItem extends Model
             $item->status = $item->calculatedStatus();
 
             if ($item->status !== $originalStatus) {
-                $service = app(NotificationService::class);
-
                 if ($item->status === 'low_stock') {
-                    $service->create([
-                        'type' => 'low_stock',
-                        'title' => 'Low stock alert',
-                        'message' => "Inventory item '{$item->name}' is running low ({$item->quantity} {$item->unit}).",
-                        'link' => $itemLink,
-                    ]);
+                    NotificationService::sendToRole(
+                        'lgu_staff',
+                        'low_stock',
+                        'Low stock alert',
+                        "Inventory item '{$item->name}' is running low ({$item->quantity} {$item->unit}).",
+                        $itemLink
+                    );
                 }
 
                 if ($item->status === 'depleted') {
-                    $service->create([
-                        'type' => 'low_stock',
-                        'title' => 'Out of stock',
-                        'message' => "Inventory item '{$item->name}' has been depleted.",
-                        'link' => route('inventory.edit', $item),
-                    ]);
+                    NotificationService::sendToRole(
+                        'lgu_staff',
+                        'low_stock',
+                        'Out of stock',
+                        "Inventory item '{$item->name}' has been depleted.",
+                        $itemLink
+                    );
                 }
             }
 
             $expiresSoon = $item->expires_at
                 && $item->expires_at->isFuture()
-                && $item->expires_at->diffInDays(Carbon::now(), true) <= 30;
+                && $item->expires_at->diffInDays(Carbon::now(), true) <= config('notifications.near_expiration_days');
             $originalExpiry = $item->getOriginal('expires_at');
             $wasOutsideExpiryWindow = !$originalExpiry
                 || Carbon::parse($originalExpiry)->diffInDays(Carbon::now(), true) > 30;
 
             if ($expiresSoon && $wasOutsideExpiryWindow) {
-                app(NotificationService::class)->create([
-                    'type' => 'near_expiration',
-                    'title' => 'Item expiring soon',
-                    'message' => "Inventory item '{$item->name}' expires on {$item->expires_at->format('M d, Y')}.",
-                    'link' => $itemLink,
-                ]);
+                NotificationService::sendToRole(
+                    'lgu_staff',
+                    'near_expiration',
+                    'Item expiring soon',
+                    "Inventory item '{$item->name}' expires on {$item->expires_at->format('M d, Y')}.",
+                    $itemLink
+                );
             }
         });
     }

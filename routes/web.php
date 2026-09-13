@@ -241,6 +241,8 @@ Route::middleware('auth')->group(function () {
         ->name('notifications.markAllRead');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markRead'])
         ->name('notifications.read');
+    Route::get('/notifications/{id}/open', [NotificationController::class, 'open'])
+        ->name('notifications.open');
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])
         ->name('notifications.destroy');
 

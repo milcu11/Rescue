@@ -26,7 +26,7 @@
       @else
         <div class="list-group list-group-flush">
           @foreach($notifications as $notification)
-            <a href="{{ $notification->link ?? route('notifications.index') }}"
+            <a href="{{ route('notifications.open', $notification) }}"
                class="list-group-item list-group-item-action d-flex justify-content-between align-items-start {{ $notification->is_read ? '' : 'bg-light' }}">
               <div>
                 <div class="fw-semibold">{{ $notification->title }}</div>

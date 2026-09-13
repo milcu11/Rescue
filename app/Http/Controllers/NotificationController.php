@@ -69,6 +69,14 @@ class NotificationController extends Controller
         return redirect()->back();
     }
 
+    public function open($id)
+    {
+        $notification = \App\Models\Notification::forUser(auth()->user())->findOrFail($id);
+        $notification->update(['is_read' => true]);
+
+        return redirect($notification->link ?: route('notifications.index'));
+    }
+
     public function destroy($id)
     {
         $notification = \App\Models\Notification::forUser(auth()->user())->findOrFail($id);

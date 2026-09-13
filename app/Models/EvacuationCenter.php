@@ -55,7 +55,7 @@ class EvacuationCenter extends Model
     {
         $originalStatus = $this->status;
         $originalOccupancy = $previousOccupancy ?? (int) $this->getOriginal('current_occupancy');
-        $nearCapacityThreshold = max(1, (int) ceil($this->capacity * 0.8));
+        $nearCapacityThreshold = max(1, (int) ceil($this->capacity * config('notifications.near_capacity_percent') / 100));
 
         if ($this->current_occupancy >= $this->capacity) {
             $this->status = 'full';
@@ -66,23 +66,25 @@ class EvacuationCenter extends Model
         $this->save();
 
         if ($originalStatus !== 'full' && $this->status === 'full') {
-            app(NotificationService::class)->create([
-                'type' => 'center_full',
-                'title' => 'Center full alert',
-                'message' => "Evacuation center '{$this->name}' is now full.",
-                'link' => route('evacuation.show', $this),
-            ]);
+            NotificationService::sendToRole(
+                'mdrrmo',
+                'center_full',
+                'Center full alert',
+                "Evacuation center '{$this->name}' is now full.",
+                route('evacuation.show', $this)
+            );
         }
 
         if ($originalOccupancy < $nearCapacityThreshold
             && $this->current_occupancy >= $nearCapacityThreshold
             && $this->current_occupancy < $this->capacity) {
-            app(NotificationService::class)->create([
-                'type' => 'near_capacity',
-                'title' => 'Evacuation center nearing capacity',
-                'message' => "Evacuation center '{$this->name}' is at {$this->occupancy_percent}% capacity.",
-                'link' => route('evacuation.show', $this),
-            ]);
+            NotificationService::sendToRole(
+                'mdrrmo',
+                'near_capacity',
+                'Evacuation center nearing capacity',
+                "Evacuation center '{$this->name}' is at {$this->occupancy_percent}% capacity.",
+                route('evacuation.show', $this)
+            );
         }
     }
 

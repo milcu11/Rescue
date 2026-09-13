@@ -44,12 +44,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('layouts.app', function ($view) {
-            $userId = auth()->id();
+            $user = auth()->user();
+            $userId = $user?->id;
+            $roleTarget = $user?->role?->slug;
             $service = app(NotificationService::class);
 
             $view->with([
-                'notificationsUnreadCount' => $service->unreadCountForUser($userId),
-                'notificationsDropdown'    => $service->recentForUser($userId, null, 5),
+                'notificationsUnreadCount' => $service->unreadCountForUser($userId, $roleTarget),
+                'notificationsDropdown'    => $service->recentForUser($userId, $roleTarget, 5),
             ]);
         });
     }

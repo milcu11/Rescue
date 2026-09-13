@@ -72,6 +72,14 @@ class ReliefController extends Controller
             $operation->toArray()
         );
 
+        NotificationService::sendToRole(
+            'mdrrmo',
+            'operation_created',
+            'Relief operation pending approval',
+            "Relief operation '{$operation->name}' is awaiting approval before distribution.",
+            route('relief.show', $operation)
+        );
+
         return redirect()->route('relief.index')
             ->with('success', 'Relief operation created successfully.');
     }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Notification;
+use App\Models\InventoryItem;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class NotificationService
@@ -10,6 +11,38 @@ class NotificationService
     public function create(array $data): Notification
     {
         return Notification::create($data);
+    }
+
+    public function createExpiringItemAlerts(): int
+    {
+        $cutoff = now()->addDays(config('notifications.near_expiration_days'));
+        $created = 0;
+
+        InventoryItem::where('is_active', true)
+            ->whereDate('expires_at', '>', now()->toDateString())
+            ->whereDate('expires_at', '<=', $cutoff->toDateString())
+            ->get()
+            ->each(function (InventoryItem $item) use (&$created) {
+                $link = route('inventory.edit', $item);
+                $alreadyAlerted = Notification::where('type', 'near_expiration')
+                    ->where('role_target', 'lgu_staff')
+                    ->where('link', $link)
+                    ->where('created_at', '>=', now()->subDay())
+                    ->exists();
+
+                if (!$alreadyAlerted) {
+                    self::sendToRole(
+                        'lgu_staff',
+                        'near_expiration',
+                        'Item expiring soon',
+                        "Inventory item '{$item->name}' expires on {$item->expires_at->format('M d, Y')}.",
+                        $link
+                    );
+                    $created++;
+                }
+            });
+
+        return $created;
     }
 
     public static function sendToUser(
