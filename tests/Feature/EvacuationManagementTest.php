@@ -101,6 +101,35 @@ class EvacuationManagementTest extends TestCase
         $this->assertSame(2, $target->fresh()->syncOccupancy());
     }
 
+    public function test_checked_in_evacuee_can_be_checked_out(): void
+    {
+        $user = $this->user();
+        $center = $this->center($user, 'Center A', 10);
+        $evacuee = Evacuee::create([
+            'evacuation_center_id' => $center->id,
+            'name' => 'Checkout Family',
+            'family_members' => 3,
+            'status' => 'checked_in',
+            'checked_in_at' => now(),
+            'recorded_by' => $user->id,
+        ]);
+        $center->update(['current_occupancy' => 3]);
+
+        $response = $this->actingAs($user)->patch(route('evacuation.checkout', [$center, $evacuee]));
+
+        $response->assertRedirect(route('evacuation.show', $center));
+        $this->assertDatabaseHas('evacuees', [
+            'id' => $evacuee->id,
+            'status' => 'checked_out',
+        ]);
+        $this->assertSame(0, $center->fresh()->current_occupancy);
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'updated',
+            'module' => 'evacuation',
+            'record_id' => $evacuee->id,
+        ]);
+    }
+
     public function test_near_capacity_alert_is_created(): void
     {
         $user = $this->user();

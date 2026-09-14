@@ -755,7 +755,8 @@
         }
         $.ajax({
           url: '/evacuation/' + activeFamiliesCenterId + '/checkout/' + familyId,
-          method: 'PATCH'
+          method: 'PATCH',
+          data: { _token: csrfToken }
         }).done(function () {
           $('#evacFamilyDetailModal').modal('hide');
           loadFamiliesModal(activeFamiliesCenterId, activeFamiliesCenterName);
