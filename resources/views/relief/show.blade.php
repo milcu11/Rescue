@@ -77,21 +77,23 @@
         @endif
 
         @if(!in_array(Auth::user()->role->slug, ['lgu_staff', 'warehouse_staff']))
-          <a href="{{ route('relief.edit', $relief) }}" class="btn btn-sm btn-outline-primary mt-2"><i class="bi bi-pencil me-1"></i>Edit Operation</a>
+          <div class="admin-action-group mt-2">
+          <a href="{{ route('relief.edit', $relief) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i>Edit Operation</a>
           @if($relief->approval_status !== 'approved')
             <form action="{{ route('relief.approve', $relief) }}" method="POST" class="d-inline">
               @csrf
               @method('PATCH')
-              <button class="btn btn-sm btn-success mt-2"><i class="bi bi-check-circle me-1"></i>Approve</button>
+              <button class="btn btn-sm btn-success"><i class="bi bi-check-circle"></i>Approve</button>
             </form>
           @endif
           @if($relief->approval_status !== 'rejected')
             <form action="{{ route('relief.reject', $relief) }}" method="POST" class="d-inline">
               @csrf
               @method('PATCH')
-              <button class="btn btn-sm btn-outline-danger mt-2"><i class="bi bi-x-circle me-1"></i>Reject</button>
+              <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle"></i>Reject</button>
             </form>
           @endif
+          </div>
         @endif
       </div>
     </div>

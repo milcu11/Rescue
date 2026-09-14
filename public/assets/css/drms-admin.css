@@ -53,9 +53,16 @@
 .drms-admin-theme .btn-primary:hover{ background: var(--drms-red-hover) !important; border-color: var(--drms-red-hover) !important; }
 
 /* Keep icon labels and adjacent actions readable under Bootstrap 4. */
+.drms-admin-theme .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: .4rem;
+}
+
 .drms-admin-theme .btn > i:not(:last-child),
 .drms-admin-theme .btn > svg:not(:last-child) {
-  margin-right: .35rem;
+  margin-right: 0 !important;
 }
 
 .drms-admin-theme .btn > i:only-child,
@@ -75,6 +82,18 @@
 .drms-admin-theme form + .btn-block {
   margin-left: 0;
   margin-top: .5rem;
+}
+
+.drms-admin-theme .admin-action-group {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.drms-admin-theme .admin-action-group > form,
+.drms-admin-theme .admin-action-group > .btn {
+  margin: 0 !important;
 }
 
 /* Notifications dropdown */

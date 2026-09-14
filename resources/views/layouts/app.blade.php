@@ -19,7 +19,7 @@
   <!-- DataTables -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
   <!-- DRMS admin overrides -->
-  <link rel="stylesheet" href="/assets/css/drms-admin.css">
+  <link rel="stylesheet" href="/assets/css/drms-admin.css?v=20260914-2">
 
   <style>
     body.drms-admin-theme {

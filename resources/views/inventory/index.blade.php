@@ -108,6 +108,7 @@
           <td>{{ number_format($item->quantity) }}</td>
           <td>{{ $item->unit }}</td>
           <td>
+            <div class="admin-action-group">
             @if($item->expires_at)
               <small class="{{ $item->expires_at->isPast() ? 'text-danger' : 'text-muted' }}">
                 {{ $item->expires_at->format('M d, Y') }}
@@ -155,6 +156,7 @@
                 <i class="bi bi-trash"></i>
               </button>
             </form>
+            </div>
           </td>
         </tr>
         @empty
