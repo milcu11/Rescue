@@ -52,6 +52,31 @@
 .drms-admin-theme .btn-primary, .drms-admin-theme .btn-primary.drms-icon-action{ background: var(--drms-red) !important; border-color: var(--drms-red-hover) !important; color: #fff !important; }
 .drms-admin-theme .btn-primary:hover{ background: var(--drms-red-hover) !important; border-color: var(--drms-red-hover) !important; }
 
+/* Keep icon labels and adjacent actions readable under Bootstrap 4. */
+.drms-admin-theme .btn > i:not(:last-child),
+.drms-admin-theme .btn > svg:not(:last-child) {
+  margin-right: .35rem;
+}
+
+.drms-admin-theme .btn > i:only-child,
+.drms-admin-theme .btn > svg:only-child {
+  margin-right: 0;
+}
+
+.drms-admin-theme .btn + .btn,
+.drms-admin-theme .btn + form,
+.drms-admin-theme form + .btn,
+.drms-admin-theme form + form {
+  margin-left: .5rem;
+}
+
+.drms-admin-theme .btn-block + .btn-block,
+.drms-admin-theme .btn-block + form,
+.drms-admin-theme form + .btn-block {
+  margin-left: 0;
+  margin-top: .5rem;
+}
+
 /* Notifications dropdown */
 .drms-admin-theme .dropdown-menu.notifications {
   min-width: 340px;
