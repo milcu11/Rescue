@@ -755,13 +755,15 @@
         }
         $.ajax({
           url: '/evacuation/' + activeFamiliesCenterId + '/checkout/' + familyId,
-          method: 'PATCH',
-          data: { _token: csrfToken }
+          method: 'POST',
+          data: { _method: 'PATCH', _token: csrfToken }
         }).done(function () {
-          $('#evacFamilyDetailModal').modal('hide');
-          loadFamiliesModal(activeFamiliesCenterId, activeFamiliesCenterName);
-        }).fail(function () {
-          alert('Failed to check out the family.');
+          window.location.reload();
+        }).fail(function (xhr) {
+          var message = xhr.responseJSON && xhr.responseJSON.message
+            ? xhr.responseJSON.message
+            : 'Failed to check out the family.';
+          alert(message);
         });
       });
 
