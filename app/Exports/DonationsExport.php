@@ -2,19 +2,26 @@
 
 namespace App\Exports;
 
-use App\Models\Donation;
+use App\Exports\Concerns\HasReportMetadata;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class DonationsExport implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize
+class DonationsExport implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize, WithEvents
 {
-    public function collection()
+    use HasReportMetadata;
+
+    public function __construct(private Collection $donations, private array $metadata) {}
+
+    public function collection(): Enumerable
     {
-        return Donation::all()->map(fn($d) => [
+        return $this->donations->map(fn($d) => [
             'Tracking Code' => $d->tracking_code,
             'Donor Name' => $d->donor_name,
             'Contact' => $d->donor_contact ?? '—',
@@ -37,7 +44,7 @@ class DonationsExport implements FromCollection, WithHeadings, WithStyles, WithT
     public function styles(Worksheet $sheet): array
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            5 => ['font' => ['bold' => true]],
         ];
     }
 

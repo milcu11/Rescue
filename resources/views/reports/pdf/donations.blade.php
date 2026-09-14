@@ -15,7 +15,7 @@
 </head>
 <body>
   <h1>RescuePH — Donations Report</h1>
-  <p>Generated: {{ now()->format('F d, Y h:i A') }} | Total: {{ $donations->count() }} donations</p>
+  <p>Coverage: {{ $filters['from'] ?? 'Beginning' }} to {{ $filters['to'] ?? 'Present' }} | Generated: {{ now()->format('F d, Y h:i A') }} by {{ Auth::user()->name }} | Filters: {{ collect($filters ?? [])->filter()->map(fn($value, $key) => ucfirst($key).'='.$value)->join(', ') ?: 'None' }} | Total: {{ $donations->count() }} donations</p>
   <table>
     <thead>
       <tr>

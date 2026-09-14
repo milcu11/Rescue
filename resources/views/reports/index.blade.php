@@ -7,6 +7,78 @@
 
 @section('content')
 
+<form method="GET" action="{{ route('reports.index') }}" class="card mb-3">
+  <div class="card-body">
+    <div class="form-row align-items-end">
+      <div class="form-group col-md-2 mb-2">
+        <label for="report-from">From</label>
+        <input id="report-from" type="date" name="from" value="{{ request('from') }}" class="form-control form-control-sm">
+      </div>
+      <div class="form-group col-md-2 mb-2">
+        <label for="report-to">To</label>
+        <input id="report-to" type="date" name="to" value="{{ request('to') }}" class="form-control form-control-sm">
+      </div>
+      <div class="form-group col-md-2 mb-2">
+        <label for="report-status">Status</label>
+        <input id="report-status" type="text" name="status" value="{{ request('status') }}" class="form-control form-control-sm" placeholder="e.g. received">
+      </div>
+      <div class="form-group col-md-2 mb-2">
+        <label for="report-category">Category</label>
+        <input id="report-category" type="text" name="category" value="{{ request('category') }}" class="form-control form-control-sm">
+      </div>
+      <div class="form-group col-md-2 mb-2">
+        <label for="report-item">Item ID</label>
+        <input id="report-item" type="number" min="1" name="item" value="{{ request('item') }}" class="form-control form-control-sm">
+      </div>
+      <div class="form-group col-md-2 mb-2">
+        <label for="report-center">Center ID</label>
+        <input id="report-center" type="number" min="1" name="center" value="{{ request('center') }}" class="form-control form-control-sm">
+      </div>
+      <div class="form-group col-md-2 mb-2">
+        <label for="report-module">Audit Module</label>
+        <input id="report-module" type="text" name="module" value="{{ request('module') }}" class="form-control form-control-sm">
+      </div>
+      <div class="form-group col-md-2 mb-2">
+        <label for="report-action">Audit Action</label>
+        <input id="report-action" type="text" name="action" value="{{ request('action') }}" class="form-control form-control-sm">
+      </div>
+      <div class="form-group col-md-2 mb-2 d-flex" style="gap:6px;">
+        <button type="submit" class="btn btn-sm btn-primary flex-fill"><i class="fas fa-filter mr-1"></i>Apply</button>
+        <a href="{{ route('reports.index') }}" class="btn btn-sm btn-outline-secondary" title="Clear filters"><i class="fas fa-times"></i></a>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <div class="card mb-0">
+      <div class="card-body d-flex justify-content-between align-items-center">
+        <div><strong><i class="fas fa-exchange-alt mr-2"></i>Stock Movement Report</strong><br><small class="text-muted">Inbound and outbound inventory transactions</small></div>
+        <div class="d-flex" style="gap:6px;">
+          <a href="{{ route('reports.movements.print', request()->query()) }}" target="_blank" class="btn btn-sm btn-outline-secondary" title="Print"><i class="fas fa-print"></i></a>
+          <a href="{{ route('reports.movements.excel', request()->query()) }}" class="btn btn-sm btn-outline-success" title="Excel"><i class="fas fa-file-excel"></i></a>
+          <a href="{{ route('reports.movements.pdf', request()->query()) }}" class="btn btn-sm btn-outline-danger" title="PDF"><i class="fas fa-file-pdf"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  @if(in_array(Auth::user()->role->slug, ['super_admin', 'mdrrmo']))
+  <div class="col-md-6">
+    <div class="card mb-0">
+      <div class="card-body d-flex justify-content-between align-items-center">
+        <div><strong><i class="fas fa-history mr-2"></i>Audit Trail Report</strong><br><small class="text-muted">Traceable system actions and changes</small></div>
+        <div class="d-flex" style="gap:6px;">
+          <a href="{{ route('reports.audit.print', request()->query()) }}" target="_blank" class="btn btn-sm btn-outline-secondary" title="Print"><i class="fas fa-print"></i></a>
+          <a href="{{ route('reports.audit.excel', request()->query()) }}" class="btn btn-sm btn-outline-success" title="Excel"><i class="fas fa-file-excel"></i></a>
+          <a href="{{ route('reports.audit.pdf', request()->query()) }}" class="btn btn-sm btn-outline-danger" title="PDF"><i class="fas fa-file-pdf"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  @endif
+</div>
+
 <div class="row">
 
   {{-- Inventory Report --}}
@@ -37,15 +109,15 @@
           </div>
         </div>
         <div class="d-flex gap-2 justify-content-center" style="gap:6px;">
-          <a href="{{ route('reports.inventory.print') }}" target="_blank"
+          <a href="{{ route('reports.inventory.print', request()->query()) }}" target="_blank"
              class="btn btn-sm btn-outline-secondary">
             <i class="fas fa-print mr-1"></i>Print
           </a>
-          <a href="{{ route('reports.inventory.excel') }}"
+          <a href="{{ route('reports.inventory.excel', request()->query()) }}"
              class="btn btn-sm btn-outline-success">
             <i class="fas fa-file-excel mr-1"></i>Excel
           </a>
-          <a href="{{ route('reports.inventory.pdf') }}"
+          <a href="{{ route('reports.inventory.pdf', request()->query()) }}"
              class="btn btn-sm btn-outline-danger">
             <i class="fas fa-file-pdf mr-1"></i>PDF
           </a>
@@ -87,15 +159,15 @@
           <strong>₱{{ number_format($summary['donations']['monetary_total'], 2) }}</strong>
         </div>
         <div class="d-flex justify-content-center" style="gap:6px;">
-          <a href="{{ route('reports.donations.print') }}" target="_blank"
+          <a href="{{ route('reports.donations.print', request()->query()) }}" target="_blank"
              class="btn btn-sm btn-outline-secondary">
             <i class="fas fa-print mr-1"></i>Print
           </a>
-          <a href="{{ route('reports.donations.excel') }}"
+          <a href="{{ route('reports.donations.excel', request()->query()) }}"
              class="btn btn-sm btn-outline-success">
             <i class="fas fa-file-excel mr-1"></i>Excel
           </a>
-          <a href="{{ route('reports.donations.pdf') }}"
+          <a href="{{ route('reports.donations.pdf', request()->query()) }}"
              class="btn btn-sm btn-outline-danger">
             <i class="fas fa-file-pdf mr-1"></i>PDF
           </a>
@@ -148,15 +220,15 @@
           <strong>{{ $pct }}%</strong>
         </div>
         <div class="d-flex justify-content-center" style="gap:6px;">
-          <a href="{{ route('reports.evacuation.print') }}" target="_blank"
+          <a href="{{ route('reports.evacuation.print', request()->query()) }}" target="_blank"
              class="btn btn-sm btn-outline-secondary">
             <i class="fas fa-print mr-1"></i>Print
           </a>
-          <a href="{{ route('reports.evacuation.excel') }}"
+          <a href="{{ route('reports.evacuation.excel', request()->query()) }}"
              class="btn btn-sm btn-outline-success">
             <i class="fas fa-file-excel mr-1"></i>Excel
           </a>
-          <a href="{{ route('reports.evacuation.pdf') }}"
+          <a href="{{ route('reports.evacuation.pdf', request()->query()) }}"
              class="btn btn-sm btn-outline-danger">
             <i class="fas fa-file-pdf mr-1"></i>PDF
           </a>
@@ -200,15 +272,15 @@
           <strong>{{ number_format($summary['relief']['beneficiaries']) }}</strong>
         </div>
         <div class="d-flex justify-content-center" style="gap:6px;">
-          <a href="{{ route('reports.relief.print') }}" target="_blank"
+          <a href="{{ route('reports.relief.print', request()->query()) }}" target="_blank"
              class="btn btn-sm btn-outline-secondary">
             <i class="fas fa-print mr-1"></i>Print
           </a>
-          <a href="{{ route('reports.relief.excel') }}"
+          <a href="{{ route('reports.relief.excel', request()->query()) }}"
              class="btn btn-sm btn-outline-success">
             <i class="fas fa-file-excel mr-1"></i>Excel
           </a>
-          <a href="{{ route('reports.relief.pdf') }}"
+          <a href="{{ route('reports.relief.pdf', request()->query()) }}"
              class="btn btn-sm btn-outline-danger">
             <i class="fas fa-file-pdf mr-1"></i>PDF
           </a>

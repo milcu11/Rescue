@@ -2,21 +2,26 @@
 
 namespace App\Exports;
 
-use App\Models\InventoryItem;
+use App\Exports\Concerns\HasReportMetadata;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class InventoryExport implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize
+class InventoryExport implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize, WithEvents
 {
-    public function collection()
+    use HasReportMetadata;
+
+    public function __construct(private Collection $items, private array $metadata) {}
+
+    public function collection(): Enumerable
     {
-        return InventoryItem::with('creator')
-            ->get()
-            ->map(fn($item) => [
+        return $this->items->map(fn($item) => [
                 'ID' => $item->id,
                 'Name' => $item->name,
                 'Category' => ucfirst($item->category),
@@ -38,7 +43,7 @@ class InventoryExport implements FromCollection, WithHeadings, WithStyles, WithT
     public function styles(Worksheet $sheet): array
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            5 => ['font' => ['bold' => true]],
         ];
     }
 

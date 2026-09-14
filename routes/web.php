@@ -207,6 +207,12 @@ Route::middleware('auth')->group(function () {
               ->name('reports.inventory.excel');
           Route::get('/reports/inventory/pdf',  [ReportController::class, 'exportInventoryPdf'])
               ->name('reports.inventory.pdf');
+          Route::get('/reports/movements/print', [ReportController::class, 'movementPrint'])
+              ->name('reports.movements.print');
+          Route::get('/reports/movements/excel', [ReportController::class, 'exportMovementExcel'])
+              ->name('reports.movements.excel');
+          Route::get('/reports/movements/pdf', [ReportController::class, 'exportMovementPdf'])
+              ->name('reports.movements.pdf');
         });
 
     // Restricted reports
@@ -230,6 +236,12 @@ Route::middleware('auth')->group(function () {
               ->name('reports.evacuation.pdf');
           Route::get('/reports/relief/pdf',     [ReportController::class, 'exportReliefPdf'])
               ->name('reports.relief.pdf');
+          Route::get('/reports/audit/print', [ReportController::class, 'auditPrint'])
+              ->name('reports.audit.print');
+          Route::get('/reports/audit/excel', [ReportController::class, 'exportAuditExcel'])
+              ->name('reports.audit.excel');
+          Route::get('/reports/audit/pdf', [ReportController::class, 'exportAuditPdf'])
+              ->name('reports.audit.pdf');
         });
 
     // Notifications

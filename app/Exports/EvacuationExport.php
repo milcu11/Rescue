@@ -2,19 +2,26 @@
 
 namespace App\Exports;
 
-use App\Models\EvacuationCenter;
+use App\Exports\Concerns\HasReportMetadata;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class EvacuationExport implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize
+class EvacuationExport implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize, WithEvents
 {
-    public function collection()
+    use HasReportMetadata;
+
+    public function __construct(private Collection $centers, private array $metadata) {}
+
+    public function collection(): Enumerable
     {
-        return EvacuationCenter::all()->map(fn($c) => [
+        return $this->centers->map(fn($c) => [
             'ID' => $c->id,
             'Center Name' => $c->name,
             'Barangay' => $c->barangay,
@@ -36,7 +43,7 @@ class EvacuationExport implements FromCollection, WithHeadings, WithStyles, With
     public function styles(Worksheet $sheet): array
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            5 => ['font' => ['bold' => true]],
         ];
     }
 

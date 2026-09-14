@@ -2,21 +2,26 @@
 
 namespace App\Exports;
 
-use App\Models\ReliefDistribution;
+use App\Exports\Concerns\HasReportMetadata;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ReliefExport implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize
+class ReliefExport implements FromCollection, WithHeadings, WithStyles, WithTitle, ShouldAutoSize, WithEvents
 {
-    public function collection()
+    use HasReportMetadata;
+
+    public function __construct(private Collection $distributions, private array $metadata) {}
+
+    public function collection(): Enumerable
     {
-        return ReliefDistribution::with(['operation', 'center', 'item', 'distributor'])
-            ->get()
-            ->map(fn($d) => [
+        return $this->distributions->map(fn($d) => [
                 'Operation' => $d->operation?->name ?? '—',
                 'Center' => $d->center?->name ?? '—',
                 'Item' => $d->item?->name ?? '—',
@@ -37,7 +42,7 @@ class ReliefExport implements FromCollection, WithHeadings, WithStyles, WithTitl
     public function styles(Worksheet $sheet): array
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            5 => ['font' => ['bold' => true]],
         ];
     }
 
