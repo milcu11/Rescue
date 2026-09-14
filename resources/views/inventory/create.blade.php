@@ -108,7 +108,7 @@
         @error('notes')<div class="invalid-feedback">{{ $message }}</div>@enderror
       </div>
 
-      <div class="d-flex gap-2">
+      <div class="d-flex form-action-buttons">
         <button type="submit" class="btn btn-danger">
           <i class="bi bi-check-lg me-1"></i>Save Item
         </button>
@@ -122,3 +122,9 @@
 </div>
 
 @endsection
+
+@push('styles')
+<style>
+  .form-action-buttons > * + * { margin-left: .5rem; }
+</style>
+@endpush

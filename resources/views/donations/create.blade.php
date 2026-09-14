@@ -50,7 +50,7 @@
 
       <div class="mb-3">
         <label class="form-label fw-semibold">Donation Type <span class="text-danger">*</span></label>
-        <div class="d-flex gap-3">
+        <div class="d-flex donation-type-options">
           <div class="form-check">
             <input class="form-check-input" type="radio" name="type"
                    id="type_inkind" value="in-kind"
@@ -124,6 +124,7 @@
 @push('styles')
 <style>
   .donation-form-actions > * + * { margin-left: .5rem; }
+  .donation-type-options > * + * { margin-left: 1rem; }
 </style>
 @endpush
 

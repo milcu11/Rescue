@@ -76,7 +76,7 @@
         <textarea name="notes" rows="2" class="form-control">{{ old('notes') }}</textarea>
       </div>
 
-      <div class="d-flex gap-2">
+      <div class="d-flex form-action-buttons">
         <button type="submit" class="btn btn-danger"><i class="bi bi-check-lg me-1"></i>Create Operation</button>
         <a href="{{ route('relief.index') }}" class="btn btn-outline-secondary">Cancel</a>
       </div>
@@ -86,3 +86,9 @@
 </div>
 
 @endsection
+
+@push('styles')
+<style>
+  .form-action-buttons > * + * { margin-left: .5rem; }
+</style>
+@endpush
