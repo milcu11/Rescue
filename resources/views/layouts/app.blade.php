@@ -371,7 +371,7 @@
 
           @if(!in_array($currentRole, ['donor', 'lgu_staff', 'warehouse_staff', 'evac_manager', 'evacuation_manager']))
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users"></i>
               <p>User Management</p>
             </a>

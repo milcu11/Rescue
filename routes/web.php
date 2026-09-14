@@ -14,6 +14,7 @@ use App\Http\Controllers\ReliefController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\UserGuideController;
+use App\Http\Controllers\UserManagementController;
 
 // ── Public routes ──────────────────────────────
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
@@ -42,6 +43,16 @@ Route::get('/donate/success/{donation}', [PublicController::class, 'paymentSucce
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::middleware('role:super_admin,mdrrmo')
+                ->group(function () {
+                    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+                    Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
+                    Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
+                    Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
+                    Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
+                    Route::patch('/users/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('users.toggle-status');
+                });
 
     // Inventory - view
     Route::middleware('role:super_admin,mdrrmo,lgu_staff,evac_manager,evacuation_manager')
