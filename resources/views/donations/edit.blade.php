@@ -140,7 +140,7 @@
         <textarea name="notes" rows="2" class="form-control">{{ old('notes', $donation->notes) }}</textarea>
       </div>
 
-      <div class="d-flex gap-2">
+      <div class="d-flex donation-form-actions">
         <button type="submit" class="btn btn-danger">
           <i class="bi bi-check-lg me-1"></i>Update Donation
         </button>
@@ -152,3 +152,9 @@
 </div>
 
 @endsection
+
+@push('styles')
+<style>
+  .donation-form-actions > * + * { margin-left: .5rem; }
+</style>
+@endpush
