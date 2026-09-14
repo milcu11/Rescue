@@ -180,11 +180,11 @@
           <tbody>
             @forelse($relief->distributions as $dist)
             <tr>
-              <td>{{ $dist->center->name }}</td>
-              <td>{{ $dist->item->name }}</td>
-              <td>{{ number_format($dist->quantity_distributed) }} {{ $dist->item->unit }}</td>
+              <td>{{ $dist->center?->name ?? 'Unavailable center' }}@if($dist->center?->trashed()) <small class="text-muted">(archived)</small>@endif</td>
+              <td>{{ $dist->item?->name ?? 'Unavailable item' }}@if($dist->item?->trashed()) <small class="text-muted">(archived)</small>@endif</td>
+              <td>{{ number_format($dist->quantity_distributed) }} {{ $dist->item?->unit ?? '' }}</td>
               <td>{{ number_format($dist->beneficiaries_count) }}</td>
-              <td>{{ $dist->distributed_at->format('M d, Y h:i A') }}</td>
+              <td>{{ $dist->distributed_at?->format('M d, Y h:i A') ?? '—' }}</td>
               <td><small class="text-muted">{{ $dist->notes ?? '—' }}</small></td>
             </tr>
             @empty

@@ -28,12 +28,12 @@ class ReliefDistribution extends Model
 
     public function center()
     {
-        return $this->belongsTo(EvacuationCenter::class, 'evacuation_center_id');
+        return $this->belongsTo(EvacuationCenter::class, 'evacuation_center_id')->withTrashed();
     }
 
     public function item()
     {
-        return $this->belongsTo(InventoryItem::class, 'inventory_item_id');
+        return $this->belongsTo(InventoryItem::class, 'inventory_item_id')->withTrashed();
     }
 
     public function distributor()

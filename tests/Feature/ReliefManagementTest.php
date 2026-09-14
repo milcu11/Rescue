@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\EvacuationCenter;
 use App\Models\InventoryItem;
 use App\Models\ReliefOperation;
+use App\Models\ReliefDistribution;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -126,5 +127,29 @@ class ReliefManagementTest extends TestCase
         $response->assertSessionHasErrors('quantity_distributed');
         $this->assertDatabaseCount('relief_distributions', 1);
         $this->assertDatabaseHas('inventory_items', ['id' => $item->id, 'quantity' => 15]);
+    }
+
+    public function test_relief_show_handles_archived_distribution_relations(): void
+    {
+        $user = $this->user();
+        $operation = $this->operation($user, 'approved');
+        $center = $this->center($user);
+        $item = $this->item($user);
+
+        ReliefDistribution::create([
+            ...$this->distributionData($center, $item),
+            'relief_operation_id' => $operation->id,
+            'distributed_by' => $user->id,
+            'distributed_at' => now(),
+        ]);
+        $center->delete();
+        $item->delete();
+
+        $this->actingAs($user)
+            ->get(route('relief.show', $operation))
+            ->assertOk()
+            ->assertSee('Relief Center')
+            ->assertSee('Rice')
+            ->assertSee('archived');
     }
 }
