@@ -57,8 +57,8 @@ class EvacuationController extends Controller
             'contact_phone'       => 'nullable|string|max:50',
             'intake_procedures'   => 'nullable|string',
             'required_items'      => 'nullable|string',
-            'latitude'            => 'nullable|numeric',
-            'longitude'           => 'nullable|numeric',
+            'latitude'            => 'required|numeric|between:-90,90',
+            'longitude'           => 'required|numeric|between:-180,180',
             'notes'               => 'nullable|string',
         ]);
 
@@ -176,8 +176,8 @@ class EvacuationController extends Controller
             'contact_phone'       => 'nullable|string|max:50',
             'intake_procedures'   => 'nullable|string',
             'required_items'      => 'nullable|string',
-            'latitude'            => 'nullable|numeric',
-            'longitude'           => 'nullable|numeric',
+            'latitude'            => 'required|numeric|between:-90,90',
+            'longitude'           => 'required|numeric|between:-180,180',
             'notes'               => 'nullable|string',
         ]);
 

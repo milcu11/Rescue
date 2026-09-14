@@ -213,6 +213,21 @@
             <small class="form-text text-muted">Physical location of the building entrance families should use.</small>
           </div>
 
+          <div class="form-group">
+            <label>Exact map location <span class="text-danger">*</span></label>
+            <div class="row">
+              <div class="col-md-6">
+                <input type="number" name="latitude" id="evacLatitude" class="form-control" required min="-90" max="90" step="any" placeholder="e.g. 14.563210">
+                <small class="form-text text-muted">Latitude from the exact building pin in Google Maps.</small>
+              </div>
+              <div class="col-md-6">
+                <input type="number" name="longitude" id="evacLongitude" class="form-control" required min="-180" max="180" step="any" placeholder="e.g. 121.285430">
+                <small class="form-text text-muted">Longitude from the same exact pin.</small>
+              </div>
+            </div>
+            <small class="form-text text-info"><i class="fas fa-info-circle mr-1"></i>In Google Maps, right-click the evacuation building, choose the coordinates, then paste the two values here. Do not use the barangay name as the location.</small>
+          </div>
+
           <h6 class="text-uppercase text-muted border-bottom pb-2 mb-3 mt-2"><i class="fas fa-users mr-1"></i> Capacity & census <small class="font-weight-normal">(staff-maintained)</small></h6>
           <p class="small text-muted">These numbers are <strong>operational counts for this shelter</strong>, not resident phone numbers. Update them as families check in or leave.</p>
           <div class="row">
@@ -619,6 +634,8 @@
         $('#evacBarangay').val(center.barangay || '');
         $('#evacStatus').val(center.status || 'open');
         $('#evacAddress').val(center.address || '');
+        $('#evacLatitude').val(center.latitude ?? '');
+        $('#evacLongitude').val(center.longitude ?? '');
         $('#evacCapacity').val(center.capacity || 0);
         $('#evacOccupancy').val(center.current_occupancy || 0);
         $('#evacFamilies').val(center.families_registered || 0);

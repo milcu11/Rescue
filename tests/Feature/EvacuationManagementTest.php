@@ -72,6 +72,29 @@ class EvacuationManagementTest extends TestCase
         $this->assertSame(2, Evacuee::where('status', 'checked_in')->sum('family_members'));
     }
 
+    public function test_center_creation_uses_exact_coordinates_supplied_by_staff(): void
+    {
+        $user = $this->user();
+
+        $response = $this->actingAs($user)->post(route('evacuation.store'), [
+            'name' => 'Pinugay Covered Court',
+            'barangay' => 'Pinugay',
+            'address' => 'Pinugay, Baras, Rizal',
+            'capacity' => 100,
+            'status' => 'open',
+            'latitude' => '14.563210',
+            'longitude' => '121.285430',
+        ]);
+
+        $response->assertRedirect(route('evacuation.index'));
+        $this->assertDatabaseHas('evacuation_centers', [
+            'name' => 'Pinugay Covered Court',
+            'barangay' => 'Pinugay',
+            'latitude' => 14.563210,
+            'longitude' => 121.285430,
+        ]);
+    }
+
     public function test_checked_in_evacuee_can_be_transferred_between_centers(): void
     {
         $user = $this->user();
