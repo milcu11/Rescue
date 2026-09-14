@@ -136,7 +136,8 @@
               <span class="badge bg-danger">Depleted</span>
             @endif
           </td>
-          <td>
+          <td class="inventory-actions-cell">
+            <div class="admin-action-group inventory-action-group">
             <a href="{{ route('inventory.edit', $item) }}" class="btn btn-sm btn-outline-primary">
               <i class="bi bi-pencil"></i>
             </a>

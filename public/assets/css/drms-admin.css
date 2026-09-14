@@ -91,6 +91,28 @@
   gap: .5rem;
 }
 
+.drms-admin-theme .inventory-action-group {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  gap: .4rem;
+}
+
+.drms-admin-theme .inventory-actions-cell {
+  min-width: 142px;
+  white-space: nowrap;
+}
+
+.drms-admin-theme .inventory-action-group .btn {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  padding: .25rem;
+}
+
+.drms-admin-theme .inventory-action-group form {
+  display: inline-flex;
+}
+
 .drms-admin-theme .admin-action-group > form,
 .drms-admin-theme .admin-action-group > .btn {
   margin: 0 !important;
