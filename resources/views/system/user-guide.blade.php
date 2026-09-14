@@ -54,7 +54,7 @@
         'Review Emergency Supplies before preparing a release.',
         'Update quantities and item status immediately after receiving or releasing stock.',
         'Confirm each Distribution includes the correct items and destination.',
-        'Use Reports & Analytics to check inventory totals and export a current report.',
+        'Review the stock movement history on an item page after receiving or releasing stock.',
       ],
     ],
     'evac_manager' => [
@@ -217,7 +217,69 @@
       ],
       'check' => 'Never share your password or use another person\'s account.',
     ],
+    [
+      'title' => 'User Management',
+      'icon' => 'fas fa-users text-primary',
+      'purpose' => 'Manage system accounts, roles, and account status for authorized staff.',
+      'steps' => [
+        'Review the user list and filter it by role or active status.',
+        'Create an account with the correct role and temporary password when onboarding staff.',
+        'Edit account details or deactivate an account when access must change.',
+        'Use the Audit Trail to verify user-management changes when needed.',
+      ],
+      'check' => 'Never deactivate your own account; ask another administrator to make that change.',
+    ],
+    [
+      'title' => 'My Donations',
+      'icon' => 'fas fa-hand-holding-heart text-info',
+      'purpose' => 'Review donations connected to your donor account.',
+      'steps' => [
+        'Open a donation to review its tracking code, type, amount or items, and current status.',
+        'Use the tracking code when contacting the response team about a donation.',
+      ],
+      'check' => 'Keep your tracking code available for follow-up.',
+    ],
+    [
+      'title' => 'Make a Donation',
+      'icon' => 'fas fa-donate text-info',
+      'purpose' => 'Submit a monetary or in-kind donation through the public donation form.',
+      'steps' => [
+        'Choose the donation type and provide accurate donor contact details.',
+        'Describe in-kind items or enter the monetary amount before submitting.',
+        'Save the tracking code shown after submission.',
+      ],
+      'check' => 'Complete payment only through the payment page provided for a monetary donation.',
+    ],
+    [
+      'title' => 'Track a Donation',
+      'icon' => 'fas fa-search text-info',
+      'purpose' => 'Check donation progress using its tracking code.',
+      'steps' => [
+        'Enter the tracking code exactly as provided after submission.',
+        'Review the current status and contact the response team if the information needs clarification.',
+      ],
+      'check' => 'Do not share another donor\'s tracking code or private information.',
+    ],
   ];
+
+  $pageAccess = [
+    'super_admin' => ['Dashboard', 'User Management', 'Evacuation Centers', 'Emergency Supplies', 'Distributions', 'Donations', 'Payment History', 'Reports & Analytics', 'Audit Trail', 'My Profile'],
+    'mdrrmo' => ['Dashboard', 'Evacuation Centers', 'Emergency Supplies', 'Distributions', 'Donations', 'Reports & Analytics', 'My Profile'],
+    'drrm_officer' => ['Dashboard', 'Evacuation Centers', 'Emergency Supplies', 'Distributions', 'Donations', 'Payment History', 'Reports & Analytics', 'Audit Trail', 'My Profile'],
+    'lgu_staff' => ['Dashboard', 'Emergency Supplies', 'Distributions', 'Donations', 'Reports & Analytics', 'My Profile'],
+    'warehouse_staff' => ['Dashboard', 'Emergency Supplies', 'Distributions', 'My Profile'],
+    'evac_manager' => ['Dashboard', 'Evacuation Centers', 'Emergency Supplies', 'Distributions', 'My Profile'],
+    'evacuation_manager' => ['Dashboard', 'Evacuation Centers', 'Emergency Supplies', 'Distributions', 'My Profile'],
+    'donor' => ['My Donations', 'Make a Donation', 'Track a Donation', 'My Profile'],
+    'volunteer' => ['My Profile'],
+    'resident' => ['Evacuation Centers', 'My Profile'],
+  ];
+
+  $allowedPages = $pageAccess[$role] ?? ['Dashboard', 'My Profile'];
+  $pageInstructions = array_values(array_filter(
+    $pageInstructions,
+    fn($instruction) => in_array($instruction['title'], $allowedPages, true)
+  ));
 @endphp
 
 @section('content')
@@ -243,7 +305,7 @@
       </div>
       <div class="card-body">
         <ul class="mb-0 pl-4">
-          <li class="mb-2">Use the page that matches the real-world action. For example, record received items in Emergency Supplies before distributing them.</li>
+          <li class="mb-2">Use the page that matches the real-world action and review the record before moving to the next step.</li>
           <li class="mb-2">Check the record details before saving. Accurate names, quantities, statuses, and dates make reports reliable.</li>
           <li class="mb-2">Do not use another person's account. Ask an administrator when your account cannot access a needed page.</li>
           <li>Sign out when you finish, especially on a shared computer.</li>
@@ -259,12 +321,9 @@
       </div>
       <div class="card-body p-0">
         <div class="list-group list-group-flush">
-          <div class="list-group-item"><strong>Dashboard</strong><small class="d-block text-muted">See current response activity at a glance.</small></div>
-          <div class="list-group-item"><strong>Emergency Supplies</strong><small class="d-block text-muted">Track stock, status, and item releases.</small></div>
-          <div class="list-group-item"><strong>Distributions</strong><small class="d-block text-muted">Record relief sent to an evacuation center.</small></div>
-          <div class="list-group-item"><strong>Evacuation Centers</strong><small class="d-block text-muted">Manage centers, capacity, and evacuee check-ins.</small></div>
-          <div class="list-group-item"><strong>Reports &amp; Analytics</strong><small class="d-block text-muted">Review, print, or export operational summaries.</small></div>
-          <div class="list-group-item"><strong>My Profile</strong><small class="d-block text-muted">Review your account information.</small></div>
+          @foreach($pageInstructions as $instruction)
+            <div class="list-group-item"><strong>{{ $instruction['title'] }}</strong><small class="d-block text-muted">{{ $instruction['purpose'] }}</small></div>
+          @endforeach
         </div>
       </div>
     </div>

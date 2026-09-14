@@ -62,4 +62,26 @@ class UserManagementAuditTest extends TestCase
 
         $this->actingAs($staff)->get(route('users.index'))->assertRedirect(route('dashboard'));
     }
+
+    public function test_user_guide_matches_role_visible_pages(): void
+    {
+        $admin = $this->user('super_admin');
+        $this->actingAs($admin)->get(route('user-guide'))
+            ->assertOk()
+            ->assertSee('User Management')
+            ->assertSee('Audit Trail');
+
+        $staff = $this->user('lgu_staff');
+        $this->actingAs($staff)->get(route('user-guide'))
+            ->assertOk()
+            ->assertDontSee('User Management')
+            ->assertDontSee('Audit Trail');
+
+        $donor = $this->user('donor');
+        $this->actingAs($donor)->get(route('user-guide'))
+            ->assertOk()
+            ->assertSee('My Donations')
+            ->assertSee('Make a Donation')
+            ->assertDontSee('Emergency Supplies');
+    }
 }
