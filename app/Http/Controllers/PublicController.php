@@ -19,8 +19,16 @@ class PublicController extends Controller
 {
     public function home()
     {
-        // Landing page removed — redirect to public evacuation centers list
-        return redirect()->route('public.evac_centers');
+        $stats = [
+            'evacuation_centers' => EvacuationCenter::count(),
+            'volunteers' => User::whereHas('role', fn ($q) => $q->where('slug', 'volunteer'))
+                ->where('status', 'active')
+                ->count(),
+            'donations' => Donation::count(),
+            'modules' => 10,
+        ];
+
+        return view('public.home', compact('stats'));
     }
 
     public function evacCenters()
