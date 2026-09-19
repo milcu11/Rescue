@@ -24,8 +24,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Public donation tracker (no login needed)
 Route::get('/track', [DonationController::class, 'track'])->name('donations.track');
 
-// Require authentication from the site root; public services remain available below.
-Route::get('/', [LoginController::class, 'showLogin'])->name('home');
+// Landing page at the site root; staff sign in via /login.
+Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/public-home', [PublicController::class, 'home'])->name('public.home');
 Route::get('/evac-centers', [PublicController::class, 'evacCenters'])->name('public.evac_centers');
 Route::get('/evac-centers/map-data', [PublicController::class, 'evacCenterMapData'])->name('public.evac_centers.map_data');
