@@ -16,7 +16,7 @@
         * { box-sizing: border-box; }
         body.drms-login-page { min-height: 100vh; margin: 0; color: var(--drms-ink); background: #f9f5f4; font-family: 'DM Sans', sans-serif; }
         .drms-login-wrap { display: grid; min-height: 100vh; grid-template-columns: minmax(0, 1.15fr) minmax(420px, 0.85fr); }
-        .drms-login-brand { position: relative; display: flex; align-items: center; overflow: hidden; padding: 4rem clamp(2rem, 7vw, 7rem); color: #fff; background: linear-gradient(135deg, var(--drms-burgundy-deep) 0%, var(--drms-burgundy) 54%, #a52a36 100%); }
+        .drms-login-brand { position: relative; display: flex; align-items: center; overflow: hidden; padding: 4rem clamp(2rem, 7vw, 7rem); color: #fff; background-image: linear-gradient(90deg, rgba(61, 20, 25, 0.94) 0%, rgba(109, 31, 42, 0.86) 47%, rgba(61, 20, 25, 0.45) 100%), url('{{ asset('assets/logo/472849389_1012327994260123_290553008324288451_n.jpg') }}'); background-position: center; background-size: cover; }
         .drms-login-brand::after { position: absolute; right: -16rem; bottom: -20rem; width: 42rem; height: 42rem; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 50%; box-shadow: 0 0 0 3rem rgba(255, 255, 255, 0.04), 0 0 0 6rem rgba(255, 255, 255, 0.035); content: ''; }
         .drms-login-brand-inner { position: relative; z-index: 1; max-width: 42rem; }
         .drms-login-logo { margin-bottom: 1.5rem; }
