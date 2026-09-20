@@ -12,45 +12,46 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        :root { --drms-red: #c62828; --drms-burgundy: #6d1f2a; --drms-burgundy-deep: #3d1419; --drms-ink: #2c1819; --drms-muted: #735f62; }
+        :root { --drms-login-red: #c62828; --drms-login-red-dark: #6d1f2a; --drms-login-burgundy: #3d1419; --drms-login-soft: #fdeaea; }
         * { box-sizing: border-box; }
-        body.drms-login-page { min-height: 100vh; margin: 0; color: var(--drms-ink); background: #f9f5f4; font-family: 'DM Sans', sans-serif; }
-        .drms-login-wrap { display: grid; min-height: 100vh; grid-template-columns: minmax(0, 1.15fr) minmax(420px, 0.85fr); }
-        .drms-login-brand { position: relative; display: flex; align-items: center; overflow: hidden; padding: 4rem clamp(2rem, 7vw, 7rem); color: #fff; background-image: linear-gradient(90deg, rgba(61, 20, 25, 0.94) 0%, rgba(109, 31, 42, 0.86) 47%, rgba(61, 20, 25, 0.45) 100%), url('{{ asset('assets/logo/472849389_1012327994260123_290553008324288451_n.jpg') }}'); background-position: center; background-size: cover; }
-        .drms-login-brand::after { position: absolute; right: -16rem; bottom: -20rem; width: 42rem; height: 42rem; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 50%; box-shadow: 0 0 0 3rem rgba(255, 255, 255, 0.04), 0 0 0 6rem rgba(255, 255, 255, 0.035); content: ''; }
-        .drms-login-brand-inner { position: relative; z-index: 1; max-width: 42rem; }
-        .drms-login-logo { margin-bottom: 1.5rem; }
-        .drms-login-logo img { width: 108px; height: 112px; object-fit: contain; }
-        .drms-login-brand h1 { margin: 0 0 0.5rem; font-size: 3.2rem; font-weight: 700; letter-spacing: 0; }
-        .drms-login-brand .badge { padding: 0.45rem 0.8rem; color: var(--drms-burgundy-deep); font-size: 0.78rem; font-weight: 700; }
-        .tagline { max-width: 35rem; margin: 1.1rem 0 1.4rem; color: rgba(255, 255, 255, 0.85); font-size: 1.1rem; line-height: 1.65; }
-        .area-badge { display: inline-block; padding: 0.5rem 0.75rem; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 4px; background: rgba(0, 0, 0, 0.12); font-size: 0.9rem; }
-        .drms-login-features { margin: 2rem 0; padding: 0; list-style: none; }
-        .drms-login-features li { margin: 0.8rem 0; color: rgba(255, 255, 255, 0.92); }
-        .drms-login-features i { width: 1.5rem; color: #ffd5d5; }
-        .drms-login-back a { color: rgba(255, 255, 255, 0.88); font-size: 0.9rem; text-decoration: none; }
+        body.drms-login-page { min-height: 100vh; margin: 0; background: var(--drms-login-burgundy); font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        .drms-login-wrap { display: flex; min-height: 100vh; }
+        .drms-login-brand { position: relative; display: flex; flex: 1 1 42%; flex-direction: column; justify-content: center; overflow: hidden; padding: 3rem 3.5rem; color: #fff; background: linear-gradient(145deg, var(--drms-login-burgundy) 0%, var(--drms-login-red-dark) 45%, #8b2635 100%); }
+        .drms-login-brand::before { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 100% 0%, rgba(255, 255, 255, 0.1), transparent 55%), radial-gradient(ellipse 50% 40% at 0% 100%, rgba(0, 0, 0, 0.2), transparent 50%); content: ''; pointer-events: none; }
+        .drms-login-brand-inner { position: relative; z-index: 1; max-width: 420px; }
+        .drms-login-logo { display: flex; width: 96px; height: 100px; align-items: center; justify-content: center; margin-bottom: 1.5rem; background: transparent; }
+        .drms-login-logo img { width: 96px; height: 100px; object-fit: contain; filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.28)); }
+        .drms-login-brand h1 { margin: 0 0 0.75rem; font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; }
+        .drms-login-brand .badge { margin-bottom: 0.5rem; padding: 0.4rem 0.8rem; color: var(--drms-login-burgundy); font-size: 0.78rem; font-weight: 700; }
+        .tagline { margin: 0 0 2rem; color: rgba(255, 235, 235, 0.88); font-size: 1.05rem; line-height: 1.5; }
+        .area-badge { display: inline-block; align-self: flex-start; margin-bottom: 2rem; padding: 0.4rem 0.9rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 999px; background: rgba(255, 255, 255, 0.12); font-size: 0.85rem; }
+        .drms-login-features { margin: 0; padding: 0; list-style: none; }
+        .drms-login-features li { padding: 0.35rem 0; color: rgba(255, 230, 230, 0.85); font-size: 0.9rem; }
+        .drms-login-features i { width: 1.25rem; margin-right: 0.5rem; color: #ef9a9a; }
+        .drms-login-back { margin-top: 2.5rem; font-size: 0.9rem; }
+        .drms-login-back a { color: #ffcdd2; text-decoration: none; }
         .drms-login-back a:hover { color: #fff; text-decoration: underline; }
-        .drms-login-main { display: flex; align-items: center; justify-content: center; padding: 2rem; background: #fff; }
-        .drms-login-card { width: 100%; max-width: 430px; overflow: hidden; border: 1px solid #eee4e3; border-radius: 8px; box-shadow: 0 16px 45px rgba(61, 20, 25, 0.12); }
-        .drms-login-card-header { padding: 1.75rem 2rem 1.25rem; color: #fff; background: linear-gradient(125deg, var(--drms-burgundy-deep), var(--drms-burgundy)); }
-        .drms-login-card-header h2 { margin: 0 0 0.2rem; font-size: 1.55rem; font-weight: 700; }
-        .drms-login-card-header p { margin: 0; color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; }
-        .drms-login-card-body { padding: 2rem; }
-        .drms-login-card label { color: #4d3538; font-size: 0.9rem; font-weight: 600; }
-        .drms-login-card .input-group-text { min-width: 44px; justify-content: center; border-color: #ded0d0; border-right: 0; color: var(--drms-burgundy); background: #fffafa; }
-        .drms-login-card .form-control { height: calc(1.5em + 1rem + 2px); border-color: #ded0d0; border-left: 0; font-size: 0.95rem; }
-        .drms-login-card .form-control:focus { border-color: var(--drms-red); box-shadow: 0 0 0 0.2rem rgba(198, 40, 40, 0.12); }
-        .drms-login-card .form-check-label { color: var(--drms-muted); font-size: 0.85rem; font-weight: 400; }
-        .btn-drms-login { width: 100%; padding: 0.7rem 1rem; border: 0; border-radius: 4px; color: #fff; background: var(--drms-red); font-weight: 700; transition: background 0.15s ease, transform 0.15s ease; }
-        .btn-drms-login:hover, .btn-drms-login:focus { color: #fff; background: #a51f22; transform: translateY(-1px); }
-        .drms-login-footer-links { margin: 1.35rem 0 0; color: var(--drms-muted); font-size: 0.86rem; text-align: center; }
-        .drms-login-loader-overlay { position: fixed; z-index: 1050; inset: 0; align-items: center; justify-content: center; background: rgba(40, 11, 15, 0.87); }
+        .drms-login-main { position: relative; display: flex; flex: 1 1 58%; align-items: center; justify-content: center; padding: 2rem 1.5rem; background-color: #2b1115; background-image: linear-gradient(rgba(43, 17, 21, 0.68), rgba(20, 6, 9, 0.82)), url('{{ asset('assets/logo/472849389_1012327994260123_290553008324288451_n.jpg') }}'); background-position: center; background-size: cover; }
+        .drms-login-card { width: 100%; max-width: 420px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 16px; color: #fff; background: rgba(38, 13, 17, 0.90); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55); backdrop-filter: blur(14px); }
+        .drms-login-card-header { padding: 1.75rem 2rem 0; }
+        .drms-login-card-header h2 { margin: 0 0 0.25rem; color: #fff; font-size: 1.5rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+        .drms-login-card-header p { margin: 0; color: rgba(255, 230, 230, 0.85); font-size: 0.9rem; }
+        .drms-login-card-body { padding: 1.5rem 2rem 2rem; }
+        .drms-login-card .form-group label { color: #ffcdd2; font-size: 0.85rem; font-weight: 600; }
+        .drms-login-card .input-group-text { min-width: 44px; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.25); border-right: 0; border-radius: 10px 0 0 10px; color: var(--drms-login-red-dark); background: #fff; }
+        .drms-login-card .form-control { height: auto; padding: 0.65rem 0.9rem; border: 1px solid rgba(255, 255, 255, 0.25); border-left: 0; border-radius: 0 10px 10px 0; color: #210b0e; background: #fff; font-weight: 500; }
+        .drms-login-card .form-control:focus { border-color: #ff8a80; box-shadow: 0 0 0 0.2rem rgba(255, 138, 128, 0.25); }
+        .drms-login-card .form-check-label { color: rgba(255, 230, 230, 0.88); font-size: 0.9rem; font-weight: 400; }
+        .btn-drms-login { width: 100%; margin-top: 0.5rem; padding: 0.7rem 1rem; border: 1px solid #b71c1c; border-radius: 10px; color: #fff; background: var(--drms-login-red); box-shadow: 0 4px 14px rgba(198, 40, 40, 0.4); font-weight: 600; }
+        .btn-drms-login:hover, .btn-drms-login:focus { color: #fff; border-color: var(--drms-login-red); background: #e53935; box-shadow: 0 6px 18px rgba(229, 57, 53, 0.5); }
+        .drms-login-footer-links { margin: 1rem 0 0; color: rgba(255, 230, 230, 0.85); font-size: 0.85rem; text-align: center; }
+        .drms-login-loader-overlay { position: fixed; z-index: 9999999; inset: 0; align-items: center; justify-content: center; background: rgba(18, 5, 8, 0.94); backdrop-filter: blur(10px); }
         .drms-login-loader-overlay.is-active { display: flex !important; }
-        .drms-login-loader-content { color: #fff; }
+        .drms-login-loader-content { display: flex; width: 90%; max-width: 380px; flex-direction: column; align-items: center; justify-content: center; margin: auto; padding: 2.5rem 3rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; color: #fff; background: #2b1115; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6); }
         .drms-login-loader-content img { width: 82px; height: 86px; object-fit: contain; }
         .drms-pulse-logo { animation: pulse 1.35s ease-in-out infinite alternate; }
-        @keyframes pulse { from { transform: scale(0.95); opacity: 0.8; } to { transform: scale(1.05); opacity: 1; } }
-        @media (max-width: 991.98px) { .drms-login-wrap { grid-template-columns: 1fr; } .drms-login-brand { min-height: auto; padding: 2.75rem 2rem; } .drms-login-logo, .drms-login-features { display: none; } .drms-login-brand h1 { font-size: 2.25rem; } .tagline { margin-bottom: 1rem; font-size: 1rem; } .drms-login-main { padding: 2rem 1rem; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 18px rgba(198, 40, 40, 0.7)); } }
+        @media (max-width: 991px) { .drms-login-wrap { flex-direction: column; } .drms-login-brand { flex: none; padding: 2rem 1.5rem; text-align: center; } .drms-login-brand-inner { max-width: none; } .drms-login-logo { margin-right: auto; margin-left: auto; } .drms-login-features { display: none; } .drms-login-back { margin-top: 1rem; } .area-badge { align-self: center; } }
     </style>
 </head>
 <body class="drms-login-page">
