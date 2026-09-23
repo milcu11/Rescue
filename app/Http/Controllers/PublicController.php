@@ -144,7 +144,7 @@ class PublicController extends Controller
                 'sw' => ['lat' => 14.4756, 'lng' => 121.2233],
                 'ne' => ['lat' => 14.6567, 'lng' => 121.3463]
             ],
-            'boundaryUrl' => 'https://drvms.freedev.app/assets/geo/baras-rizal.geojson',
+            'boundaryUrl' => 'https://dvrmsgov.freedev.app/assets/geo/baras-rizal.geojson',
             'label' => 'Municipality of Baras, Rizal',
             'municipality' => 'Municipality of Baras, Rizal',
         ];

@@ -6,23 +6,17 @@
     <meta name="description" content="Unified disaster response for LGUs — incidents, volunteers, relief, evacuation, and accountable operations.">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Evacuation Centers</title>
-    <link rel="icon" type="image/png" sizes="41x43" href="https://drvms.freedev.app/assets/logo/baras_seal_xs.png">
-    <link rel="apple-touch-icon" sizes="185x193" href="https://drvms.freedev.app/assets/logo/baras_seal_l.png">
+    <link rel="icon" type="image/png" sizes="41x43" href="{{ asset('assets/logo/baras_seal_xs.png') }}">
+    <link rel="apple-touch-icon" sizes="185x193" href="{{ asset('assets/logo/baras_seal_l.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap 4 (from AdminLTE bundle – same as dashboard for consistency) -->
-    <link rel="stylesheet" href="https://drvms.freedev.app/assets/adminlte/plugins/bootstrap/css/bootstrap.min.css">
+    <!-- Bootstrap 4 / Font Awesome served from CDN only (the old drvms.freedev.app copies were dead weight causing slow loads) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://drvms.freedev.app/assets/adminlte/plugins/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://drvms.freedev.app/assets/css/public-home.css?v=1787802163">
-
-    <script>
-        window.DRMS_WEATHER_URL = "https:\/\/drvms.freedev.app\/api\/weather\/current";
-    </script>
+    <link rel="stylesheet" href="{{ asset('assets/css/public-home.css') }}?v={{ filemtime(public_path('assets/css/public-home.css')) }}">
 
     <!-- Lucide Icons (homepage only – lightweight SVG icons) -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
@@ -263,8 +257,8 @@
 <body class="drms-public-body drms-public-theme">
 <nav class="navbar navbar-expand-lg navbar-dark drms-nav sticky-top">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="https://drvms.freedev.app/">
-            <img src="https://drvms.freedev.app/assets/logo/baras_seal_xs.png" width="41" height="43" class="brand-icon mr-2" alt="Municipality of Baras seal">
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
+            <img src="{{ asset('assets/logo/baras_seal_xs.png') }}" width="41" height="43" class="brand-icon mr-2" alt="Municipality of Baras seal">
             <span><strong>DRMS</strong></span>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#publicNav" aria-controls="publicNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -277,10 +271,10 @@
                         Explore
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navExplore">
-                        <a class="dropdown-item" href="https://drvms.freedev.app/#modules">System modules</a>
-                        <a class="dropdown-item" href="https://drvms.freedev.app/#public-services">Public services</a>
-                        <a class="dropdown-item" href="https://drvms.freedev.app/#lgu-updates">LGU Facebook updates</a>
-                        <a class="dropdown-item" href="https://drvms.freedev.app/#location">Map &amp; weather</a>
+                        <a class="dropdown-item" href="{{ route('home') }}#modules">System modules</a>
+                        <a class="dropdown-item" href="{{ route('home') }}#public-services">Public services</a>
+                        <a class="dropdown-item" href="{{ route('home') }}#lgu-updates">LGU Facebook updates</a>
+                        <a class="dropdown-item" href="{{ route('home') }}#location">Map &amp; weather</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown drms-nav-dropdown">
@@ -288,16 +282,16 @@
                         Citizen tools
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navCitizen">
-                        <a class="dropdown-item" href="https://drvms.freedev.app/report">Report incident</a>
+                        <a class="dropdown-item" href="https://dvrmsgov.freedev.app/report">Report incident</a>
                         <a class="dropdown-item" href="{{ route('public.evac_centers') }}">Evacuation centers</a>
-                        <a class="dropdown-item" href="https://drvms.freedev.app/register">Register</a>
+                        <a class="dropdown-item" href="https://dvrmsgov.freedev.app/register">Register</a>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://drvms.freedev.app/#location">Map &amp; weather</a>
+                    <a class="nav-link" href="{{ route('home') }}#location">Map &amp; weather</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://drvms.freedev.app/about">About</a>
+                    <a class="nav-link" href="https://dvrmsgov.freedev.app/about">About</a>
                 </li>
                 <li class="nav-item">
                     <a class="btn btn-drms-light btn-sm ml-lg-2 mt-2 mt-lg-0" href="{{ route('login') }}">
@@ -518,7 +512,7 @@
         <div class="row">
             <div class="col-lg-4 mb-4 mb-lg-0">
                 <div class="d-flex align-items-center mb-3">
-                    <img src="https://drvms.freedev.app/assets/logo/baras_seal_xs.png" width="41" height="43" class="footer-brand-icon mr-2" alt="Municipality of Baras seal">
+                    <img src="{{ asset('assets/logo/baras_seal_xs.png') }}" width="41" height="43" class="footer-brand-icon mr-2" alt="Municipality of Baras seal">
                     <h5 class="mb-0 text-white font-weight-bold">DRMS</h5>
                 </div>
                 <p class="small text-muted mb-2">Disaster Response &amp; Volunteer Matching System</p>
@@ -527,21 +521,20 @@
             <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
                 <h6 class="text-white font-weight-bold mb-3">Explore</h6>
                 <ul class="list-unstyled small drms-footer-links mb-0">
-                    <li><a href="https://drvms.freedev.app/#features">Features</a></li>
-                    <li><a href="https://drvms.freedev.app/#disasters">Disaster resilience</a></li>
-                    <li><a href="https://drvms.freedev.app/#location">Map &amp; weather</a></li>
-                    <li><a href="https://drvms.freedev.app/#modules">System modules</a></li>
-                    <li><a href="https://drvms.freedev.app/#modules">System modules</a></li>
-                    <li><a href="https://drvms.freedev.app/#public-services">Public services</a></li>
-                    <li><a href="https://drvms.freedev.app/about">About DRMS</a></li>
-                    <li><a href="https://drvms.freedev.app/demo">Client demo</a></li>
+                    <li><a href="{{ route('home') }}#features">Features</a></li>
+                    <li><a href="{{ route('home') }}#disasters">Disaster resilience</a></li>
+                    <li><a href="{{ route('home') }}#location">Map &amp; weather</a></li>
+                    <li><a href="{{ route('home') }}#modules">System modules</a></li>
+                    <li><a href="{{ route('home') }}#public-services">Public services</a></li>
+                    <li><a href="https://dvrmsgov.freedev.app/about">About DRMS</a></li>
+                    <li><a href="https://dvrmsgov.freedev.app/demo">Client demo</a></li>
                 </ul>
             </div>
             <div class="col-sm-6 col-lg-4">
                 <h6 class="text-white font-weight-bold mb-3">Operations</h6>
                 <ul class="list-unstyled small drms-footer-links mb-0">
                     <li><a href="{{ route('login') }}">Admin dashboard</a></li>
-                    <li><a href="https://drvms.freedev.app/api/v1/health" target="_blank" rel="noopener">API health</a></li>
+                    <li><a href="https://dvrmsgov.freedev.app/api/v1/health" target="_blank" rel="noopener">API health</a></li>
                     <li><a href="https://www.pagasa.dost.gov.ph/" target="_blank" rel="noopener">PAGASA official advisories</a></li>
                 </ul>
                 <p class="small text-muted mt-3 mb-0">Weather on this site is informational (Open-Meteo). Always follow official government warnings.</p>
