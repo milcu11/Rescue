@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Staff access for the Disaster Response and Volunteer Matching System.">
-    <title>Login | DRMS</title>
+    <meta name="description" content="Create a donor account for the Disaster Response and Volunteer Matching System.">
+    <title>Register | DRMS</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/logo/baras_seal_l.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +32,7 @@
         .drms-login-back a { color: #ffcdd2; text-decoration: none; }
         .drms-login-back a:hover { color: #fff; text-decoration: underline; }
         .drms-login-main { position: relative; display: flex; flex: 1 1 58%; align-items: center; justify-content: center; padding: 2rem 1.5rem; background-color: #2b1115; background-image: linear-gradient(rgba(43, 17, 21, 0.68), rgba(20, 6, 9, 0.82)), url('{{ asset('assets/logo/472849389_1012327994260123_290553008324288451_n.jpg') }}'); background-position: center; background-size: cover; }
-        .drms-login-card { width: 100%; max-width: 420px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 16px; color: #fff; background: rgba(38, 13, 17, 0.90); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55); backdrop-filter: blur(14px); }
+        .drms-login-card { width: 100%; max-width: 440px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 16px; color: #fff; background: rgba(38, 13, 17, 0.90); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55); backdrop-filter: blur(14px); }
         .drms-login-card-header { padding: 1.75rem 2rem 0; }
         .drms-login-card-header h2 { margin: 0 0 0.25rem; color: #fff; font-size: 1.5rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
         .drms-login-card-header p { margin: 0; color: rgba(255, 230, 230, 0.85); font-size: 0.9rem; }
@@ -41,16 +41,9 @@
         .drms-login-card .input-group-text { min-width: 44px; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.25); border-right: 0; border-radius: 10px 0 0 10px; color: var(--drms-login-red-dark); background: #fff; }
         .drms-login-card .form-control { height: auto; padding: 0.65rem 0.9rem; border: 1px solid rgba(255, 255, 255, 0.25); border-left: 0; border-radius: 0 10px 10px 0; color: #210b0e; background: #fff; font-weight: 500; }
         .drms-login-card .form-control:focus { border-color: #ff8a80; box-shadow: 0 0 0 0.2rem rgba(255, 138, 128, 0.25); }
-        .drms-login-card .form-check-label { color: rgba(255, 230, 230, 0.88); font-size: 0.9rem; font-weight: 400; }
         .btn-drms-login { width: 100%; margin-top: 0.5rem; padding: 0.7rem 1rem; border: 1px solid #b71c1c; border-radius: 10px; color: #fff; background: var(--drms-login-red); box-shadow: 0 4px 14px rgba(198, 40, 40, 0.4); font-weight: 600; }
         .btn-drms-login:hover, .btn-drms-login:focus { color: #fff; border-color: var(--drms-login-red); background: #e53935; box-shadow: 0 6px 18px rgba(229, 57, 53, 0.5); }
         .drms-login-footer-links { margin: 1rem 0 0; color: rgba(255, 230, 230, 0.85); font-size: 0.85rem; text-align: center; }
-        .drms-login-loader-overlay { position: fixed; z-index: 9999999; inset: 0; align-items: center; justify-content: center; background: rgba(18, 5, 8, 0.94); backdrop-filter: blur(10px); }
-        .drms-login-loader-overlay.is-active { display: flex !important; }
-        .drms-login-loader-content { display: flex; width: 90%; max-width: 380px; flex-direction: column; align-items: center; justify-content: center; margin: auto; padding: 2.5rem 3rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; color: #fff; background: #2b1115; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6); }
-        .drms-login-loader-content img { width: 82px; height: 86px; object-fit: contain; }
-        .drms-pulse-logo { animation: pulse 1.35s ease-in-out infinite alternate; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 18px rgba(198, 40, 40, 0.7)); } }
         @media (max-width: 991px) { .drms-login-wrap { flex-direction: column; } .drms-login-brand { flex: none; padding: 2rem 1.5rem; text-align: center; } .drms-login-brand-inner { max-width: none; } .drms-login-logo { margin-right: auto; margin-left: auto; } .drms-login-features { display: none; } .drms-login-back { margin-top: 1rem; } .area-badge { align-self: center; } }
     </style>
 </head>
@@ -61,64 +54,65 @@
                 <div class="drms-login-logo"><img src="{{ asset('assets/logo/baras_seal_l.png') }}" alt="Municipality of Baras seal"></div>
                 <h1>DRMS</h1>
                 <span class="badge badge-light">Disaster Response &amp; Volunteer Matching System</span>
-                <p class="tagline">Unified disaster response for LGUs — incidents, volunteers, relief, evacuation, and accountable operations.</p>
+                <p class="tagline">Create a donor account to support relief operations and track your donations online.</p>
                 <span class="area-badge"><i class="fas fa-map-marker-alt mr-1"></i> Municipality of Baras, Rizal</span>
                 <ul class="drms-login-features">
-                    <li><i class="fas fa-check-circle"></i> Incident reporting and verification</li>
-                    <li><i class="fas fa-check-circle"></i> Volunteer matching and deployment</li>
-                    <li><i class="fas fa-check-circle"></i> Relief, evacuation, and operations analytics</li>
+                    <li><i class="fas fa-check-circle"></i> Donate cash or in-kind items securely</li>
+                    <li><i class="fas fa-check-circle"></i> Track the status of every donation</li>
+                    <li><i class="fas fa-check-circle"></i> Get notified when relief is distributed</li>
                 </ul>
                 <p class="drms-login-back mb-0"><a href="{{ route('home') }}"><i class="fas fa-arrow-left mr-1"></i> Back to public homepage</a></p>
             </div>
         </aside>
         <main class="drms-login-main">
-            <section class="drms-login-card" aria-labelledby="login-title">
-                <div class="drms-login-card-header"><h2 id="login-title">Login</h2><p>Staff access to the operations dashboard</p></div>
+            <section class="drms-login-card" aria-labelledby="register-title">
+                <div class="drms-login-card-header"><h2 id="register-title">Register</h2><p>Create a donor account</p></div>
                 <div class="drms-login-card-body">
-                    @if($errors->any())<div class="alert alert-danger small" role="alert">{{ $errors->first() }}</div>@endif
-                    @if(session('status'))<div class="alert alert-success small" role="alert">{{ session('status') }}</div>@endif
-                    <form method="POST" action="{{ route('login.post') }}" autocomplete="on" id="login-form">
+                    @if($errors->any())
+                        <div class="alert alert-danger small" role="alert">
+                            <ul class="mb-0 pl-3">
+                                @foreach($errors->all() as $err)
+                                    <li>{{ $err }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form method="POST" action="{{ route('register.post') }}" autocomplete="on" id="register-form">
                         @csrf
                         <div class="form-group">
-                            <label for="loginEmail">Email address</label>
+                            <label for="registerName">Full name</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-user"></i></span></div>
-                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="loginEmail" name="email" autocomplete="username" placeholder="Enter your email address" value="{{ old('email') }}" required autofocus>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="registerName" name="name" autocomplete="name" placeholder="Enter your full name" value="{{ old('name') }}" required autofocus>
                             </div>
-                            @error('email')<small class="text-danger d-block mt-1">{{ $message }}</small>@enderror
                         </div>
                         <div class="form-group">
-                            <label for="loginPassword">Password</label>
+                            <label for="registerEmail">Email address</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-envelope"></i></span></div>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="registerEmail" name="email" autocomplete="username" placeholder="Enter your email address" value="{{ old('email') }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-lock"></i></span></div>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="loginPassword" name="password" autocomplete="current-password" placeholder="Enter your password" required>
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="registerPassword" name="password" autocomplete="new-password" placeholder="At least 8 characters" required>
                             </div>
-                            @error('password')<small class="text-danger d-block mt-1">{{ $message }}</small>@enderror
                         </div>
-                        <div class="form-group form-check mb-4">
-                            <input type="checkbox" name="remember" class="form-check-input" id="rememberMe" value="1" @checked(old('remember'))>
-                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        <div class="form-group mb-4">
+                            <label for="registerPasswordConfirm">Confirm password</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-lock"></i></span></div>
+                                <input type="password" class="form-control" id="registerPasswordConfirm" name="password_confirmation" autocomplete="new-password" placeholder="Re-enter your password" required>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-drms-login"><i class="fas fa-sign-in-alt mr-1"></i> Login</button>
+                        <button type="submit" class="btn btn-drms-login"><i class="fas fa-user-plus mr-1"></i> Create account</button>
                     </form>
-                    <p class="drms-login-footer-links mb-0">Need an account? <a href="{{ route('register') }}" class="font-weight-bold" style="color:#ffcdd2;">Register as a donor</a></p>
-                    <p class="drms-login-footer-links">Need help with staff access? Contact your DRMS administrator.</p>
+                    <p class="drms-login-footer-links mb-0">Already have an account? <a href="{{ route('login') }}" class="font-weight-bold" style="color:#ffcdd2;">Login</a></p>
                 </div>
             </section>
         </main>
     </div>
-    <div id="loginLoaderOverlay" class="drms-login-loader-overlay" style="display: none;" aria-live="polite">
-        <div class="drms-login-loader-content text-center">
-            <img src="{{ asset('assets/logo/baras_seal_l.png') }}" alt="" class="mb-3 drms-pulse-logo">
-            <div class="spinner-border text-light mb-3 d-block mx-auto" role="status"><span class="sr-only">Loading</span></div>
-            <h4 class="font-weight-bold mb-1">Authenticating...</h4>
-            <p class="text-white-50 small mb-0">Preparing your DRMS operations dashboard</p>
-        </div>
-    </div>
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function () {
-            if (this.checkValidity()) document.getElementById('loginLoaderOverlay').classList.add('is-active');
-        });
-    </script>
 </body>
 </html>

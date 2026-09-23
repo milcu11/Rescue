@@ -20,6 +20,8 @@ use App\Http\Controllers\UserManagementController;
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/register', [LoginController::class, 'showRegister'])->name('register');
+Route::post('/register', [LoginController::class, 'register'])->name('register.post');
 
 // Public donation tracker (no login needed)
 Route::get('/track', [DonationController::class, 'track'])->name('donations.track');
