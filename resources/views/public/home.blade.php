@@ -118,6 +118,25 @@
         .drms-weather-meta li { padding: 0.25rem 0; border-bottom: 1px solid rgba(198, 40, 40, 0.1); }
         .drms-weather-meta li:last-child { border-bottom: none; }
         .drms-weather-loading { padding: 1rem 0; }
+
+        /* LGU Facebook updates */
+        .drms-fb-screen { background: var(--drms-light, #f9f5f4); }
+        .drms-fb-panel-wrapper { width: 100%; max-width: min(94vw, 640px); margin: 0 auto; }
+        .drms-fb-panel { display: flex; flex-direction: column; width: 100%; background: #fff; border: 1px solid rgba(109, 31, 42, 0.16); border-radius: var(--drms-radius); box-shadow: var(--drms-shadow); overflow: hidden; }
+        .drms-fb-panel-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1rem 1.15rem; border-bottom: 1px solid rgba(45, 12, 18, 0.08); border-top: 4px solid var(--drms-primary); background: linear-gradient(180deg, #fff 0%, #fdf8f8 100%); }
+        .drms-fb-panel-brand { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
+        .drms-fb-panel-icon { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #1877f2; color: #fff; font-size: 1.15rem; flex-shrink: 0; box-shadow: 0 2px 8px rgba(24, 119, 242, 0.35); }
+        .drms-fb-panel-brand-text { min-width: 0; }
+        .drms-fb-panel-title { display: block; font-weight: 700; font-size: 1rem; color: var(--drms-primary-dark); line-height: 1.3; }
+        .drms-fb-panel-sub { display: block; font-size: 0.82rem; color: var(--drms-muted); margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .drms-fb-panel-link { flex-shrink: 0; border-color: rgba(24, 119, 242, 0.45); color: #1877f2; }
+        .drms-fb-panel-link:hover { background: #1877f2; border-color: #1877f2; color: #fff; }
+        .drms-fb-panel-viewport { min-height: min(72vh, 680px); height: min(72vh, 680px); overflow: hidden; background: #f0f2f5; border-top: 1px solid rgba(45, 12, 18, 0.06); }
+        .drms-fb-panel-viewport-inner { width: 100%; height: 100%; display: flex; justify-content: center; align-items: flex-start; overflow: hidden; padding: 0; }
+        .drms-fb-screen-scaler { transform-origin: top center; will-change: transform; flex-shrink: 0; }
+        .drms-fb-screen-scaler iframe { display: block; border: 0; background: #fff; }
+        @media (min-width: 768px) { .drms-fb-panel-wrapper { max-width: min(88vw, 720px); } .drms-fb-panel-viewport { min-height: min(75vh, 720px); height: min(75vh, 720px); } }
+        @media (min-width: 992px) { .drms-fb-panel-wrapper { max-width: min(78vw, 820px); } .drms-fb-panel-viewport { min-height: min(78vh, 760px); height: min(78vh, 760px); } }
     </style>
 </head>
 <body class="drms-public-body drms-public-theme">
@@ -137,6 +156,7 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navExplore">
                         <a class="dropdown-item" href="{{ route('public.home') }}#modules">System modules</a>
                         <a class="dropdown-item" href="{{ route('public.home') }}#public-services">Public services</a>
+                        <a class="dropdown-item" href="{{ route('public.home') }}#lgu-updates">LGU Facebook updates</a>
                         <a class="dropdown-item" href="{{ route('public.home') }}#location">Map &amp; weather</a>
                         <a class="dropdown-item" href="{{ route('public.home') }}#roles">Who uses DRMS</a>
                     </div>
@@ -305,6 +325,51 @@
         </div>
     </section>
 
+    <!-- LGU Facebook updates -->
+    <section id="lgu-updates" class="py-5 drms-section-alt drms-fb-screen">
+        <div class="container">
+            <div class="text-center mb-4 mb-lg-5">
+                <span class="badge badge-drms mb-2">Facebook Official Page</span>
+                <h2 class="section-title mb-2">LGU Baras Rizal</h2>
+                <p class="text-muted col-lg-8 mx-auto mb-0">
+                    Official municipal announcements and advisories from LGU Baras Rizal.
+                    Scroll inside the panel below to read the latest posts.
+                </p>
+            </div>
+
+            <div class="drms-fb-panel-wrapper">
+                <div class="drms-fb-panel">
+                    <div class="drms-fb-panel-header">
+                        <div class="drms-fb-panel-brand">
+                            <span class="drms-fb-panel-icon" aria-hidden="true"><i class="fab fa-facebook-f"></i></span>
+                            <div class="drms-fb-panel-brand-text">
+                                <span class="drms-fb-panel-title">Facebook Official Page</span>
+                                <span class="drms-fb-panel-sub">LGU Baras Rizal</span>
+                            </div>
+                        </div>
+                        <a href="https://www.facebook.com/LGUBarasRizal" class="btn btn-sm btn-outline-primary drms-fb-panel-link" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt mr-1"></i> Open on Facebook
+                        </a>
+                    </div>
+                    <div id="drms-fb-embed-wrap" class="drms-fb-panel-viewport" data-page-url="https://www.facebook.com/LGUBarasRizal">
+                        <div class="drms-fb-panel-viewport-inner">
+                            <div id="drms-fb-embed-scaler" class="drms-fb-screen-scaler">
+                                <iframe
+                                    id="drms-fb-embed-frame"
+                                    title="LGU Baras Rizal — Facebook Official Page"
+                                    src="about:blank"
+                                    scrolling="yes"
+                                    frameborder="0"
+                                    allowfullscreen="true"
+                                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Map & weather -->
     <section id="location" class="py-5">
         <div class="container">
@@ -457,6 +522,7 @@
                 <h6 class="text-white font-weight-bold mb-3">Explore</h6>
                 <ul class="list-unstyled small drms-footer-links mb-0">
                     <li><a href="#public-services">Public services</a></li>
+                    <li><a href="#lgu-updates">LGU Facebook updates</a></li>
                     <li><a href="#location">Map &amp; weather</a></li>
                     <li><a href="#modules">System modules</a></li>
                     <li><a href="#roles">Who uses DRMS</a></li>
@@ -496,6 +562,70 @@
             });
         }
     });
+
+    // LGU Facebook updates — Facebook Page Plugin embed, scaled to fit the panel
+    (function () {
+        var wrap = document.getElementById('drms-fb-embed-wrap');
+        var frame = document.getElementById('drms-fb-embed-frame');
+        var scaler = document.getElementById('drms-fb-embed-scaler');
+        if (!wrap || !frame || !scaler) return;
+
+        var pageUrl = wrap.getAttribute('data-page-url');
+        var FB_WIDTH = 500;
+        var FB_HEIGHT = 700;
+        var loaded = false;
+
+        function buildSrc() {
+            var params = new URLSearchParams({
+                href: pageUrl,
+                tabs: 'timeline',
+                width: FB_WIDTH,
+                height: FB_HEIGHT,
+                small_header: 'false',
+                adapt_container_width: 'false',
+                hide_cover: 'false',
+                show_facepile: 'true'
+            });
+            return 'https://www.facebook.com/plugins/page.php?' + params.toString();
+        }
+
+        function resize() {
+            var scale = Math.min(1, wrap.clientWidth / FB_WIDTH);
+            scaler.style.width = FB_WIDTH + 'px';
+            scaler.style.height = FB_HEIGHT + 'px';
+            scaler.style.transform = 'scale(' + scale + ')';
+            frame.style.width = FB_WIDTH + 'px';
+            frame.style.height = FB_HEIGHT + 'px';
+        }
+
+        function load() {
+            if (loaded || !pageUrl) return;
+            loaded = true;
+            frame.src = buildSrc();
+            resize();
+        }
+
+        // Only load once the panel scrolls into view, to avoid an upfront Facebook request on every page load.
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        load();
+                        observer.disconnect();
+                    }
+                });
+            }, { rootMargin: '200px' });
+            observer.observe(wrap);
+        } else {
+            load();
+        }
+
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(resize, 150);
+        });
+    })();
 
     // Windy overlay switcher
     (function () {
