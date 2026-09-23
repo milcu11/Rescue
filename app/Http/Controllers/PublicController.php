@@ -195,6 +195,45 @@ class PublicController extends Controller
         ]);
     }
 
+    public function weatherCurrent(Request $request)
+    {
+        $lat = (float) $request->query('lat', 14.5171);
+        $lon = (float) $request->query('lon', 121.2672);
+        $cacheKey = "public.weather.current.{$lat}.{$lon}";
+
+        try {
+            $response = Http::timeout(6)->get('https://api.open-meteo.com/v1/forecast', [
+                'latitude' => $lat,
+                'longitude' => $lon,
+                'current' => 'temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m',
+                'timezone' => 'Asia/Manila',
+            ]);
+
+            if ($response->successful() && isset($response->json()['current'])) {
+                $payload = [
+                    'status' => 'ok',
+                    'current' => $response->json()['current'],
+                    'description' => null,
+                    'source' => 'Open-Meteo',
+                    'stale' => false,
+                ];
+                cache()->put($cacheKey, $payload, now()->addHours(6));
+
+                return response()->json($payload);
+            }
+        } catch (\Throwable $e) {
+            // network/API failure — fall back to cached reading below
+        }
+
+        if ($cached = cache()->get($cacheKey)) {
+            $cached['stale'] = true;
+
+            return response()->json($cached);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Weather is temporarily unavailable.'], 503);
+    }
+
     public function nearestEvac(Request $request)
     {
         $lat = (float) $request->query('lat', 14.5171);

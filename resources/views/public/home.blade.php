@@ -100,6 +100,24 @@
         .drms-footer-links a { color: #e8c4c4; text-decoration: none; display: inline-block; padding: 0.2rem 0; transition: color 0.15s ease; }
         .drms-footer-links a:hover { color: #fff; }
         img.footer-brand-icon { width: 38px; height: 40px; object-fit: contain; flex: 0 0 auto; }
+
+        /* Map & weather */
+        .drms-map-card { background: #fff; border-radius: var(--drms-radius); overflow: hidden; box-shadow: var(--drms-shadow); border: 1px solid #e2e8f0; }
+        .drms-map-header { padding: 0.85rem 1.1rem; background: var(--drms-primary-soft); color: var(--drms-primary-dark); font-weight: 600; font-size: 0.95rem; gap: 0.75rem; flex-wrap: wrap; }
+        .drms-map-frame-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #e2e8f0; }
+        .drms-map-frame-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .drms-windy-card .drms-map-header { border-bottom: 1px solid #e2e8f0; }
+        .drms-windy-frame-wrap { position: relative; width: 100%; min-height: 420px; height: 52vw; max-height: 520px; background: #1a2332; }
+        @media (min-width: 992px) { .drms-windy-frame-wrap { height: 480px; } }
+        .drms-windy-frame-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        #windyOverlayBtns .btn-outline-primary { color: var(--drms-primary); border-color: var(--drms-primary); }
+        #windyOverlayBtns .btn-outline-primary.active, #windyOverlayBtns .btn-outline-primary:hover { background: var(--drms-primary); color: #fff; }
+        .icon-xs, .icon-xs svg { width: 14px; height: 14px; vertical-align: -2px; }
+        .drms-weather-card { border-radius: var(--drms-radius); box-shadow: var(--drms-shadow); background: linear-gradient(160deg, #fff 0%, var(--drms-primary-soft) 100%); border: 1px solid #e2e8f0 !important; }
+        .drms-weather-temp { font-size: 2.75rem; font-weight: 700; line-height: 1; color: var(--drms-primary-dark); letter-spacing: -0.04em; }
+        .drms-weather-meta li { padding: 0.25rem 0; border-bottom: 1px solid rgba(198, 40, 40, 0.1); }
+        .drms-weather-meta li:last-child { border-bottom: none; }
+        .drms-weather-loading { padding: 1rem 0; }
     </style>
 </head>
 <body class="drms-public-body drms-public-theme">
@@ -119,6 +137,7 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navExplore">
                         <a class="dropdown-item" href="{{ route('public.home') }}#modules">System modules</a>
                         <a class="dropdown-item" href="{{ route('public.home') }}#public-services">Public services</a>
+                        <a class="dropdown-item" href="{{ route('public.home') }}#location">Map &amp; weather</a>
                         <a class="dropdown-item" href="{{ route('public.home') }}#roles">Who uses DRMS</a>
                     </div>
                 </li>
@@ -286,6 +305,81 @@
         </div>
     </section>
 
+    <!-- Map & weather -->
+    <section id="location" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Service area &amp; weather context</h2>
+                <p class="text-muted col-lg-9 mx-auto mb-0">
+                    Situational maps and rainfall readings for <strong>Municipality of Baras</strong>, Rizal.
+                    Use alongside official advisories from <strong>PAGASA</strong> when planning deployments or public warnings.
+                </p>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="drms-map-card drms-windy-card">
+                        <div class="drms-map-header d-flex flex-wrap justify-content-between align-items-center">
+                            <span><i data-lucide="wind" class="icon-inline"></i> Weather map — Municipality of Baras</span>
+                            <div class="d-flex flex-wrap align-items-center">
+                                <div class="btn-group btn-group-sm mr-2 mb-1" id="windyOverlayBtns" role="group" aria-label="Weather layer">
+                                    <button type="button" class="btn btn-outline-primary active" data-overlay="wind">Wind</button>
+                                    <button type="button" class="btn btn-outline-primary" data-overlay="rain">Rain</button>
+                                    <button type="button" class="btn btn-outline-primary" data-overlay="temp">Temp</button>
+                                    <button type="button" class="btn btn-outline-primary" data-overlay="clouds">Clouds</button>
+                                </div>
+                                <a href="https://www.windy.com/?14.5171,121.2672,11,d:picker" class="btn btn-sm btn-outline-secondary mb-1" target="_blank" rel="noopener noreferrer">
+                                    Full forecast <i data-lucide="external-link" class="icon-inline icon-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="small text-muted px-3 pt-2 mb-0">Rain and wind layers help duty officers anticipate flood risk in low-lying barangays.</p>
+                        <div class="drms-windy-frame-wrap" id="drms-windy" data-lat="14.5171" data-lon="121.2672" data-zoom="11">
+                            <iframe id="windyEmbedFrame" title="Weather map — Municipality of Baras"
+                                src="https://embed.windy.com/embed2.html?lat=14.5171&lon=121.2672&detailLat=14.5171&detailLon=121.2672&zoom=11&level=surface&overlay=wind&product=ecmwf&message=true&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=true&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1"
+                                loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <div class="drms-map-card">
+                        <div class="drms-map-header d-flex justify-content-between align-items-center">
+                            <span><i data-lucide="map-pin" class="icon-inline"></i> Municipality of Baras — service area</span>
+                        </div>
+                        <div class="drms-map-frame-wrap">
+                            <iframe title="Map of Municipality of Baras"
+                                src="https://maps.google.com/maps?q=14.5171%2C121.2672&hl=en&z=12&output=embed&iwloc=near"
+                                loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="card drms-weather-card border-0 h-100" id="drms-weather" data-lat="14.5171" data-lon="121.2672" data-weather-url="{{ route('public.weather.current') }}">
+                        <div class="card-body">
+                            <h5 class="font-weight-bold mb-1"><i data-lucide="cloud-sun" class="icon-inline"></i> Current conditions</h5>
+                            <p class="small text-muted mb-3">Municipality of Baras · updated from live readings</p>
+                            <div id="drms-weather-loading" class="drms-weather-loading text-muted small">Loading latest conditions…</div>
+                            <div id="drms-weather-body" class="d-none">
+                                <div class="drms-weather-temp" id="drms-weather-temp">—</div>
+                                <p class="mb-2 text-muted small" id="drms-weather-desc"></p>
+                                <ul class="list-unstyled small text-muted mb-0 drms-weather-meta">
+                                    <li><span class="text-dark font-weight-bold">Feels like</span> <span id="drms-weather-apparent">—</span></li>
+                                    <li><span class="text-dark font-weight-bold">Humidity</span> <span id="drms-weather-humidity">—</span></li>
+                                    <li><span class="text-dark font-weight-bold">Wind</span> <span id="drms-weather-wind">—</span></li>
+                                </ul>
+                                <p class="small text-muted mt-3 mb-0" id="drms-weather-updated"></p>
+                            </div>
+                            <div id="drms-weather-error" class="alert alert-warning small mb-0 d-none" role="alert"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Modules -->
     <section id="modules" class="py-5 drms-section-alt">
         <div class="container">
@@ -363,6 +457,7 @@
                 <h6 class="text-white font-weight-bold mb-3">Explore</h6>
                 <ul class="list-unstyled small drms-footer-links mb-0">
                     <li><a href="#public-services">Public services</a></li>
+                    <li><a href="#location">Map &amp; weather</a></li>
                     <li><a href="#modules">System modules</a></li>
                     <li><a href="#roles">Who uses DRMS</a></li>
                 </ul>
@@ -401,6 +496,124 @@
             });
         }
     });
+
+    // Windy overlay switcher
+    (function () {
+        var wrap = document.getElementById('drms-windy');
+        var frame = document.getElementById('windyEmbedFrame');
+        var btns = document.getElementById('windyOverlayBtns');
+        if (!wrap || !frame || !btns) return;
+
+        btns.addEventListener('click', function (e) {
+            var btn = e.target.closest('button[data-overlay]');
+            if (!btn) return;
+            Array.prototype.forEach.call(btns.querySelectorAll('button'), function (b) {
+                b.classList.remove('active');
+            });
+            btn.classList.add('active');
+
+            var lat = wrap.getAttribute('data-lat');
+            var lon = wrap.getAttribute('data-lon');
+            var zoom = wrap.getAttribute('data-zoom') || 11;
+            frame.src = 'https://embed.windy.com/embed2.html?lat=' + lat + '&lon=' + lon +
+                '&detailLat=' + lat + '&detailLon=' + lon + '&zoom=' + zoom +
+                '&level=surface&overlay=' + btn.getAttribute('data-overlay') +
+                '&product=ecmwf&message=true&marker=&calendar=now&pressure=&type=map' +
+                '&location=coordinates&detail=true&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1';
+        });
+    })();
+
+    // Live weather card
+    (function () {
+        function wmoLabel(code) {
+            if (code === 0) return 'Clear sky';
+            if (code === 1) return 'Mainly clear';
+            if (code === 2) return 'Partly cloudy';
+            if (code === 3) return 'Overcast';
+            if (code >= 45 && code <= 48) return 'Fog';
+            if (code >= 51 && code <= 67) return 'Rain';
+            if (code >= 80 && code <= 82) return 'Rain showers';
+            if (code >= 95) return 'Thunderstorm';
+            return 'Current conditions';
+        }
+
+        var el = document.getElementById('drms-weather');
+        if (!el) return;
+
+        var lat = parseFloat(el.getAttribute('data-lat'));
+        var lon = parseFloat(el.getAttribute('data-lon'));
+        var loading = document.getElementById('drms-weather-loading');
+        var body = document.getElementById('drms-weather-body');
+        var errBox = document.getElementById('drms-weather-error');
+        var apiUrl = el.getAttribute('data-weather-url');
+
+        if (!apiUrl || Number.isNaN(lat) || Number.isNaN(lon)) {
+            if (loading) loading.classList.add('d-none');
+            if (errBox) {
+                errBox.textContent = 'Weather is not configured.';
+                errBox.classList.remove('d-none');
+            }
+            return;
+        }
+
+        var url = apiUrl + (apiUrl.indexOf('?') >= 0 ? '&' : '?') +
+            'lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon);
+
+        fetch(url, { method: 'GET', credentials: 'same-origin', headers: { Accept: 'application/json' } })
+            .then(function (res) {
+                return res.json().then(function (data) {
+                    if (!res.ok || data.status !== 'ok') {
+                        throw new Error(data.message || 'Weather unavailable');
+                    }
+                    return data;
+                });
+            })
+            .then(function (data) {
+                var cur = data.current;
+                if (!cur) throw new Error('No weather data');
+
+                if (loading) loading.classList.add('d-none');
+                if (errBox) errBox.classList.add('d-none');
+                if (body) body.classList.remove('d-none');
+
+                var tempEl = document.getElementById('drms-weather-temp');
+                var descEl = document.getElementById('drms-weather-desc');
+                var appEl = document.getElementById('drms-weather-apparent');
+                var humEl = document.getElementById('drms-weather-humidity');
+                var windEl = document.getElementById('drms-weather-wind');
+                var updatedEl = document.getElementById('drms-weather-updated');
+
+                if (tempEl && cur.temperature_2m != null) {
+                    tempEl.textContent = Math.round(cur.temperature_2m) + '°C';
+                }
+                if (descEl) {
+                    descEl.textContent = data.description || wmoLabel(cur.weather_code);
+                }
+                if (appEl && cur.apparent_temperature != null) {
+                    appEl.textContent = Math.round(cur.apparent_temperature) + '°C';
+                }
+                if (humEl && cur.relative_humidity_2m != null) {
+                    humEl.textContent = Math.round(cur.relative_humidity_2m) + '%';
+                }
+                if (windEl && cur.wind_speed_10m != null) {
+                    windEl.textContent = Math.round(cur.wind_speed_10m) + ' km/h';
+                }
+                if (updatedEl && cur.time) {
+                    updatedEl.textContent = 'Updated: ' + String(cur.time).replace('T', ' ') + ' · ' + (data.source || 'Open-Meteo') +
+                        (data.stale ? ' (cached)' : '');
+                }
+
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            })
+            .catch(function (err) {
+                if (loading) loading.classList.add('d-none');
+                if (body) body.classList.add('d-none');
+                if (errBox) {
+                    errBox.textContent = (err && err.message) ? err.message : 'Could not load weather. Please refresh the page.';
+                    errBox.classList.remove('d-none');
+                }
+            });
+    })();
 </script>
 </body>
 </html>

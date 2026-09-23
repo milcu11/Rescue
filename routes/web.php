@@ -34,6 +34,7 @@ Route::post('/evac-centers/check-in-family', [PublicController::class, 'checkInF
 Route::get('/captcha/image', [PublicController::class, 'captcha'])->name('public.captcha');
 Route::get('/captcha', [PublicController::class, 'captcha']);
 Route::get('/api/evac/nearest', [PublicController::class, 'nearestEvac'])->name('public.evac_centers.nearest');
+Route::get('/api/weather/current', [PublicController::class, 'weatherCurrent'])->name('public.weather.current');
 Route::get('/evac-centers/{evacuationCenter}', [PublicController::class, 'evacCenter'])->name('public.evac_center');
 Route::get('/donate', [PublicController::class, 'donate'])->name('donate');
 Route::post('/donate', [PublicController::class, 'storeDonation'])->name('donate.submit');
