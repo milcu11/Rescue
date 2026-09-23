@@ -170,6 +170,9 @@
                     </div>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ route('public.home') }}#location">Map &amp; weather</a>
+                </li>
+                <li class="nav-item">
                     <a class="btn btn-drms-light btn-sm ml-lg-2 mt-2 mt-lg-0" href="{{ route('login') }}">
                         <i data-lucide="log-in" class="icon-inline"></i> Login
                     </a>
