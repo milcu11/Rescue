@@ -329,7 +329,7 @@
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
           <img src="{{ asset('assets/adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2"
-               alt="{{ Auth::user()->name }}" style="width:2.1rem;height:2.1rem;object-fit:cover;">
+               alt="{{ auth()->user()?->name ?? 'Guest' }}" style="width:2.1rem;height:2.1rem;object-fit:cover;">
         </div>
         <div class="info drms-user-info">
           @php
@@ -345,7 +345,7 @@
               default => 'Account access',
             };
           @endphp
-          <a href="{{ $profileUrl }}" class="d-block">{{ in_array($currentRole, ['mdrrmo', 'drrm_officer']) ? 'MDRRMO' : (in_array($currentRole, ['lgu_staff', 'warehouse_staff']) ? 'LGU Staff' : ($currentRole === 'super_admin' ? 'admin' : Auth::user()->name)) }}</a>
+          <a href="{{ $profileUrl }}" class="d-block">{{ in_array($currentRole, ['mdrrmo', 'drrm_officer']) ? 'MDRRMO' : (in_array($currentRole, ['lgu_staff', 'warehouse_staff']) ? 'LGU Staff' : ($currentRole === 'super_admin' ? 'admin' : (auth()->user()?->name ?? 'Guest'))) }}</a>
           <small class="text-muted">{{ $accessLabel }}</small>
         </div>
       </div>
