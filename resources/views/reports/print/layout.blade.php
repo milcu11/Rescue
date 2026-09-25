@@ -48,7 +48,7 @@
   @yield('content')
 
   <div class="footer">
-    DRMS &middot; Disaster Response &amp; Volunteer Matching System
+    DRMS &middot; Disaster Response Matching System
   </div>
 
       <div class="no-print" style="text-align:center;margin-top:20px;">

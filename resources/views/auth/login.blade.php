@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Staff access for the Disaster Response and Volunteer Matching System.">
+    <meta name="description" content="Staff access for the Disaster Response Matching System.">
     <title>Login | DRMS</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/logo/baras_seal_l.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,12 +60,12 @@
             <div class="drms-login-brand-inner">
                 <div class="drms-login-logo"><img src="{{ asset('assets/logo/baras_seal_l.png') }}" alt="Municipality of Baras seal"></div>
                 <h1>DRMS</h1>
-                <span class="badge badge-light">Disaster Response &amp; Volunteer Matching System</span>
-                <p class="tagline">Unified disaster response for LGUs — incidents, volunteers, relief, evacuation, and accountable operations.</p>
+                <span class="badge badge-light">Disaster Response Matching System</span>
+                <p class="tagline">Unified disaster response for LGUs — incidents, response teams, relief, evacuation, and accountable operations.</p>
                 <span class="area-badge"><i class="fas fa-map-marker-alt mr-1"></i> Municipality of Baras, Rizal</span>
                 <ul class="drms-login-features">
                     <li><i class="fas fa-check-circle"></i> Incident reporting and verification</li>
-                    <li><i class="fas fa-check-circle"></i> Volunteer matching and deployment</li>
+                    <li><i class="fas fa-check-circle"></i> Resource matching and deployment</li>
                     <li><i class="fas fa-check-circle"></i> Relief, evacuation, and operations analytics</li>
                 </ul>
                 <p class="drms-login-back mb-0"><a href="{{ route('home') }}"><i class="fas fa-arrow-left mr-1"></i> Back to public homepage</a></p>

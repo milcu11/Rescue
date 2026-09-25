@@ -88,10 +88,10 @@
       ],
     ],
     'volunteer' => [
-      'title' => 'Volunteer workflow',
-      'summary' => 'Your volunteer portal is managed separately by the volunteer team.',
+      'title' => 'Response team workflow',
+      'summary' => 'Your response team portal is managed separately by the response coordinator.',
       'steps' => [
-        'Contact the volunteer coordinator if you need access or task instructions.',
+        'Contact the response coordinator if you need access or task instructions.',
         'Use My Profile to confirm your account information when it is available.',
         'Do not create operational records under another user role.',
       ],

@@ -37,6 +37,6 @@
       @endforeach
     </tbody>
   </table>
-  <div class="footer">DRMS &middot; Disaster Response &amp; Volunteer Matching System</div>
+  <div class="footer">DRMS &middot; Disaster Response Matching System</div>
 </body>
 </html>

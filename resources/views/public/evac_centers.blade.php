@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Unified disaster response for LGUs — incidents, volunteers, relief, evacuation, and accountable operations.">
+    <meta name="description" content="Unified disaster response for LGUs — incidents, response teams, relief, evacuation, and accountable operations.">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Evacuation Centers</title>
     <link rel="icon" type="image/png" sizes="41x43" href="{{ asset('assets/logo/baras_seal_xs.png') }}">
@@ -515,7 +515,7 @@
                     <img src="{{ asset('assets/logo/baras_seal_xs.png') }}" width="41" height="43" class="footer-brand-icon mr-2" alt="Municipality of Baras seal">
                     <h5 class="mb-0 text-white font-weight-bold">DRMS</h5>
                 </div>
-                <p class="small text-muted mb-2">Disaster Response &amp; Volunteer Matching System</p>
+                <p class="small text-muted mb-2">Disaster Response Matching System</p>
                 <p class="small text-muted mb-0">Serving <strong class="text-white-50">Municipality of Baras</strong>, Rizal · Version 1.0.0-dev</p>
             </div>
             <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">

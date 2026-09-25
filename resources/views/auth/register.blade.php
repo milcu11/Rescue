@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Create a donor account for the Disaster Response and Volunteer Matching System.">
+    <meta name="description" content="Create a donor account for the Disaster Response Matching System.">
     <title>Register | DRMS</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/logo/baras_seal_l.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,7 +53,7 @@
             <div class="drms-login-brand-inner">
                 <div class="drms-login-logo"><img src="{{ asset('assets/logo/baras_seal_l.png') }}" alt="Municipality of Baras seal"></div>
                 <h1>DRMS</h1>
-                <span class="badge badge-light">Disaster Response &amp; Volunteer Matching System</span>
+                <span class="badge badge-light">Disaster Response Matching System</span>
                 <p class="tagline">Create a donor account to support relief operations and track your donations online.</p>
                 <span class="area-badge"><i class="fas fa-map-marker-alt mr-1"></i> Municipality of Baras, Rizal</span>
                 <ul class="drms-login-features">

@@ -319,7 +319,7 @@
            alt="Municipality of Baras seal" class="brand-image drms-municipal-seal elevation-2">
       <span class="brand-text font-weight-light drms-brand-erp">
         DRMS
-        <small class="d-block drms-brand-erp-sub">Disaster Response &amp; Volunteer Matching System</small>
+        <small class="d-block drms-brand-erp-sub">Disaster Response Matching System</small>
       </span>
     </a>
 
@@ -339,7 +339,7 @@
               'lgu_staff', 'warehouse_staff' => 'Inventory and LGU operations',
               'evac_manager', 'evacuation_manager' => 'Evacuation center operations',
               'donor' => 'Donor portal',
-              'volunteer' => 'Volunteer portal',
+              'volunteer' => 'Response team portal',
               'resident' => 'Resident portal',
               'supplier' => 'Supplier portal',
               default => 'Account access',
@@ -560,7 +560,7 @@
 
   {{-- ═══ FOOTER ═══ --}}
   <footer class="main-footer">
-    <strong>DRMS</strong> &middot; Disaster Response &amp; Volunteer Matching System
+    <strong>DRMS</strong> &middot; Disaster Response Matching System
   </footer>
 
 </div>

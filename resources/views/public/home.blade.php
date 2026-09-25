@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Unified disaster response for LGUs — incidents, volunteers, relief, evacuation, and accountable operations.">
-    <title>DRMS — Disaster Response &amp; Volunteer Matching System</title>
+    <meta name="description" content="Unified disaster response for LGUs — incidents, response teams, relief, evacuation, and accountable operations.">
+    <title>DRMS — Disaster Response Matching System</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/logo/baras_seal_l.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('assets/logo/baras_seal_l.png') }}">
 
@@ -198,7 +198,7 @@
                             <div class="col-lg-8 drms-carousel-copy">
                                 <span class="badge badge-drms mb-3">DRMS</span>
                                 <h2 class="display-4 font-weight-bold text-white mb-3">DRMS — Municipality of Baras</h2>
-                                <p class="lead text-white-75 mb-4">Unified disaster response for LGUs — incidents, volunteers, relief, evacuation, and accountable operations.</p>
+                                <p class="lead text-white-75 mb-4">Unified disaster response for LGUs — incidents, response teams, relief, evacuation, and accountable operations.</p>
                                 <a href="{{ route('public.evac_centers') }}" class="btn btn-drms-light btn-lg mr-2 mb-2">Find evacuation centers</a>
                                 <a href="#public-services" class="btn btn-outline-light btn-lg mb-2">Public services</a>
                             </div>
@@ -257,7 +257,7 @@
                 <div class="col-6 col-lg-3 mb-3 mb-lg-0">
                     <div class="stat-strip-item">
                         <span class="stat-strip-value">{{ $stats['volunteers'] }}</span>
-                        <span class="stat-strip-label">Active volunteers</span>
+                        <span class="stat-strip-label">Active responders</span>
                     </div>
                 </div>
                 <div class="col-6 col-lg-3 mb-3 mb-lg-0">
@@ -484,15 +484,15 @@
     <section id="roles" class="py-5">
         <div class="container">
             <h2 class="section-title text-center mb-2">Who uses DRMS?</h2>
-            <p class="text-center text-muted mb-5 col-lg-8 mx-auto">Each role sees only the modules they need — from full MDRRMO control to volunteer, evacuation manager, and donor access.</p>
+            <p class="text-center text-muted mb-5 col-lg-8 mx-auto">Each role sees only the modules they need — from full MDRRMO control to response team, evacuation manager, and donor access.</p>
             <div class="row justify-content-center">
-                @foreach(['Super Admin', 'MDRRMO Staff', 'Volunteer', 'Evacuation Manager', 'Donor'] as $role)
+                @foreach(['Super Admin', 'MDRRMO Staff', 'Response Team', 'Evacuation Manager', 'Donor'] as $role)
                     <div class="col-6 col-md-4 col-lg-3 mb-3 text-center">
                         <span class="role-badge">{{ $role }}</span>
                     </div>
                 @endforeach
             </div>
-            <p class="text-center text-muted small mt-4 mb-0">Staff and volunteer accounts are created by administrators in User Management.</p>
+            <p class="text-center text-muted small mt-4 mb-0">Staff and response team accounts are created by administrators in User Management.</p>
         </div>
     </section>
 
@@ -518,7 +518,7 @@
                     <img src="{{ asset('assets/logo/baras_seal_l.png') }}" width="38" height="40" class="footer-brand-icon mr-2" alt="Municipality of Baras seal">
                     <h5 class="mb-0 text-white font-weight-bold">DRMS</h5>
                 </div>
-                <p class="small text-muted mb-2">Disaster Response &amp; Volunteer Matching System</p>
+                <p class="small text-muted mb-2">Disaster Response Matching System</p>
                 <p class="small text-muted mb-0">Serving <strong class="text-white-50">Municipality of Baras</strong>, Rizal</p>
             </div>
             <div class="col-sm-6 col-lg-4 mb-4 mb-lg-0">
