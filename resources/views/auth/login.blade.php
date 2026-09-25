@@ -101,7 +101,7 @@
                         </div>
                         <button type="submit" class="btn btn-drms-login"><i class="fas fa-sign-in-alt mr-1"></i> Login</button>
                     </form>
-                    <p class="drms-login-footer-links mb-0">Need an account? <a href="{{ route('register') }}" class="font-weight-bold" style="color:#ffcdd2;">Register as a donor</a></p>
+                    <p class="drms-login-footer-links mb-0">Need an account? <a href="{{ route('register') }}" class="font-weight-bold" style="color:#c62828;">Register</a></p>
                     <p class="drms-login-footer-links">Need help with staff access? Contact your DRMS administrator.</p>
                 </div>
             </section>
