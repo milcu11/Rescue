@@ -16,10 +16,19 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'role_id',
         'status',
+        'email_verified_at',
+        'email_verification_code',
+        'email_verification_expires_at',
     ];
 
     protected $hidden = [
         'password',
+        'email_verification_code',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'email_verification_expires_at' => 'datetime',
     ];
 
     public function role()

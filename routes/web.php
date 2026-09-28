@@ -22,6 +22,9 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [LoginController::class, 'showRegister'])->name('register');
 Route::post('/register', [LoginController::class, 'register'])->name('register.post');
+Route::get('/register/verify', [LoginController::class, 'showVerify'])->name('register.verify.show');
+Route::post('/register/verify', [LoginController::class, 'verifyCode'])->name('register.verify.post');
+Route::post('/register/verify/resend', [LoginController::class, 'resendCode'])->name('register.verify.resend');
 
 // Public donation tracker (no login needed)
 Route::get('/track', [DonationController::class, 'track'])->name('donations.track');
