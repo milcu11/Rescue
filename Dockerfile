@@ -2,7 +2,8 @@ FROM php:8.4-cli
 
 ENV APP_ENV=production \
     APP_DEBUG=false \
-    PORT=8000
+    PORT=8000 \
+    PHP_CLI_SERVER_WORKERS=4
 
 WORKDIR /app
 

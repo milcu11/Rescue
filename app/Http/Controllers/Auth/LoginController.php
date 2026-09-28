@@ -10,6 +10,7 @@ use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class LoginController extends Controller
@@ -181,6 +182,10 @@ class LoginController extends Controller
             'email_verification_expires_at' => now()->addMinutes(15),
         ]);
 
-        Mail::to($user->email)->send(new VerificationCodeMail($user, $code));
+        try {
+            Mail::to($user->email)->send(new VerificationCodeMail($user, $code));
+        } catch (\Throwable $e) {
+            Log::error('Failed to send verification code email: ' . $e->getMessage());
+        }
     }
 }
