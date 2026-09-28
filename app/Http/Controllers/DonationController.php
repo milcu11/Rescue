@@ -224,7 +224,7 @@ class DonationController extends Controller
             ->with('success', 'Donation record removed.');
     }
 
-    // Public tracking — no auth needed
+    // Public tracking — no auth needed, but authenticated donors stay inside the dashboard shell
     public function track(Request $request)
     {
         $code     = $request->query('code');
@@ -238,6 +238,8 @@ class DonationController extends Controller
             }
         }
 
-        return view('donations.track', compact('donation', 'error', 'code'));
+        $view = Auth::check() ? 'donations.track-app' : 'donations.track';
+
+        return view($view, compact('donation', 'error', 'code'));
     }
 }
