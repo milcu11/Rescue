@@ -154,9 +154,21 @@
       <a href="{{ route('donations.track') }}?code={{ $donation->tracking_code }}" class="btn-primary-custom">
         <i class="fas fa-search mr-2"></i>Track Your Donation
       </a>
-      <a href="{{ route('public.home') }}" class="btn-outline-custom">
-        <i class="fas fa-home mr-2"></i>Back to Home
-      </a>
+      @auth
+        @if (auth()->user()->role?->slug === 'donor')
+          <a href="{{ route('donor.index') }}" class="btn-outline-custom">
+            <i class="fas fa-home mr-2"></i>Back to Dashboard
+          </a>
+        @else
+          <a href="{{ route('public.home') }}" class="btn-outline-custom">
+            <i class="fas fa-home mr-2"></i>Back to Home
+          </a>
+        @endif
+      @else
+        <a href="{{ route('public.home') }}" class="btn-outline-custom">
+          <i class="fas fa-home mr-2"></i>Back to Home
+        </a>
+      @endauth
     </div>
   </div>
 </div>
