@@ -6,6 +6,11 @@
     <meta name="description" content="Staff access for the Disaster Response Matching System.">
     <title>Login | DRMS</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/logo/baras_seal_l.png') }}">
+    <script>
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted) window.location.reload();
+      });
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
