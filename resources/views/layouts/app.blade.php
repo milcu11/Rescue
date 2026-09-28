@@ -481,7 +481,7 @@
             </li>
           @endif
           <li class="nav-item">
-            <a href="https://rescue-production-02d4.up.railway.app/evac-centers" class="nav-link" target="_blank" rel="noopener">
+            <a href="{{ route('public.evac_centers') }}" class="nav-link" target="_blank" rel="noopener">
               <i class="nav-icon fas fa-map-marker-alt"></i>
               <p>Evacuation centers</p>
             </a>
