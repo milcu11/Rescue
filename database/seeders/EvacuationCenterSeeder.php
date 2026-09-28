@@ -56,9 +56,9 @@ class EvacuationCenterSeeder extends Seeder
         ];
 
         foreach ($centers as $centerData) {
-            $center = EvacuationCenter::create($centerData);
+            $center = EvacuationCenter::updateOrCreate(['name' => $centerData['name']], $centerData);
 
-            if ($center->name === 'School BES') {
+            if ($center->name === 'School BES' && $center->evacuees()->count() === 0) {
                 Evacuee::create([
                     'evacuation_center_id' => $center->id,
                     'name' => 'Perez Family',
