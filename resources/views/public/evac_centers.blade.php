@@ -700,6 +700,10 @@
             showCheckInModal(res);
             if (res.status === 'ok') {
                 $form.find('input[name=family_qr_token]').val('');
+                // Reload once the modal closes so the map/table reflect the new occupancy.
+                $('#checkInResultModal').one('hidden.bs.modal', function () {
+                    window.location.reload();
+                });
             }
         }).fail(function (xhr) {
             var res = xhr.responseJSON || { status: 'error', message: 'Server error. Please try again.' };
