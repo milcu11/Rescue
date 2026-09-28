@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rules\Password;
 
 class LoginController extends Controller
 {
@@ -44,14 +45,6 @@ class LoginController extends Controller
                 return back()->withErrors([
                     'email' => 'Your account is inactive. Contact the administrator.',
                 ]);
-            }
-
-            if (!$user->email_verified_at) {
-                Auth::logout();
-                $this->issueVerificationCode($user);
-                $request->session()->put('verify_user_id', $user->id);
-                return redirect()->route('register.verify.show')
-                    ->with('status', 'Please verify your email address. We sent you a new code.');
             }
 
             AuditService::login($user->name);
@@ -92,25 +85,27 @@ class LoginController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'confirmed', Password::min(8)->numbers()->symbols()],
         ]);
 
         $donorRole = Role::where('slug', 'donor')->firstOrFail();
 
+        // Email verification is temporarily disabled; accounts are auto-verified on registration.
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'role_id'  => $donorRole->id,
             'status'   => 'active',
+            'email_verified_at' => now(),
         ]);
 
         AuditService::logForUser($user, 'register', 'users', $user->name, $user->id, null, null, 'Self-registered as donor');
 
-        $this->issueVerificationCode($user);
-        $request->session()->put('verify_user_id', $user->id);
+        Auth::login($user);
+        $request->session()->regenerate();
 
-        return redirect()->route('register.verify.show');
+        return redirect()->route('dashboard')->with('status', 'Welcome to DRMS! Your donor account has been created.');
     }
 
     public function showVerify(Request $request)

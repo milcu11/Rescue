@@ -99,6 +99,7 @@
                                 <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-lock"></i></span></div>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror" id="registerPassword" name="password" autocomplete="new-password" placeholder="At least 8 characters" required>
                             </div>
+                            <small class="form-text" style="color: rgba(255, 230, 230, 0.7);">Must be at least 8 characters and include a number and a special character (e.g. ! @ # $).</small>
                         </div>
                         <div class="form-group mb-4">
                             <label for="registerPasswordConfirm">Confirm password</label>
