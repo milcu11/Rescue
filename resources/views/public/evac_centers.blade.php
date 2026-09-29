@@ -257,8 +257,8 @@
 <body class="drms-public-body drms-public-theme">
 <nav class="navbar navbar-expand-lg navbar-dark drms-nav sticky-top">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-            <img src="{{ asset('assets/logo/baras_seal_xs.png') }}" width="41" height="43" class="brand-icon mr-2" alt="Municipality of Baras seal">
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('public.home') }}">
+            <img src="{{ asset('assets/logo/baras_seal_l.png') }}" width="34" height="36" class="brand-icon mr-2" alt="Municipality of Baras seal">
             <span><strong>DRMS</strong></span>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#publicNav" aria-controls="publicNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -271,10 +271,11 @@
                         Explore
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navExplore">
-                        <a class="dropdown-item" href="{{ route('home') }}#modules">System modules</a>
-                        <a class="dropdown-item" href="{{ route('home') }}#public-services">Public services</a>
-                        <a class="dropdown-item" href="{{ route('home') }}#lgu-updates">LGU Facebook updates</a>
-                        <a class="dropdown-item" href="{{ route('home') }}#location">Map &amp; weather</a>
+                        <a class="dropdown-item" href="{{ route('public.home') }}#modules">System modules</a>
+                        <a class="dropdown-item" href="{{ route('public.home') }}#public-services">Public services</a>
+                        <a class="dropdown-item" href="{{ route('public.home') }}#lgu-updates">LGU Facebook updates</a>
+                        <a class="dropdown-item" href="{{ route('public.home') }}#location">Map &amp; weather</a>
+                        <a class="dropdown-item" href="{{ route('public.home') }}#roles">Who uses DRMS</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown drms-nav-dropdown">
@@ -282,16 +283,13 @@
                         Citizen tools
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navCitizen">
-                        <a class="dropdown-item" href="https://dvrmsgov.freedev.app/report">Report incident</a>
                         <a class="dropdown-item" href="{{ route('public.evac_centers') }}">Evacuation centers</a>
-                        <a class="dropdown-item" href="https://dvrmsgov.freedev.app/register">Register</a>
+                        <a class="dropdown-item" href="{{ route('donate') }}">Make a donation</a>
+                        <a class="dropdown-item" href="{{ route('donations.track') }}">Track my donation</a>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}#location">Map &amp; weather</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://dvrmsgov.freedev.app/about">About</a>
+                    <a class="nav-link" href="{{ route('public.home') }}#location">Map &amp; weather</a>
                 </li>
                 <li class="nav-item">
                     <a class="btn btn-drms-light btn-sm ml-lg-2 mt-2 mt-lg-0" href="{{ route('login') }}">
