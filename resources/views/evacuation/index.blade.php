@@ -108,7 +108,7 @@
 
   <div class="row drms-evac-cards mb-3" id="drmsEvacCardsWrap">
     @foreach($centers as $center)
-      <div class="col-lg-4 col-md-6">
+      <div class="col-lg-4 col-md-6 mb-4">
         <div class="card drms-evac-center-card h-100" data-evac-id="{{ $center->id }}">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-start mb-2">
