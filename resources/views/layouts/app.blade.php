@@ -210,6 +210,41 @@
       color: var(--drms-red) !important;
     }
 
+    #navNotifMenu {
+      width: 320px;
+      max-width: calc(100vw - 1rem);
+    }
+
+    #navNotifItems .nav-notification-link {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      white-space: normal;
+    }
+
+    #navNotifItems .nav-notification-link > i {
+      flex: 0 0 1rem;
+      margin: 0.2rem 0 0 !important;
+    }
+
+    #navNotifItems .nav-notification-content {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    #navNotifItems .nav-notification-title {
+      display: block;
+      overflow-wrap: anywhere;
+      line-height: 1.35;
+    }
+
+    #navNotifItems .nav-notification-time {
+      display: block;
+      margin-top: 0.15rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+
     /* Prevent debug tools (Kint/Debugbar) from creating very wide elements that cause
        a global horizontal scrollbar. Keep these rules scoped and non-invasive. */
     .kint-rich, .kint-dump, .kint, .kint pre, .kint table, .phpdebugbar * {
@@ -284,13 +319,13 @@
                 ];
                 $icon = $iconMap[$n->type] ?? 'far fa-bell text-muted';
               @endphp
-                <a href="{{ $n->link ?? route('notifications.index') }}"
-                  class="dropdown-item nav-notification-link"
-                  data-read-url="{{ route('notifications.read', $n->id) }}">
-                <i class="{{ $icon }} mr-2"></i>
-                {{ \Illuminate\Support\Str::limit($n->title, 35) }}
-                <span class="float-right text-muted text-sm">
-                  {{ $n->created_at->diffForHumans() }}
+              <a href="{{ $n->link ?? route('notifications.index') }}"
+                 class="dropdown-item nav-notification-link"
+                 data-read-url="{{ route('notifications.read', $n->id) }}">
+                <i class="{{ $icon }}"></i>
+                <span class="nav-notification-content">
+                  <span class="nav-notification-title">{{ \Illuminate\Support\Str::limit($n->title, 35) }}</span>
+                  <span class="nav-notification-time text-muted text-sm">{{ $n->created_at->diffForHumans() }}</span>
                 </span>
               </a>
               <div class="dropdown-divider"></div>
