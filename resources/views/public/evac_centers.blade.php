@@ -853,5 +853,10 @@
     setTimeout(function () { map.invalidateSize(); }, 200);
 })();
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.lucide) window.lucide.createIcons();
+    });
+</script>
 </body>
 </html>
