@@ -10,6 +10,7 @@ use App\Http\Controllers\DonorPortalController;
 use App\Http\Controllers\EvacuationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReliefController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuditLogController;
@@ -49,6 +50,9 @@ Route::get('/donate/success/{donation}', [PublicController::class, 'paymentSucce
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo');
 
         Route::middleware('role:super_admin,mdrrmo')
                 ->group(function () {
