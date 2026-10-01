@@ -50,10 +50,10 @@
         @endif
 
         <div class="row align-items-center mb-4">
-          <div class="col-12 col-md-5 text-center mb-3 mb-md-0">
-            <img src="{{ asset(config('gcash.qr_image')) }}" alt="GCash QR code" class="img-fluid" style="width:100%;max-width:320px;height:auto;border:1px solid #eee;border-radius:12px;padding:8px;background:#fff;">
+          <div class="col-12 text-center mb-3">
+            <img src="{{ asset(config('gcash.qr_image')) }}?v={{ filemtime(public_path(config('gcash.qr_image'))) }}" alt="GCash QR code" class="img-fluid" style="width:100%;max-width:560px;height:auto;border:1px solid #eee;border-radius:12px;padding:8px;background:#fff;">
           </div>
-          <div class="col-12 col-md-7">
+          <div class="col-12">
             <p class="mb-1"><strong>Account name:</strong> {{ config('gcash.account_name') }}</p>
             @if(config('gcash.account_number'))
               <p class="mb-1"><strong>GCash number:</strong> {{ config('gcash.account_number') }}</p>
