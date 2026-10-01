@@ -38,7 +38,8 @@ class DashboardController extends Controller
 
     private function getStats(string $role, string $period): array
     {
-        $activeOccupancy = Evacuee::where('status', 'checked_in')->sum('family_members');
+        // Only count evacuees whose center still exists, so dashboard totals match /evacuation.
+        $activeOccupancy = Evacuee::where('status', 'checked_in')->whereHas('center')->sum('family_members');
         $totalCapacity = EvacuationCenter::where('status', '!=', 'closed')->sum('capacity');
         $activity = AuditLog::query()->latest();
         if ($period !== 'all') {
