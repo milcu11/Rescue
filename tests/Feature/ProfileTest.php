@@ -31,7 +31,7 @@ class ProfileTest extends TestCase
     {
         $user = $this->profileUser();
 
-        $this->actingAs($user)->get(route('profile'))->assertOk()->assertSee('Account details');
+        $this->actingAs($user)->get(route('profile'))->assertOk()->assertSee('Account & Leadership Details');
 
         $this->actingAs($user)->put(route('profile.update'), [
             'name' => 'Updated Name',
