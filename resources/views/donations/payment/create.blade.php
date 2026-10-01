@@ -11,7 +11,7 @@
 
 @section('content')
 <div class="row">
-  <div class="col-md-5">
+  <div class="col-12 col-lg-5">
     <div class="card">
       <div class="card-header">
         <h3 class="card-title"><i class="fas fa-receipt mr-2"></i>Donation Summary</h3>
@@ -37,7 +37,7 @@
     </div>
   </div>
 
-  <div class="col-md-7">
+  <div class="col-12 col-lg-7">
     <div class="card">
       <div class="card-header" style="background:#3b0b0d;">
         <h3 class="card-title text-white"><i class="fas fa-qrcode mr-2"></i>Pay via GCash</h3>
@@ -50,10 +50,10 @@
         @endif
 
         <div class="row align-items-center mb-4">
-          <div class="col-5 text-center mb-3 mb-md-0">
-            <img src="{{ asset(config('gcash.qr_image')) }}" alt="GCash QR code" class="img-fluid" style="max-width:220px;border:1px solid #eee;border-radius:12px;padding:8px;background:#fff;">
+          <div class="col-12 col-md-5 text-center mb-3 mb-md-0">
+            <img src="{{ asset(config('gcash.qr_image')) }}" alt="GCash QR code" class="img-fluid" style="width:100%;max-width:320px;height:auto;border:1px solid #eee;border-radius:12px;padding:8px;background:#fff;">
           </div>
-          <div class="col-7">
+          <div class="col-12 col-md-7">
             <p class="mb-1"><strong>Account name:</strong> {{ config('gcash.account_name') }}</p>
             @if(config('gcash.account_number'))
               <p class="mb-1"><strong>GCash number:</strong> {{ config('gcash.account_number') }}</p>
