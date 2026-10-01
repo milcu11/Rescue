@@ -68,13 +68,21 @@ class NotificationService
         string $message,
         ?string $link = null
     ): Notification {
-        return Notification::create([
+        $data = [
             'role_target' => $roleSlug,
             'type'        => $type,
             'title'       => $title,
             'message'     => $message,
             'link'        => $link,
-        ]);
+        ];
+
+        $notification = Notification::create($data);
+
+        if ($roleSlug === 'mdrrmo') {
+            Notification::create([...$data, 'role_target' => 'super_admin']);
+        }
+
+        return $notification;
     }
 
     public static function sendToSuppliers(

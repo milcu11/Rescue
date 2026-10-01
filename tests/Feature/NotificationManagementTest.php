@@ -43,6 +43,18 @@ class NotificationManagementTest extends TestCase
         $this->assertCount(0, app(NotificationService::class)->recentForUser($warehouse->id, 'lgu_staff'));
     }
 
+    public function test_mdrrmo_alerts_also_create_an_admin_notification(): void
+    {
+        $admin = $this->user('super_admin');
+        $mdrrmo = $this->user('mdrrmo');
+
+        NotificationService::sendToRole('mdrrmo', 'center_full', 'Center full', 'Full');
+
+        $this->assertCount(1, app(NotificationService::class)->recentForUser($mdrrmo->id, 'mdrrmo'));
+        $this->assertCount(1, app(NotificationService::class)->recentForUser($admin->id, 'super_admin'));
+        $this->assertDatabaseHas('notifications', ['role_target' => 'super_admin', 'type' => 'center_full']);
+    }
+
     public function test_opening_a_notification_marks_it_read_and_redirects(): void
     {
         $user = $this->user();
