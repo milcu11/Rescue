@@ -40,68 +40,53 @@
   <div class="col-md-7">
     <div class="card">
       <div class="card-header" style="background:#3b0b0d;">
-        <h3 class="card-title text-white"><i class="fas fa-credit-card mr-2"></i>Choose Payment Method</h3>
+        <h3 class="card-title text-white"><i class="fas fa-qrcode mr-2"></i>Pay via GCash</h3>
       </div>
       <div class="card-body">
-        <form action="{{ route('donations.payment.checkout', $donation) }}" method="POST">
-          @csrf
-          <div class="row">
-            <div class="col-6 mb-3">
-              <label class="payment-card w-100" onclick="pick('gcash')">
-                <input type="radio" name="payment_method" value="gcash" style="display:none;">
-                <div class="payment-card-inner" id="card-gcash">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/GCash_logo.svg/512px-GCash_logo.svg.png" alt="GCash" style="height:36px;margin-bottom:6px;">
-                  <div class="font-weight-bold">GCash</div>
-                  <small class="text-muted">E-wallet payment</small>
-                </div>
-              </label>
-            </div>
-
-            <div class="col-6 mb-3">
-              <label class="payment-card w-100" onclick="pick('paymaya')">
-                <input type="radio" name="payment_method" value="paymaya" style="display:none;">
-                <div class="payment-card-inner" id="card-paymaya">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Maya_%28payments%29_logo.svg/512px-Maya_%28payments%29_logo.svg.png" alt="Maya" style="height:36px;margin-bottom:6px;">
-                  <div class="font-weight-bold">Maya</div>
-                  <small class="text-muted">E-wallet payment</small>
-                </div>
-              </label>
-            </div>
-
-            <div class="col-6 mb-3">
-              <label class="payment-card w-100" onclick="pick('grab_pay')">
-                <input type="radio" name="payment_method" value="grab_pay" style="display:none;">
-                <div class="payment-card-inner" id="card-grab_pay">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/GrabPay_Logo.svg/512px-GrabPay_Logo.svg.png" alt="GrabPay" style="height:36px;margin-bottom:6px;">
-                  <div class="font-weight-bold">GrabPay</div>
-                  <small class="text-muted">E-wallet payment</small>
-                </div>
-              </label>
-            </div>
-
-            <div class="col-6 mb-3">
-              <label class="payment-card w-100" onclick="pick('card')">
-                <input type="radio" name="payment_method" value="card" style="display:none;">
-                <div class="payment-card-inner" id="card-card">
-                  <i class="fas fa-credit-card fa-2x text-secondary d-block mb-1"></i>
-                  <div class="font-weight-bold">Credit / Debit Card</div>
-                  <small class="text-muted">Visa, Mastercard</small>
-                </div>
-              </label>
-            </div>
+        @if($payment && $payment->status === 'rejected')
+          <div class="alert alert-warning">
+            The previous reference number could not be verified{{ $payment->rejection_reason ? ': ' . $payment->rejection_reason : '.' }} Please double-check and submit again.
           </div>
+        @endif
 
-          @error('payment_method')
-            <div class="text-danger small mb-3">Please select a payment method.</div>
-          @enderror
+        <div class="row align-items-center mb-4">
+          <div class="col-5 text-center mb-3 mb-md-0">
+            <img src="{{ asset(config('gcash.qr_image')) }}" alt="GCash QR code" class="img-fluid" style="max-width:220px;border:1px solid #eee;border-radius:12px;padding:8px;background:#fff;">
+          </div>
+          <div class="col-7">
+            <p class="mb-1"><strong>Account name:</strong> {{ config('gcash.account_name') }}</p>
+            @if(config('gcash.account_number'))
+              <p class="mb-1"><strong>GCash number:</strong> {{ config('gcash.account_number') }}</p>
+            @endif
+            <p class="mb-0 text-muted small">
+              Put <strong>{{ $donation->tracking_code }}</strong> in the message/note field when sending so it can be matched.
+            </p>
+          </div>
+        </div>
+
+        <hr>
+
+        <form action="{{ route('donations.payment.checkout', $donation) }}" method="POST" enctype="multipart/form-data">
+          @csrf
+          <div class="form-group">
+            <label class="font-weight-bold">GCash reference number <span class="text-danger">*</span></label>
+            <input type="text" name="gcash_reference_number" class="form-control" value="{{ old('gcash_reference_number') }}" placeholder="e.g. 1234567890123" required>
+            @error('gcash_reference_number')
+              <small class="text-danger d-block mt-1">{{ $message }}</small>
+            @enderror
+          </div>
+          <div class="form-group">
+            <label class="font-weight-bold">Screenshot of receipt <small class="text-muted font-weight-normal">(optional)</small></label>
+            <input type="file" name="proof_image" class="form-control-file" accept="image/jpeg,image/png,image/webp">
+          </div>
 
           <div class="callout callout-info">
-            <i class="fas fa-shield-alt mr-1"></i>
-            Payments are securely processed by <strong>PayMongo</strong>. RescuePH does not store your card details.
+            <i class="fas fa-info-circle mr-1"></i>
+            Submitting your reference number does not auto-confirm payment — MDRRMO staff will verify it against GCash transaction records before marking this donation as paid.
           </div>
 
-          <button type="submit" class="btn btn-danger btn-block btn-lg" id="pay-btn" disabled>
-            <i class="fas fa-lock mr-2"></i>Proceed to Payment — ₱{{ number_format($donation->amount, 2) }}
+          <button type="submit" class="btn btn-danger btn-block btn-lg">
+            <i class="fas fa-paper-plane mr-2"></i>Submit for verification
           </button>
 
           <a href="{{ route('donations.show', $donation) }}" class="btn btn-outline-secondary btn-block mt-2">Cancel</a>
@@ -111,32 +96,3 @@
   </div>
 </div>
 @endsection
-
-@push('styles')
-<style>
-  .payment-card-inner {
-    border: 2px solid #dee2e6;
-    border-radius: 10px;
-    padding: 16px 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: all .2s;
-    background: #fff;
-  }
-  .payment-card-inner:hover { border-color: #aaa; }
-  .payment-card-inner.selected { border-color: #3b0b0d; background: #fff5f5; }
-</style>
-@endpush
-
-@push('scripts')
-<script>
-  function pick(method) {
-    document.querySelectorAll('.payment-card-inner').forEach(function (card) {
-      card.classList.remove('selected');
-    });
-    document.getElementById('card-' + method).classList.add('selected');
-    document.querySelector('input[value="' + method + '"]').checked = true;
-    document.getElementById('pay-btn').disabled = false;
-  }
-</script>
-@endpush

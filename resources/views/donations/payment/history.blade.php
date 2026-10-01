@@ -50,7 +50,7 @@
           <th>Method</th>
           <th>Amount</th>
           <th>Status</th>
-          <th>PayMongo ID</th>
+          <th>GCash Reference</th>
           <th>Date</th>
         </tr>
       </thead>
@@ -62,7 +62,7 @@
             <td><span class="badge badge-info">{{ ucfirst(str_replace('_',' ',$payment->payment_method ?? '—')) }}</span></td>
             <td><strong>₱{{ number_format($payment->amount, 2) }}</strong></td>
             <td><span class="badge badge-{{ $payment->status_badge }}">{{ ucfirst($payment->status) }}</span></td>
-            <td><small><code>{{ $payment->paymongo_payment_id ?? '—' }}</code></small></td>
+            <td><small><code>{{ $payment->gcash_reference_number ?? '—' }}</code></small></td>
             <td><small>{{ $payment->created_at->format('M d, Y h:i A') }}</small></td>
           </tr>
         @empty

@@ -7,7 +7,8 @@ use App\Models\DonationPayment;
 use App\Services\AuditService;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
-use Kirame\PayMongo\PayMongo;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class DonationPaymentController extends Controller
 {
@@ -23,140 +24,86 @@ class DonationPaymentController extends Controller
                 ->with('error', 'This donation has already been paid.');
         }
 
-        return view('donations.payment.create', compact('donation'));
+        $payment = $donation->payments()->whereIn('status', ['pending', 'pending_verification', 'rejected'])
+            ->latest()
+            ->first();
+
+        $view = Auth::check() ? 'donations.payment.create' : 'public.gcash-pay';
+
+        return view($view, compact('donation', 'payment'));
     }
 
-    public function checkout(Request $request, Donation $donation, PayMongo $paymongo)
+    public function checkout(Request $request, Donation $donation)
     {
-        $request->validate([
-            'payment_method' => 'required|in:gcash,paymaya,card,grab_pay',
+        if ($donation->payment_status === 'paid') {
+            return redirect()->route('donations.show', $donation)
+                ->with('error', 'This donation has already been paid.');
+        }
+
+        $data = $request->validate([
+            'gcash_reference_number' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('donation_payments', 'gcash_reference_number'),
+            ],
+            'proof_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ]);
 
-        try {
-            $amountInCentavos = (int) ($donation->amount * 100);
+        $proofPath = $request->hasFile('proof_image')
+            ? $request->file('proof_image')->store('gcash-proofs', 'public')
+            : null;
 
-            $session = $paymongo->createCheckoutSession([
-                'billing' => [
-                    'name' => $donation->donor_name,
-                    'email' => $donation->donor_email ?? 'donor@rescueph.ph',
-                    'phone' => $donation->donor_contact ?? '',
-                ],
-                'line_items' => [[
-                    'name' => "Donation — {$donation->tracking_code}",
-                    'description' => 'Monetary donation to RescuePH disaster relief fund.',
-                    'amount' => $amountInCentavos,
-                    'currency' => 'PHP',
-                    'quantity' => 1,
-                ]],
-                'payment_method_types' => [$request->payment_method],
-                'success_url' => route('donations.payment.success', ['donation' => $donation->id, 'checkout_id' => '{CHECKOUT_SESSION_ID}']),
-                'cancel_url' => route('donations.payment.cancel', ['donation' => $donation->id]),
-                'description' => "RescuePH donation {$donation->tracking_code}",
-                'send_email_receipt' => true,
-                'show_description' => true,
-                'show_line_items' => true,
+        $payment = $donation->payments()->whereIn('status', ['pending', 'rejected'])->latest()->first();
+
+        if ($payment) {
+            $payment->update([
+                'payment_method' => 'gcash',
+                'gcash_reference_number' => $data['gcash_reference_number'],
+                'proof_image_path' => $proofPath ?? $payment->proof_image_path,
+                'status' => 'pending_verification',
+                'rejection_reason' => null,
             ]);
-
-            $checkoutId = $session['id'] ?? null;
-            $checkoutUrl = $session['attributes']['checkout_url'] ?? null;
-
-            if (!$checkoutId || !$checkoutUrl) {
-                throw new \RuntimeException('PayMongo did not return a valid checkout session.');
-            }
-
+        } else {
             $payment = DonationPayment::create([
                 'donation_id' => $donation->id,
-                'paymongo_checkout_id' => $checkoutId,
-                'payment_method' => $request->payment_method,
+                'payment_method' => 'gcash',
+                'gcash_reference_number' => $data['gcash_reference_number'],
+                'proof_image_path' => $proofPath,
                 'amount' => $donation->amount,
-                'status' => 'pending',
-                'checkout_url' => $checkoutUrl,
-                'paymongo_response' => $session,
+                'status' => 'pending_verification',
             ]);
-
-            $donation->update([
-                'paymongo_checkout_id' => $checkoutId,
-                'payment_status' => 'unpaid',
-            ]);
-
-            AuditService::log(
-                'created',
-                'donations',
-                "Payment checkout created for {$donation->tracking_code}",
-                $donation->id,
-                null,
-                ['method' => $request->payment_method, 'amount' => $donation->amount]
-            );
-
-            return redirect($checkoutUrl);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create payment session: ' . $e->getMessage());
         }
+
+        $donation->update(['payment_status' => 'verifying']);
+
+        AuditService::log(
+            'created',
+            'donations',
+            "GCash reference submitted for {$donation->tracking_code}",
+            $donation->id,
+            null,
+            ['gcash_reference_number' => $data['gcash_reference_number']]
+        );
+
+        NotificationService::sendToRole(
+            'mdrrmo',
+            'new_donation',
+            'GCash payment awaiting verification',
+            "Donation {$donation->tracking_code} — ₱" . number_format($donation->amount, 2) . ' needs reference verification.',
+            route('donations.payment.verifications')
+        );
+
+        return redirect()->route('donations.payment.success', $donation);
     }
 
-    public function success(Request $request, Donation $donation, PayMongo $paymongo)
+    public function success(Donation $donation)
     {
-        $checkoutId = $request->query('checkout_id') ?? $donation->paymongo_checkout_id;
+        $payment = $donation->payments()->latest()->first();
 
-        try {
-            $session = $paymongo->retrieveCheckoutSession($checkoutId);
-            $status = $session['attributes']['payment_status'] ?? 'pending';
+        $view = Auth::check() ? 'donations.payment.submitted' : 'public.gcash-pay-submitted';
 
-            $payment = DonationPayment::where('donation_id', $donation->id)
-                ->where('paymongo_checkout_id', $checkoutId)
-                ->first();
-
-            if ($status === 'paid') {
-                $paymentId = $session['attributes']['payments'][0]['id'] ?? null;
-
-                $payment?->update([
-                    'status' => 'paid',
-                    'paymongo_payment_id' => $paymentId,
-                    'paid_at' => now(),
-                    'paymongo_response' => $session,
-                ]);
-
-                $donation->update([
-                    'payment_status' => 'paid',
-                    'paymongo_payment_id' => $paymentId,
-                    'status' => 'received',
-                    'received_at' => now(),
-                ]);
-
-                AuditService::log(
-                    'updated',
-                    'donations',
-                    "Payment confirmed for {$donation->tracking_code}",
-                    $donation->id,
-                    ['payment_status' => 'unpaid'],
-                    ['payment_status' => 'paid', 'paymongo_payment_id' => $paymentId]
-                );
-
-                NotificationService::sendToRole(
-                    'mdrrmo',
-                    'new_donation',
-                    'Donation Payment Confirmed',
-                    "Online payment confirmed for donation {$donation->tracking_code} — ₱" . number_format($donation->amount, 2),
-                    route('donations.show', $donation)
-                );
-
-                return view('donations.payment.success', compact('donation', 'payment'));
-            }
-
-            return redirect()->route('donations.show', $donation)
-                ->with('error', 'Payment is still being processed. Please wait.');
-        } catch (\Exception $e) {
-            return redirect()->route('donations.show', $donation)
-                ->with('error', 'Could not verify payment: ' . $e->getMessage());
-        }
-    }
-
-    public function cancel(Donation $donation)
-    {
-        $donation->payments()->where('status', 'pending')->update(['status' => 'failed']);
-
-        return redirect()->route('donations.show', $donation)
-            ->with('error', 'Payment was cancelled.');
+        return view($view, compact('donation', 'payment'));
     }
 
     public function history()
@@ -167,53 +114,88 @@ class DonationPaymentController extends Controller
 
         $summary = [
             'total' => DonationPayment::count(),
-            'pending' => DonationPayment::where('status', 'pending')->count(),
+            'pending' => DonationPayment::whereIn('status', ['pending', 'pending_verification'])->count(),
             'paid' => DonationPayment::where('status', 'paid')->count(),
-            'failed' => DonationPayment::where('status', 'failed')->count(),
+            'failed' => DonationPayment::whereIn('status', ['failed', 'rejected'])->count(),
             'total_amount' => DonationPayment::where('status', 'paid')->sum('amount'),
         ];
 
         return view('donations.payment.history', compact('payments', 'summary'));
     }
 
-    public function webhook(Request $request)
+    public function verifications()
     {
-        $payload = $request->getContent();
-        $sigHeader = $request->header('Paymongo-Signature');
-        $secret = config('paymongo.webhook_secret');
+        $payments = DonationPayment::with('donation')
+            ->where('status', 'pending_verification')
+            ->orderBy('created_at')
+            ->paginate(20);
 
-        if ($secret && !hash_equals(hash_hmac('sha256', $payload, $secret), $sigHeader ?? '')) {
-            return response()->json(['error' => 'Invalid signature'], 400);
+        return view('donations.payment.verifications', compact('payments'));
+    }
+
+    public function confirm(DonationPayment $payment)
+    {
+        if ($payment->status !== 'pending_verification') {
+            return redirect()->back()->with('error', 'This payment is not awaiting verification.');
         }
 
-        $event = json_decode($payload, true);
-        $type = $event['data']['attributes']['type'] ?? null;
+        $payment->update([
+            'status' => 'paid',
+            'paid_at' => now(),
+            'verified_by' => Auth::id(),
+            'verified_at' => now(),
+        ]);
 
-        if ($type === 'payment.paid') {
-            $paymentData = $event['data']['attributes']['data'] ?? [];
-            $checkoutId = $paymentData['attributes']['checkout_session_id'] ?? null;
-            $paymongoPayId = $paymentData['id'] ?? null;
+        $donation = $payment->donation;
+        $donation->update([
+            'payment_status' => 'paid',
+            'status' => 'received',
+            'received_at' => now(),
+        ]);
 
-            if ($checkoutId) {
-                $payment = DonationPayment::where('paymongo_checkout_id', $checkoutId)->first();
+        AuditService::log(
+            'updated',
+            'donations',
+            "GCash payment verified for {$donation->tracking_code}",
+            $donation->id,
+            ['payment_status' => 'verifying'],
+            ['payment_status' => 'paid', 'gcash_reference_number' => $payment->gcash_reference_number]
+        );
 
-                if ($payment && $payment->status !== 'paid') {
-                    $payment->update([
-                        'status' => 'paid',
-                        'paymongo_payment_id' => $paymongoPayId,
-                        'paid_at' => now(),
-                    ]);
+        return redirect()->route('donations.payment.verifications')
+            ->with('success', "Payment for {$donation->tracking_code} confirmed.");
+    }
 
-                    $payment->donation->update([
-                        'payment_status' => 'paid',
-                        'paymongo_payment_id' => $paymongoPayId,
-                        'status' => 'received',
-                        'received_at' => now(),
-                    ]);
-                }
-            }
+    public function reject(Request $request, DonationPayment $payment)
+    {
+        if ($payment->status !== 'pending_verification') {
+            return redirect()->back()->with('error', 'This payment is not awaiting verification.');
         }
 
-        return response()->json(['received' => true]);
+        $data = $request->validate([
+            'rejection_reason' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $payment->update([
+            'status' => 'rejected',
+            'rejection_reason' => $data['rejection_reason'] ?? 'Reference number could not be verified.',
+            'verified_by' => Auth::id(),
+            'verified_at' => now(),
+        ]);
+
+        $payment->donation->update(['payment_status' => 'unpaid']);
+
+        AuditService::log(
+            'updated',
+            'donations',
+            "GCash payment rejected for {$payment->donation->tracking_code}",
+            $payment->donation->id,
+            ['payment_status' => 'verifying'],
+            ['payment_status' => 'unpaid', 'rejection_reason' => $payment->rejection_reason]
+        );
+
+        return redirect()->route('donations.payment.verifications')
+            ->with('success', "Payment for {$payment->donation->tracking_code} rejected. The donor can resubmit a reference.");
     }
 }
+

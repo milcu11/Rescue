@@ -63,19 +63,13 @@
                 <input type="text" name="donor_contact" class="form-control" value="{{ old('donor_contact') }}">
               </div>
               <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">Payment Method <span class="text-danger">*</span></label>
-                <select name="payment_method" class="form-control" required>
-                  <option value="gcash" {{ old('payment_method', 'gcash') === 'gcash' ? 'selected' : '' }}>GCash</option>
-                  <option value="paymaya" {{ old('payment_method') === 'paymaya' ? 'selected' : '' }}>PayMaya</option>
-                  <option value="card" {{ old('payment_method') === 'card' ? 'selected' : '' }}>Card</option>
-                  <option value="grab_pay" {{ old('payment_method') === 'grab_pay' ? 'selected' : '' }}>GrabPay</option>
-                </select>
+                <label class="form-label fw-semibold">Amount (₱) <span class="text-danger">*</span></label>
+                <input type="number" name="amount" class="form-control" min="100" step="0.01" value="{{ old('amount') }}" placeholder="100">
               </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Amount (₱) <span class="text-danger">*</span></label>
-              <input type="number" name="amount" class="form-control" min="100" step="0.01" value="{{ old('amount') }}" placeholder="100">
+            <div class="alert alert-info small">
+              <i class="fas fa-qrcode mr-1"></i> After submitting, you'll be shown a GCash QR code to pay and a form to submit your reference number for verification.
             </div>
 
             <div class="mb-3">

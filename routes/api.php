@@ -8,14 +8,12 @@ use App\Http\Controllers\Api\ApiNotificationController;
 use App\Http\Controllers\Api\ApiReliefController;
 use App\Http\Controllers\Api\ApiStatsController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\DonationPaymentController;
 
 Route::prefix('v1')->group(function () {
 
     // Public donation tracker — must be defined BEFORE the auth group
     // and BEFORE /donations/{id} so Laravel doesn't confuse the path
     Route::get('/donations/track/{code}', [ApiDonationController::class, 'track']);
-    Route::post('/webhooks/paymongo', [DonationPaymentController::class, 'webhook'])->name('paymongo.webhook');
 
     // ── Public read-only data endpoints (for external integrations) ──
     Route::get('/public/inventory', [ApiInventoryController::class, 'publicIndex']);

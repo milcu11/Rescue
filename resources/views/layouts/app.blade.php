@@ -432,9 +432,16 @@
           @if(in_array($currentRole, ['super_admin', 'drrm_officer']))
             <li class="nav-item">
               <a href="{{ route('donations.payment.history') }}"
-                 class="nav-link {{ request()->routeIs('donations.payment.*') ? 'active' : '' }}">
+                 class="nav-link {{ request()->routeIs('donations.payment.history') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-money-bill-wave"></i>
                 <p>Payment History</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('donations.payment.verifications') }}"
+                 class="nav-link {{ request()->routeIs('donations.payment.verifications') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-qrcode"></i>
+                <p>GCash Verifications</p>
               </a>
             </li>
           @endif

@@ -35,6 +35,6 @@ class DonationPaymentControllerTest extends TestCase
 
         $response->assertOk();
         $response->assertViewIs('donations.payment.create');
-        $response->assertSee('Choose Payment Method');
+        $response->assertSee('Pay via GCash');
     }
 }

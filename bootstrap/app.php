@@ -30,7 +30,6 @@ return Application::configure(basePath: dirname(__DIR__))
         // Exclude /api/* from CSRF verification
         $middleware->validateCsrfTokens(except: [
             'api/*',
-            'api/webhooks/paymongo',
             'logout',
         ]);
     })

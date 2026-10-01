@@ -44,7 +44,14 @@ Route::get('/api/weather/current', [PublicController::class, 'weatherCurrent'])-
 Route::get('/evac-centers/{evacuationCenter}', [PublicController::class, 'evacCenter'])->name('public.evac_center');
 Route::get('/donate', [PublicController::class, 'donate'])->name('donate');
 Route::post('/donate', [PublicController::class, 'storeDonation'])->name('donate.submit');
-Route::get('/donate/success/{donation}', [PublicController::class, 'paymentSuccess'])->name('public.payment.success');
+
+// Pay a pending monetary donation via GCash QR + reference number (guests and donors/staff both use this)
+Route::get('/donations/{donation}/pay', [DonationPaymentController::class, 'create'])
+    ->name('donations.payment.create');
+Route::post('/donations/{donation}/pay', [DonationPaymentController::class, 'checkout'])
+    ->name('donations.payment.checkout');
+Route::get('/donations/{donation}/pay/submitted', [DonationPaymentController::class, 'success'])
+    ->name('donations.payment.success');
 
 // ── Authenticated routes ────────────────────────
 Route::middleware('auth')->group(function () {
@@ -299,23 +306,16 @@ Route::middleware('auth')->group(function () {
               ->name('donor.index');
         });
 
-    // Payment (allow donor to access pay routes as well)
-    Route::middleware('role:super_admin,mdrrmo,donor')
-        ->group(function () {
-          Route::get('/donations/{donation}/pay', [DonationPaymentController::class, 'create'])
-              ->name('donations.payment.create');
-          Route::post('/donations/{donation}/pay', [DonationPaymentController::class, 'checkout'])
-              ->name('donations.payment.checkout');
-          Route::get('/donations/{donation}/pay/success', [DonationPaymentController::class, 'success'])
-              ->name('donations.payment.success');
-          Route::get('/donations/{donation}/pay/cancel', [DonationPaymentController::class, 'cancel'])
-              ->name('donations.payment.cancel');
-        });
-
     Route::middleware('role:super_admin,mdrrmo')
         ->group(function () {
           Route::get('/payments/history', [DonationPaymentController::class, 'history'])
               ->name('donations.payment.history');
+          Route::get('/payments/verifications', [DonationPaymentController::class, 'verifications'])
+              ->name('donations.payment.verifications');
+          Route::post('/payments/{payment}/confirm', [DonationPaymentController::class, 'confirm'])
+              ->name('donations.payment.confirm');
+          Route::post('/payments/{payment}/reject', [DonationPaymentController::class, 'reject'])
+              ->name('donations.payment.reject');
         });
 
 });
