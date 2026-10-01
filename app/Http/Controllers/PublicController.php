@@ -19,6 +19,13 @@ class PublicController extends Controller
 {
     public function home()
     {
+        // Logged-in users hitting the bare root get sent to their dashboard, matching /login's
+        // behavior, so Back can't park them on the public landing page mid-session. The explicit
+        // "Public Site" staff link uses the separate public.home route name and is unaffected.
+        if (Auth::check() && request()->routeIs('home')) {
+            return redirect()->route('dashboard');
+        }
+
         $stats = [
             'evacuation_centers' => EvacuationCenter::count(),
             'volunteers' => User::whereHas('role', fn ($q) => $q->where('slug', 'volunteer'))
