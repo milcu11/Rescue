@@ -77,11 +77,22 @@ jobs:
             touch "/tmp/rescueph-deploy/rescueph_app/$dir/.keep"
           done
           cp -a public/. /tmp/rescueph-deploy/htdocs/
-          sed -i \
-            -e "s#__DIR__'/../storage#__DIR__'/../rescueph_app/storage#g" \
-            -e "s#__DIR__'/../vendor#__DIR__'/../rescueph_app/vendor#g" \
-            -e "s#__DIR__'/../bootstrap#__DIR__'/../rescueph_app/bootstrap#g" \
-            /tmp/rescueph-deploy/htdocs/index.php
+          python3 - <<'PY'
+          from pathlib import Path
+
+          index = Path("/tmp/rescueph-deploy/htdocs/index.php")
+          content = index.read_text()
+          replacements = {
+              "__DIR__.'/../storage": "__DIR__.'/../rescueph_app/storage",
+              "__DIR__.'/../vendor": "__DIR__.'/../rescueph_app/vendor",
+              "__DIR__.'/../bootstrap": "__DIR__.'/../rescueph_app/bootstrap",
+          }
+          for old, new in replacements.items():
+              if content.count(old) != 1:
+                  raise SystemExit(f"Expected exactly one {old!r} reference in {index}")
+              content = content.replace(old, new)
+          index.write_text(content)
+          PY
 
       - name: Validate deployment layout
         run: |
