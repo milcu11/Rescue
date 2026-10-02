@@ -85,10 +85,15 @@ jobs:
 
       - name: Validate deployment layout
         run: |
-          test -f /tmp/rescueph-deploy/rescueph_app/artisan
-          test -f /tmp/rescueph-deploy/rescueph_app/vendor/autoload.php
-          test -f /tmp/rescueph-deploy/htdocs/index.php
-          ! grep -q "__DIR__.'/../\(storage\|vendor\|bootstrap\)" /tmp/rescueph-deploy/htdocs/index.php
+          test -f /tmp/rescueph-deploy/rescueph_app/artisan || { echo "::error::Laravel artisan file is missing from the private app bundle."; exit 1; }
+          test -f /tmp/rescueph-deploy/rescueph_app/vendor/autoload.php || { echo "::error::Composer dependencies are missing from the private app bundle."; exit 1; }
+          test -f /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Public front controller is missing from the web-root bundle."; exit 1; }
+          grep -Fq "__DIR__.'/../rescueph_app/storage/framework/maintenance.php" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller does not point to private Laravel storage."; exit 1; }
+          grep -Fq "__DIR__.'/../rescueph_app/vendor/autoload.php" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller does not point to the private Composer autoloader."; exit 1; }
+          grep -Fq "__DIR__.'/../rescueph_app/bootstrap/app.php" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller does not point to private Laravel bootstrap."; exit 1; }
+          ! grep -Fq "__DIR__.'/../storage/" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller still references public storage paths."; exit 1; }
+          ! grep -Fq "__DIR__.'/../vendor/" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller still references public vendor paths."; exit 1; }
+          ! grep -Fq "__DIR__.'/../bootstrap/" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller still references public bootstrap paths."; exit 1; }
 
       - name: Upload private Laravel application
         uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b
