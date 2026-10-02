@@ -1,0 +1,127 @@
+name: Deploy to InfinityFree
+
+# Assumes htdocs/ and rescueph_app/ are sibling directories in the FTP account.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Preview the FTP changes without uploading files
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: infinityfree-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: bcmath, ctype, curl, dom, fileinfo, gd, intl, mbstring, openssl, pdo_mysql, tokenizer, xml, zip
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install production dependencies
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Build frontend assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Prepare private app and public web root
+        run: |
+          mkdir -p /tmp/rescueph-deploy/rescueph_app /tmp/rescueph-deploy/htdocs
+          rsync -a ./ /tmp/rescueph-deploy/rescueph_app/ \
+            --exclude='/.git/' \
+            --exclude='/.github/' \
+            --exclude='/.env*' \
+            --exclude='/tmp/rescueph-deploy/' \
+            --exclude='/public/' \
+            --exclude='/node_modules/' \
+            --exclude='/tests/' \
+            --exclude='/scripts/' \
+            --exclude='/tmp-*.php' \
+            --exclude='/rescueph_schema.sql' \
+            --exclude='/.phpunit*' \
+            --exclude='/.editorconfig' \
+            --exclude='/.gitattributes' \
+            --exclude='/.gitignore' \
+            --exclude='/.dockerignore'
+          for dir in \
+            bootstrap/cache \
+            storage/app/private \
+            storage/app/public \
+            storage/framework/cache/data \
+            storage/framework/sessions \
+            storage/framework/testing \
+            storage/framework/views \
+            storage/logs; do
+            mkdir -p "/tmp/rescueph-deploy/rescueph_app/$dir"
+            touch "/tmp/rescueph-deploy/rescueph_app/$dir/.keep"
+          done
+          cp -a public/. /tmp/rescueph-deploy/htdocs/
+          sed -i \
+            -e "s#__DIR__'/../storage#__DIR__'/../rescueph_app/storage#g" \
+            -e "s#__DIR__'/../vendor#__DIR__'/../rescueph_app/vendor#g" \
+            -e "s#__DIR__'/../bootstrap#__DIR__'/../rescueph_app/bootstrap#g" \
+            /tmp/rescueph-deploy/htdocs/index.php
+
+      - name: Validate deployment layout
+        run: |
+          test -f /tmp/rescueph-deploy/rescueph_app/artisan
+          test -f /tmp/rescueph-deploy/rescueph_app/vendor/autoload.php
+          test -f /tmp/rescueph-deploy/htdocs/index.php
+          ! grep -q "__DIR__.'/../\(storage\|vendor\|bootstrap\)" /tmp/rescueph-deploy/htdocs/index.php
+
+      - name: Upload private Laravel application
+        uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b
+        with:
+          server: ftpupload.net
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: /tmp/rescueph-deploy/rescueph_app/
+          server-dir: rescueph_app/
+          dry-run: ${{ inputs.dry_run }}
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env
+            **/.env.*
+
+      - name: Upload public web root
+        uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b
+        with:
+          server: ftpupload.net
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: /tmp/rescueph-deploy/htdocs/
+          server-dir: htdocs/
+          dry-run: ${{ inputs.dry_run }}
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
