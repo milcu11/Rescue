@@ -1,6 +1,7 @@
 name: Deploy to InfinityFree
 
-# Assumes htdocs/ and rescueph_app/ are sibling directories in the FTP account.
+# InfinityFree restricts PHP file access to the website's htdocs directory.
+# Keep the full Laravel project in htdocs and route requests through public/.
 on:
   workflow_dispatch:
     inputs:
@@ -38,27 +39,30 @@ jobs:
           cache: npm
 
       - name: Install production dependencies
-        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+        run: |
+          composer install --no-dev --no-interaction --prefer-dist
+          composer dump-autoload --no-dev --no-interaction --optimize=false
 
       - name: Build frontend assets
         run: |
           npm ci
           npm run build
 
-      - name: Prepare private app and public web root
+      - name: Prepare Laravel project inside htdocs
         run: |
-          mkdir -p /tmp/rescueph-deploy/rescueph_app /tmp/rescueph-deploy/htdocs
-          rsync -a ./ /tmp/rescueph-deploy/rescueph_app/ \
+          mkdir -p /tmp/rescueph-deploy/htdocs
+          rsync -a ./ /tmp/rescueph-deploy/htdocs/ \
             --exclude='/.git/' \
             --exclude='/.github/' \
             --exclude='/.env*' \
             --exclude='/tmp/rescueph-deploy/' \
-            --exclude='/public/' \
             --exclude='/node_modules/' \
             --exclude='/tests/' \
             --exclude='/scripts/' \
             --exclude='/tmp-*.php' \
             --exclude='/rescueph_schema.sql' \
+            --exclude='/database/database.sqlite' \
+            --exclude='/storage/***' \
             --exclude='/.phpunit*' \
             --exclude='/.editorconfig' \
             --exclude='/.gitattributes' \
@@ -73,59 +77,28 @@ jobs:
             storage/framework/testing \
             storage/framework/views \
             storage/logs; do
-            mkdir -p "/tmp/rescueph-deploy/rescueph_app/$dir"
-            touch "/tmp/rescueph-deploy/rescueph_app/$dir/.keep"
+            mkdir -p "/tmp/rescueph-deploy/htdocs/$dir"
+            touch "/tmp/rescueph-deploy/htdocs/$dir/.keep"
           done
-          cp -a public/. /tmp/rescueph-deploy/htdocs/
-          python3 - <<'PY'
-          from pathlib import Path
-
-          index = Path("/tmp/rescueph-deploy/htdocs/index.php")
-          content = index.read_text()
-          replacements = {
-              "__DIR__.'/../storage": "__DIR__.'/../rescueph_app/storage",
-              "__DIR__.'/../vendor": "__DIR__.'/../rescueph_app/vendor",
-              "__DIR__.'/../bootstrap": "__DIR__.'/../rescueph_app/bootstrap",
-          }
-          for old, new in replacements.items():
-              if content.count(old) != 1:
-                  raise SystemExit(f"Expected exactly one {old!r} reference in {index}")
-              content = content.replace(old, new)
-          index.write_text(content)
-          PY
+          cat > /tmp/rescueph-deploy/htdocs/.htaccess <<'HTACCESS'
+          RewriteEngine On
+          RewriteRule ^storage/(.*)$ /storage/app/public/$1 [END]
+          RewriteRule (.*) /public/$1 [L]
+          HTACCESS
 
       - name: Validate deployment layout
         run: |
-          test -f /tmp/rescueph-deploy/rescueph_app/artisan || { echo "::error::Laravel artisan file is missing from the private app bundle."; exit 1; }
-          test -f /tmp/rescueph-deploy/rescueph_app/vendor/autoload.php || { echo "::error::Composer dependencies are missing from the private app bundle."; exit 1; }
-          test -f /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Public front controller is missing from the web-root bundle."; exit 1; }
-          grep -Fq "__DIR__.'/../rescueph_app/storage/framework/maintenance.php" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller does not point to private Laravel storage."; exit 1; }
-          grep -Fq "__DIR__.'/../rescueph_app/vendor/autoload.php" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller does not point to the private Composer autoloader."; exit 1; }
-          grep -Fq "__DIR__.'/../rescueph_app/bootstrap/app.php" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller does not point to private Laravel bootstrap."; exit 1; }
-          ! grep -Fq "__DIR__.'/../storage/" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller still references public storage paths."; exit 1; }
-          ! grep -Fq "__DIR__.'/../vendor/" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller still references public vendor paths."; exit 1; }
-          ! grep -Fq "__DIR__.'/../bootstrap/" /tmp/rescueph-deploy/htdocs/index.php || { echo "::error::Front controller still references public bootstrap paths."; exit 1; }
+          test -f /tmp/rescueph-deploy/htdocs/artisan || { echo "::error::Laravel artisan file is missing from the htdocs bundle."; exit 1; }
+          test -f /tmp/rescueph-deploy/htdocs/composer.json || { echo "::error::Composer manifest is missing from the htdocs bundle."; exit 1; }
+          test -f /tmp/rescueph-deploy/htdocs/vendor/autoload.php || { echo "::error::Composer dependencies are missing from the htdocs bundle."; exit 1; }
+          test -f /tmp/rescueph-deploy/htdocs/public/index.php || { echo "::error::Laravel public front controller is missing."; exit 1; }
+          grep -Fq 'RewriteRule (.*) /public/$1 [L]' /tmp/rescueph-deploy/htdocs/.htaccess || { echo "::error::htdocs rewrite to Laravel public is missing."; exit 1; }
+          grep -Fq 'RewriteRule ^storage/(.*)$ /storage/app/public/$1 [END]' /tmp/rescueph-deploy/htdocs/.htaccess || { echo "::error::Public storage rewrite is missing."; exit 1; }
+          test ! -e /tmp/rescueph-deploy/htdocs/.env || { echo "::error::A local .env file must never be included in the deployment bundle."; exit 1; }
+          oversized_php=$(find /tmp/rescueph-deploy/htdocs -type f -name '*.php' -size +1M -print -quit)
+          test -z "$oversized_php" || { echo "::error::InfinityFree may reject PHP files larger than 1 MB: $oversized_php"; exit 1; }
 
-      - name: Upload private Laravel application
-        uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b
-        with:
-          server: ftpupload.net
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          local-dir: /tmp/rescueph-deploy/rescueph_app/
-          server-dir: rescueph_app/
-          dry-run: ${{ inputs.dry_run }}
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.env
-            **/.env.*
-
-      - name: Upload public web root
+      - name: Upload Laravel project to htdocs
         uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b
         with:
           server: ftpupload.net
@@ -141,3 +114,5 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
+            **/.env
+            **/.env.*
