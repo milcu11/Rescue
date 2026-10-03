@@ -41,7 +41,7 @@ jobs:
       - name: Install production dependencies
         run: |
           composer install --no-dev --no-interaction --prefer-dist
-          composer dump-autoload --no-dev --no-interaction --optimize=false
+          composer dump-autoload --no-dev --no-interaction --no-optimize
 
       - name: Build frontend assets
         run: |
