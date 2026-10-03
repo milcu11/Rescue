@@ -107,7 +107,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: /tmp/rescueph-deploy/htdocs/
-          server-dir: htdocs/
+          server-dir: /htdocs/
           dry-run: ${{ inputs.dry_run }}
           dangerous-clean-slate: false
           exclude: |
